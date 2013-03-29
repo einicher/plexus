@@ -1,0 +1,535 @@
+/*<?php
+	$color0 = '#031414';
+	$color1 = '#B1BF41';
+	$color2 = '#4A666A';
+	$color1rgb = '177,191,65';
+	$color2rgb = '74,102,106';
+?>*/
+* { margin: 0; padding: 0; }
+header, footer, nav, article, section, aside, figure { display: block; }
+
+.left { float: left;  }
+.right { float: right; }
+.half { width: 48%; }
+.third { width: 33%; }
+.quart { width: 25%; }
+span.link { cursor: pointer; text-decoration: underline; color: #369; }
+.alignLeft { text-align: left; }
+.alignRight { text-align: right; }
+.alignCenter { text-align: center; }
+.alignJustify { text-align: justify; }
+
+.clear { clear: both; } /* old style */
+
+/* new style */
+.clearfix:after { content: "."; display: block; clear: both; visibility: hidden; line-height: 0; height: 0; }
+.clearfix { display: inline-block; }
+html[xmlns] .clearfix { display: block; }
+* html .clearfix { height: 1%; }
+
+a { outline: none; }
+a img { border: 0 none; }
+a.external { padding-right: 16px; background-image: url('external-link.gif'); background-repeat: no-repeat; background-position: right top; }
+code a.external, samp a.external, pre a.external { padding-right: 0; background: transparent; text-decoration: none; color: inherit; }
+a.external.image { background: transparent; padding-right: 0; }
+.errors { border: 1px solid #D00; background: #FFBFBF; text-align: center; color: #D00; padding: 1em; margin: 0 0 1em 0; }
+.infos { border: 1px solid #070; background: #ABFFAB; text-align: center; color: #070; padding: 1em; margin: 0 0 1em 0; }
+div.upgrade { border: 1px solid #E6DC4E; background: #FFFDD9; text-align: center; color: #A8A139; padding: 1em; margin: 0 0 1em 0; }
+div.upgrade a { color: #807A2B; }
+.standaloneWidget { position: relative; }
+
+input[type=text] { width: 200px; }
+
+
+form.plexusForm button.special.save { float: right; }
+.formFieldTextLimitCounter, .formFieldTextCounter { float: right; font-weight: bold; }
+form.plexusPreferences, #fancybox-inner .plexusForm.plexusPreferences { position: absolute; top: 10px; left: 10px; bottom: 10px; right: 200px; overflow: auto; padding: 0 10px 0 0; }
+form.plexusWidgetForm #radioStatus { margin: 20px 0 0 0; padding: 10px; background: #F3E7EF; border-top: 1px solid #402035; }
+form.plexusWidgetForm #stringOrder { margin: 0 0 20px 0; padding: 0 10px 10px 10px;  background: #F3E7EF; border-bottom: 1px solid #402035; }
+form.plexusWidgetForm #checkboxExclude { margin: 0; background: #F3E7EF; padding: 0 10px 10px 10px; }
+.formField .fieldCaptchaWrap label { display: inline; }
+
+#plexusPanel { z-index: 999; font-size: 16px; position: fixed; left: 0; top: 0; right: 0; height: 40px; line-height: 40px; background: <?=$color0?>; color: #EEE; text-align: center; }
+#plexusPanel ul.menuLeft { float: left; }
+#plexusPanel ul.menuRight {  }
+
+#plexusPanel ul { list-style-type: none; margin: 0; padding: 0; text-align: left; }
+#plexusPanel ul li { float: left; margin: 0; line-height: 30px; padding: 5px 0; margin: 0 5px; }
+#plexusPanel ul.menuRight li { float: right; }
+#plexusPanel ul li a { display: block; padding: 0 10px; color: #EEE; text-decoration: none; }
+#plexusPanel ul li a:hover,
+#plexusPanel ul li a.active { background: <?=$color1?>; color: #000; border-radius: 3px; }
+#plexusPanel ul li a.active { border-radius: 3px 3px 0 0; }
+
+#plexusPanel ul li ul { display: none; position: absolute; max-height: 300px; overflow-y: auto; overflow-x: hidden; z-index: 999; box-shadow: 3px 3px 3px rgba(0,0,0,0.5); min-width: 150px; }
+#plexusPanel ul li ul li { line-height: 40px; float: none; padding: 0; margin: 0; }
+#plexusPanel ul li ul li a { color: #000; background: <?=$color1?>; padding-right: 20px; }
+#plexusPanel ul li ul li a:hover { border-radius: 0; background: #9FAB3A; }
+
+#plexusPanel #plexus { padding: 0 10px; display: inline-block; }
+#plexusPanel #plexus:hover { background: <?=$color1?>; }
+#plexusPanel #plexus img { margin: 9px 0px 7px 0px; vertical-align: top; }
+
+img.iconset { background: transparent url('../../../plx-resources/tango-icons.png'); }
+img.lampOff { background-position: -175px -726px; }
+img.lampOn { background-position: -206px -726px; }
+
+#plexusPanel #plexusPanelId { background: #333; height: 16px; line-height: 15px; margin: 7px 6px; padding: 5px 10px; border-radius: 5px; }
+#plexusPanel #plexusPanelId:hover { background: #444; }
+#plexusPanelLamp { margin: 11px 6px 13px 6px; cursor: pointer; }
+#plexusPanel #plexusPanelEdit { height: 16px; line-height: 16px; padding: 11px 6px 13px 6px; }
+#plexusPanel #plexusPanelEdit img { background-position: -116px -726px; float: left; }
+#plexusPanel #plexusPanelEdit:hover { background-color: transparent;  }
+#plexusPanel #plexusPanelEdit:hover img,
+#plexusPanel #plexusPanelEdit.cancel img { background-position: -116px -726px; }
+
+.plexusPanelIndicator { font-weight: bold; line-height: normal; height: auto; font-size: smaller; position: absolute; right: -7px; top: -3px; background: #D00; color: #FFF; }
+.plexusPanelIndicator { border-radius: 6px; background-image: -webkit-gradient(linear, left top, left bottom, from(#FF4040), to(#D00)); background: -moz-linear-gradient(#FF4040,#D00); box-shadow: 0 0 5px #000; }
+.plexusPanelIndicator span { font-size: smaller; padding: 0 3px; border-radius: 5px;  display: block; border: 2px solid #FFF; }
+#plexusPanel ul li ul li .plexusPanelIndicator { right: 0; }
+
+table.browser .thumb { margin: 3px 3px 0 0; padding: 1px; border: 1px solid #CCC; }
+
+.plxUiTabs .ui-tabs-hide { display: none; }
+.plxUiTabs ul { margin: 0; padding: 3px 3px 0 3px; list-style-type: none; }
+.plxUiTabs ul li { float: left; height: 19px; line-height: 19px; }
+.plxUiTabs .ui-tabs-panel { clear: both; background: #FFF; padding: 5px; border-top: 1px solid #BBB; }
+.plexusForm .plxUiTabs { background: #EEEEEE; border: 1px solid #BBB }
+.plexusForm .formFieldWysiwyg .plxUiTabs { border-top: none; }
+.plexusForm .plxUiTabs ul li a { display: block; padding: 2px 4px 3px 4px; font-size: smaller; height: 14px; line-height: 14px; margin: 1px 5px 1px 1px; text-decoration: none; color: #000; }
+.plxUiTabs ul li.ui-tabs-selected a { background: #FFF; border: 1px solid #BBB; border-bottom: 0 none; margin: 0 4px 0 0; }
+.formFieldFile .plxUiTabs { border-left: 0 none; border-right: 0 none; }
+.formFieldFile .ui-tabs-panel { border-left: 1px solid #BBB; border-right: 1px solid #BBB; }
+.formFieldWysiwyg .plxUiTabs .ui-tabs-panel { height: 130px; overflow-x: scroll; overfloy-y: none; padding: 10px; width: auto; white-space: nowrap; }
+.formFieldWysiwyg .plxUiTabs .ui-tabs-panel.images img { margin: 0 7px 0 0; }
+.formFieldWysiwyg #widgetChooser { width: auto; }
+.formFieldWysiwyg .plxUiTabs .ui-tabs-panel.wysiwygMultimediaEmbeddings { height: 200px; overflow: auto; }
+.plxUiTabPage { background: #FFF; padding: 10px; }
+.plxWysiwygFileIcon { vertical-align: middle; width: 16px; height: 16px; display: inline-block; margin: 2px 5px 2px 0; background: url('../../../plx-resources/tango-icons.png') -585px -304px; }
+#wysiwygContentFiles { overflow-x: auto; overflow-y: scroll; }
+#wysiwygContentFiles ul { margin: 0; padding: 0; list-style-type: none; }
+#wysiwygContentFiles ul li { cursor: pointer; line-height: 16px; }
+
+.formField { margin: 0 0 1em 0; }
+.formField label { display: block; }
+.formFieldCheckbox label { display: inline; }
+.formField.formFieldRadio label { display: inline; }
+.formField.formFieldRadio label.formFieldRadioLabel { display: block; margin: 0 0 0.5em 0; }
+.formField .caption { margin: 0; font-size: smaller; }
+.formField input.fieldString, .formField select, .formField textarea { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; width: 100%; }
+.plexusForm button.special { width: 50%; padding: 0.5em 1em; }
+.plexusForm button.special.remove { float: left; }
+.plexusFormAdvanced { padding: 20px; background: #FFFFE6; border-top: 1px solid #FF0; border-bottom: 1px solid #FF0; }
+.plexusFormAdvancedToggle { cursor: pointer; margin: 20px 0 0 0; font-weight: bold; }
+.plexusFormAdvancedToggle img { margin: 0 5px 0 0; width: 16px; height: 16px; background: url('../../../plx-resources/tango-icons.png') no-repeat -249px -256px; }
+.plexusFormAdvancedToggle img.off {  }
+.plexusFormAdvancedToggle img.on { background-position: -273px -256px; }
+.plexusFormAdvancedToggle img, .plexusFormAdvancedToggle span { vertical-align: middle; }
+#radioStatus { width: 49%; float: left; }
+.plexusWidgetForm #radioStatus { width: auto; float: none; }
+.formChecks { width: 49%; float: right; }
+.formField .suggestions { padding: 5px; background: #F3F3F3; border-bottom: 1px solid #CCC; } 
+
+.wysiwygCodeSwitcher { float: right; }
+.plxDel { position: relative; }
+.plxDel:hover .plxDelIcon { display: block; }
+.plxDelIcon { text-indent: -9999px; width: 16px; height: 16px; background: url('../../../plx-resources/tango-icons.png') -153px -184px; cursor: pointer; display: none; position: absolute; right: 3px; top: 3px; }
+.formField #title { font-size: x-large; }
+input, label, select, textarea { vertical-align: middle; }
+
+#trackbackInputs .trackbackInput { margin: 0 0 5px 0; }
+#trackbackInputs .trackbackInput .fieldStringWrap { float: left; width: 90%; }
+#trackbackInputs .trackbackInput input { padding: 1px 0; }
+#trackbackInputs .trackbackInput button { width: 9%; }
+
+.plxEditPanel { position: absolute; right: 0; top: 0; font-family: Verdana, sans-serif; font-size: 12pt; }
+.plxEditPanel a { float: left; }
+
+.plxDock { position: relative; }
+.plxEditPanel a.edit,
+.plxDock span.edit,
+.plexusEdit,
+.plxEditPanel a.translate,
+.plxEditPanel a.copy { color: #FFF; font-weight: bold; background: #070; text-decoration: none; padding: 0 5px; position: absolute; right: 0; top: 0; z-index: 95; cursor: pointer; }
+.plxEditPanel a.plexusControls { position: static; margin: 0 0 0 5px; }
+.plxEditPanel a.translate { background: #369; }
+.plxEditPanel a.copy { background: #636; }
+.plxDock aside.widget { position: relative; }
+.plxDock span.edit.addNewWidget { position: static; padding: 20px; text-align: center; display: block; }
+.plxEditPanel a.cancel { color: #FFF; font-weight: bold; background: #D00; text-decoration: none; padding: 0 5px; }
+ul.chooseLanguage { margin: 0 0 0 2em; list-style-type: square; font-size: larger; }
+
+#plxDB {  }
+#plxDB .click { color: #039; text-decoration: underline; cursor: pointer; }
+#plxDB #plxDbMain {  }
+#plxDbMain form.plexusForm { margin: 20px; }
+#plxDB #plxDbScroller { position: absolute; top: 0; left: 0; right: 0; bottom: 33px; overflow: auto; }
+#plxDB #plxDbScroller .errors, #plxDB #plxDbScroller .infos { margin: 20px; }
+#plxDbMainBottomPanel { position: absolute; bottom: 0; left: 0; right: 0; background: #E6E6E6; background: -moz-linear-gradient(top, #FFF, #E6E6E6); background: -webkit-linear-gradient(top, #FFF, #E6E6E6); border-top: 1px solid #C0C0C0; line-height: 33px; height: 33px; }
+article.plxDbOverview { margin: 20px; }
+#plxDB #plxDbMain table { margin: 0; }
+#plxDB #plxDbMain table.browser th,
+#plxDB #plxDbMain table.browser td { white-space: nowrap; padding: 0 5px; }
+#plxDB #plxDbMain table.browser th { border-bottom: 1px solid #C0C0C0; border-left: 1px solid #C0C0C0; padding: 5px; background: #E6E6E6; background: -moz-linear-gradient(top, #FFF, #E6E6E6); background: -webkit-linear-gradient(top, #FFF, #E6E6E6); text-align: left; font-weight: normal; }
+#plxDB #plxDbMain table.browser td { cursor: pointer; border-left: 1px solid #C0C0C0; text-align: left; font-weight: normal; }
+#plxDB #plxDbMain table.browser tr.dark td { background: rgba(0,0,0,0.05); }
+#plxDB #plxDbMain table.browser tr:hover td { background: #C2D6F2; }
+#plxDB #plxDbMain table.browser th:first-child,
+#plxDB #plxDbMain table.browser td:first-child { border-left: 0; }
+#plxDbMainBottomPanel form { float: left; }
+#plxDbMainBottomPanel form input { padding: 2px 0; float: left; margin: 5px; border: 1px solid #C0C0C0; background: #FFF; font-size: inherit; }
+#plxDbMainBottomPanel form button { padding: 1px 5px; float: left; margin: 5px 0 0 0; }
+#plxDbMainBottomPanelPages { float: right; }
+#plxDbMainBottomPanelPages #display { float: left; padding: 0 10px;  }
+#plxDbMainBottomPanel span.click, #plxDbPageCurrent { cursor: pointer; border-left: 1px solid #C0C0C0; display: block; float: left; color: #333; text-decoration: none; padding: 0 10px; }
+#plxDbMainBottomPanel span.click.posLeft { float: left; border-left: 0 none; border-right: 1px solid #CCC; }
+#plxDbMainBottomPanel span.click.disabled { color: #C0C0C0; }
+#plxDbMainBottomPanel span.click:active, #plxDbPageCurrent:active { color: #FFF; background: #C0C0C0; }
+#plxDbMainBottomPanelPages #plxDbPages { float: left; position: relative; }
+#plxDbMainBottomPanelPages #plxDbPages #plxDbPageChooser { display: none; border: 1px solid #C0C0C0; position: absolute; background: #FFF; bottom: 32px; max-height: 200px; overflow-x: none; overflow-y: auto; }
+#plxDbMainBottomPanelPages #plxDbPages #plxDbPageChooser span.click { display: block; border: 0 none; }
+#plxDbTopPanel { padding: 5px; }
+#plxDB .loading { padding: 1em; font-size: xx-large; }
+
+.plxDbOverview .box { margin: 0 0 20px 0; }
+.plxDbOverview table { width: 100%; border-collapse: collapse; border: 1px solid #CCC; }
+.plxDbOverview table td { border: 1px solid #CCC; padding: 0 5px; }
+#plxDB .plxDbOverview .click { text-decoration: none; }
+#plxDB .plxDbOverview .click:hover { text-decoration: underline; }
+
+#widgetChooser { width: 480px; }
+.widgetChooserItem a { text-decoration: none; display: block; border: 1px solid #CCC; padding: 10px; margin: 10px 0 0 0; }
+.widgetChooserItem a .title { text-decoration: underline; display: block; }
+.widgetChooserItem a .desc { display: block; color: #333; }
+
+#fancybox-inner .plexusForm { margin: 0 10px 0 0; }
+
+code.code, pre { -moz-tab-size: 4; tab-size: 4; background: #F8F8F8; max-height: 300px; padding: 1px; border: 1px dashed #CCC; margin: 0 0 1em 0; display: block; white-space: pre; overflow: auto; }
+code { color: #00B; }
+#customAnalyseImagePrev { text-indent: -9999px; display: inline-block; width: 20px; height: 20px; background: url('../../../plx-resources/tango-icons.png') no-repeat -476px -551px; }
+#customAnalyseImageNext { text-indent: -9999px; display: inline-block; width: 20px; height: 20px; background: url('../../../plx-resources/tango-icons.png') no-repeat -447px -551px; }
+
+article.main { position: relative; }
+article.main.link .thumb { float: left; margin: 0.33em 1em 0 0; }
+article.main.link .title { font-weight: bold; }
+article.main.link .comment p { margin: 0 0 1em 0; }
+article.main.link .description p { margin: 0.33em 0; }
+article.main.link div.link a { color: #070; }
+
+.fancyGallery { float: left; margin: 0 5px 5px 0; }
+.fancyGallery img { float: left; }
+.fancyGallery.thumb5 { margin-right: 0; }
+
+article.result.gallery .sthumb { margin: 0 3px 3px 0; }
+article.result.gallery .excerpt { margin: 0.5em 0 0 0; }
+
+.tag10{ font-size: 20pt; }
+.tag9 { font-size: 19pt; }
+.tag8 { font-size: 18pt; }
+.tag7 { font-size: 17pt; }
+.tag6 { font-size: 16pt; }
+.tag5 { font-size: 15pt; }
+.tag4 { font-size: 14pt; }
+.tag3 { font-size: 13pt; }
+.tag2 { font-size: 12pt; }
+.tag1 { font-size: 11pt; }
+.tag0 { font-size: 10pt; }
+
+a.cloudTag, a.listTag { text-decoration: none; }
+a.cloudTag .count, a.listTag .count { color: #666; }
+.tagList { margin: 0 0 20px 0; }
+.tagList ul { margin: 0; padding: 0; list-style-type: none; }
+.tagList ul li { border-bottom: 1px solid #CCC; width: 30%; float: left; margin: 0 3% 0 0; }
+.standaloneWidget { position: relative; }
+
+#plxAdminContainer, .plxAdminContainer { padding: 20px; }
+#plxAdminContainer h1 { margin: 0 0 20px 0; }
+#plxAdminContainer .plxAdminMainHeading { background: #F5F5F5; border-bottom: 1px solid #CCC; margin: -20px -20px 20px -20px; padding: 10px; }
+#plxAdminContainer form.plexusForm { margin: 0; }
+
+#componentsContainer .heading { margin: 10px; }
+#componentsContainer .controls { float: right; }
+#componentsContainer .controls .activate { color: #070; }
+#componentsContainer .controls .deactivate { color: #F80; }
+#componentsContainer .controls .remove { color: #D00; }
+#componentsContainer .component { padding: 10px; border-bottom: 1px solid #CCC; }
+#componentsContainer .component h2 { display: inline; margin: 0; }
+#componentsContainer .component h2 a { font-size: 16px; }
+#componentsContainer .component p { margin: 0; }
+#componentsContainer .component .link a { font-size: smaller; color: #71A871; }
+#componentsContainer .component .upgradeAvailable { padding: 5px; border: 1px solid #020E19; margin: 0.5em 0; background: #E6F3FF; }
+#componentsContainer .component .version { display: inline; }
+#componentsContainer h1 { float: left; }
+#componentsContainer .coreVersion { float: right; }
+#componentsContainer .resultsMeta { border-bottom: 1px solid #CCC; padding: 0 0 20px 0; }
+#componentsContainer #message .infos { padding: 20px; margin: 20px 0; }
+#componentsContainer #error .errors { padding: 20px; margin: 20px 0; }
+.plxRightsDialog {  }
+.plxRightsDialogContainer { padding: 5px; border: 1px solid #CCC; max-height: 300px; overflow: auto; }
+.plxGroupsDialog {  }
+.plxGroupssDialogContainer { padding: 5px; border: 1px solid #CCC; max-height: 300px; overflow: auto; }
+.plxGroupsDialog .description { font-size: smaller; }
+
+.adminMenu { height: 24px; border-bottom: 1px solid #CCC; padding: 0 5px; }
+.adminMenu ul { margin: 0; padding: 0; list-style-type: none; }
+.adminMenu ul li { float: left; }
+.adminMenu ul li a { height: 19px; margin: 0 5px 0 0; padding: 2px 4px; text-decoration: none; color: #333; display: block; border: 1px solid #CCC; border-bottom: 0; }
+.adminMenu ul li a.active { border-bottom: 1px solid #FFF; }
+
+#componentsContainer .result .title { margin: 20px 0 0 0; font-weight: bold; text-decoration: none; }
+#componentsContainer .result .description { margin: 0; }
+#plexusPanel, #adminContainer, .plexusControls { font-family: Verdana, sans-serif; }
+
+.o2k7Skin table.mceLayout tr.mceLast td.mceStatusbar { position: relative; height: 0; border: 0 none; }
+.o2k7Skin table tr td.mceStatusbar div { display: none; }
+.mceResize { position: absolute; right: 0; bottom: 0; }
+
+img.alignLeft { float: left; margin: 0 10px 10px 0; }
+img.alignRight { float: left; margin: 0 0 10px 10px; }
+
+.resultTypeSelector { cursor: pointer; color: <?=$color1?>; line-height: 30px; padding: 0 10px; position: relative; background: #FFF; border: 1px solid <?=$color1?>; margin: 0 0 1em 0; float: right; }
+.resultTypeSelector:hover ul { display: block; }
+.resultTypeSelector ul { left: -1px; right: -1px; overflow: auto; margin: 0; padding: 0; list-style-type: none; position: absolute; display: none; background: #FFF; border: 1px solid <?=$color1?>; }
+.resultTypeSelector ul li a { color: <?=$color1?>; line-height: 24px; padding: 0 10px; text-decoration: none; display: block; }
+.resultTypeSelector ul li a:hover { color: #FFF; background: <?=$color1?>; }
+
+body.backend #plexusPanel {  }
+
+body.backend { background: #FFF; color: #333; font-family: Verdana, sans-serif; font-size: 14px; }
+body.backend .container { margin: 0; width: auto; position: absolute; top: 40px; left: 0; bottom: 0; right: 0; padding: 0; }
+body.backend .sidebar { overflow:auto; background: #ebebeb;  width: 200px; position: absolute; top: 0; bottom: 0; left: 0; }
+body.backend .sidebar ul.menu { list-style-type: none; padding: 0; margin: 20px 0; }
+body.backend .sidebar ul.menu li a { text-align: right; display: block; padding: 10px 20px; color: #333; text-decoration: none; }
+body.backend .sidebar ul.menu li a:hover { background: #e0e0e0; }
+body.backend .sidebar ul.menu li.active a { border-bottom: 1px solid #CCC; border-top: 1px solid #CCC; background: #f5f5f5; margin-right: -1px; }
+body.backend .main { border-left: 1px solid #CCC; background: #f5f5f5; padding: 20px; position: absolute; top: 0; right: 0; bottom: 0; left: 200px; overflow: auto; }
+
+body.backend#plexus #panelMenuItem-plexus a { border-radius: 3px; background: #444; color: #eee; }
+body.backend#preferences #panelMenuItem-preferences a { border-radius: 3px; background: #444; color: #eee; }
+body.backend#database #panelMenuItem-database a { border-radius: 3px; background: #444; color: #eee; }
+
+body.backend form#request input { font-size: 20px; width: 75%; }
+body.backend form#request button { font-size: 20px; width: 20%; }
+body.backend form#request p { margin: 0; }
+body.backend .connections ul { list-style-type: none; margin: 0; padding: 0; border-top: 1px solid #CCC; }
+body.backend .connections ul li { border-bottom: 1px solid #CCC; padding: 5px; }
+body.backend .connections ul li a.accept,
+body.backend .connections ul li a.cancel,
+body.backend .connections ul li a.refuse,
+body.backend .connections ul li a.remove,
+body.backend .connections ul li span.requestCanceled { float: right; padding: 0 5px; color: #000; }
+body.backend .connections ul li a.accept { color: #070; }
+body.backend .connections ul li a.refuse { color: #D00; }
+body.backend .plxPushes h1 { float: left; }
+body.backend .plxPushes .panel .plxGuiElement { float: left; margin: 3px 0 0 20px;  }
+body.backend .plxPushes #markAllRead { float: left; }
+body.backend .pushes { border-top: 1px solid #CCC; }
+body.backend .pushes .result { border-bottom: 1px solid #CCC; padding: 0 10px; }
+body.backend .pushes .result .col1 { float: left; width: 15%; overflow: hidden; white-space: nowrap; }
+body.backend .pushes .result .status { cursor: pointer; padding: 11.5px 0; height: 7px; float: left; width: 7px; background: url('status.png') no-repeat center left; } 
+body.backend .pushes .result.read { background: #F5F5F5; }
+body.backend .pushes .result a { height: 30px; line-height: 30px; text-decoration: none; }
+body.backend .pushes .result a.hostname { float: left; width: 15%; color: #333; margin: 0 0 0 9px; }
+body.backend .pushes .result a.title { position: relative; float: left; color: #000; font-weight: bold; margin: 0 0 0 1%; width: 83%; white-space: nowrap; overflow: hidden; }
+body.backend .pushes .result a.title span.description { font-weight: normal; color: #999; }
+body.backend .pushes .result a.received { padding: 0 10px 0 10px; background: #FFF; position: absolute; right: 0; color: #333; }
+body.backend .pushes .result.read a.received { background: #F5F5F5; }
+body.backend .pushes .result span.type { text-align: center; line-height: normal; font-weight: normal; width: 50px; background: #333; color: #FFF; float: left; margin: 5.5px 1% 0 0; padding: 0 5px 1px 5px; }
+body.backend .pushes .result.read a { font-weight: normal; color: #999; }
+body.backend .pushes .result.read .status { background-position: center right; }
+body.backend .pushes p { line-height: 25px; border-bottom: 1px solid #CCC; } 
+
+.plxPagination.plxImageSelector { float: left; height: 20px; line-height: 18px; margin: 0 0 10px 0; }
+.plxPagination.plxImageSelector a { font-size: 10px; padding: 2px 5px; }
+
+.plxEditorDialog img { float: left; cursor: pointer; margin: 0 10px 10px 0; }
+ul.editorChooseType { list-style-type: none; margin: 0; padding: 0; }
+ul.editorChooseType li { line-height: 24px; width: 50%; float: left; }
+ul.editorChooseType li a { text-decoration: none; display: block; border: 1px solid #CCC; padding: 10px 15px; margin: 5px; }
+ul.editorChooseType li a span.icon { margin: 0 15px 0 0; float: left; display: block; width: 24px; height: 24px; }
+ul.editorChooseType li.image a span.icon { background: url('../../../plx-resources/tango-icons.png') no-repeat -653px -547px; }
+ul.editorChooseType li.video a span.icon { background: url('../../../plx-resources/tango-icons.png') no-repeat -354px -427px; }
+ul.editorChooseType li.file a span.icon { background: url('../../../plx-resources/tango-icons.png') no-repeat -413px -458px; }
+ul.editorChooseType li.gallery a span.icon { background: url('../../../plx-resources/tango-icons.png') no-repeat -202px -458px; }
+ul.editorChooseType li a:hover { background: #F2E6EE; }
+
+.plexusForm, #plxAdminContainer, .plxAdminContainer { font-family: Verdana, sans-serif; color: #333; font-size: 13px; }
+.plexusForm input { font-size: 13px; }
+
+
+.plexusGUI * { margin: 0; padding: 0; border: 0 none; font-size: 13px; font-family: Verdana, sans-serif; color: #333; }
+.plexusGUI a { color: <?=$color2?>; text-decoration: underline; }
+.plexusGUI p, .plexusGUI h1, .plexusGUI h2 { margin: 0 0 20px 0; }
+.plexusGUI ul { list-style-type: square; margin: 0 0 15px 0; }
+.plexusGUI ol { padding: 0 0 0 2em; margin: 0 0 15px 0; }
+.plexusGUI li { margin: 0 0 5px 0; }
+.plexusGUI h1 { font-size: 26px; }
+.plexusGUI h2 { font-size: 16px; }
+.plexusGUI input[type=text] { border: 1px solid #CCC; font-size: inherit; padding: 5px; }
+
+.plx-button,
+.plexusGUI button,
+.plexusGUI .button,
+.plexusGUI .toggleButtons div,
+.plexusGUI .toggleButtons a { color: #333; text-decoration: none; background-color: #E6E6E6; background-image: -moz-linear-gradient(top , #FFFFFF, #E6E6E6); background-image: -webkit-linear-gradient(top , #FFFFFF, #E6E6E6); background-repeat: no-repeat; border-color: #CCCCCC #CCCCCC #BBBBBB; border-radius: 4px 4px 4px 4px; border-style: solid; border-width: 1px; box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05); color: #333333; cursor: pointer; display: inline-block; font-size: inherit; font-weight: normal; padding: 5px 20px; text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); }
+
+.plx-button:hover,
+.plexusGUI button:hover,
+.plexusGUI .button:hover,
+.plexusGUI .toggleButtons div:hover,
+.plexusGUI .toggleButtons a:hover { color: #333333; text-decoration: none; box-shadow: 0 0 3px #CCCCCC; }
+
+.plx-button:active,
+.plx-button.active,
+.plexusGUI button.active,
+.plexusGUI button:active,
+.plexusGUI .button.active,
+.plexusGUI .button:active,
+.plexusGUI .toggleButtons div.active,
+.plexusGUI .toggleButtons div:active,
+.plexusGUI .toggleButtons a.active,
+.plexusGUI .toggleButtons a:active { outline: 0 none; box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15) inset, 1px 1px 1px rgba(0, 0, 0, 0.05); }
+
+.plexusGUI .toggleButtons div, .plexusGUI .toggleButtons a { float: left; border-radius: 0; }
+.plexusGUI .toggleButtons div:first-child, .plexusGUI .toggleButtons a:first-child { border-radius: 4px 0 0 4px; border-right: 0 none; }
+.plexusGUI .toggleButtons div:last-child, .plexusGUI .toggleButtons a:last-child { border-radius: 0 4px 4px 0; border-left: 0 none; }
+
+.plx-button.green {
+	color: #ffffff !important;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	background-color: #5bb75b;
+	*background-color: #51a351;
+	background-image: -moz-linear-gradient(top, #62c462, #51a351);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#62c462), to(#51a351));
+	background-image: -webkit-linear-gradient(top, #62c462, #51a351);
+	background-image: -o-linear-gradient(top, #62c462, #51a351);
+	background-image: linear-gradient(to bottom, #62c462, #51a351);
+	background-repeat: repeat-x;
+	border-color: #51a351 #51a351 #387038;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff62c462', endColorstr='#ff51a351', GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.plx-button.red {
+	color: #ffffff !important;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	background-color: #da4f49;
+	*background-color: #bd362f;
+	background-image: -moz-linear-gradient(top, #ee5f5b, #bd362f);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ee5f5b), to(#bd362f));
+	background-image: -webkit-linear-gradient(top, #ee5f5b, #bd362f);
+	background-image: -o-linear-gradient(top, #ee5f5b, #bd362f);
+	background-image: linear-gradient(to bottom, #ee5f5b, #bd362f);
+	background-repeat: repeat-x;
+	border-color: #bd362f #bd362f #802420;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffee5f5b', endColorstr='#ffbd362f', GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.plx-button.blue {
+	color: #ffffff !important;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	background-color: #006dcc;
+	*background-color: #0044cc;
+	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
+	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
+	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
+	background-repeat: repeat-x;
+	border-color: #0044cc #0044cc #002a80;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.plx-button.black {
+	color: #ffffff !important;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	background-color: #363636;
+	*background-color: #222222;
+	background-image: -moz-linear-gradient(top, #444444, #222222);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#444444), to(#222222));
+	background-image: -webkit-linear-gradient(top, #444444, #222222);
+	background-image: -o-linear-gradient(top, #444444, #222222);
+	background-image: linear-gradient(to bottom, #444444, #222222);
+	background-repeat: repeat-x;
+	border-color: #222222 #222222 #000000;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff444444', endColorstr='#ff222222', GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.plx-button.orange {
+	color: #ffffff !important;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	background-color: #faa732;
+	*background-color: #f89406;
+	background-image: -moz-linear-gradient(top, #fbb450, #f89406);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fbb450), to(#f89406));
+	background-image: -webkit-linear-gradient(top, #fbb450, #f89406);
+	background-image: -o-linear-gradient(top, #fbb450, #f89406);
+	background-image: linear-gradient(to bottom, #fbb450, #f89406);
+	background-repeat: repeat-x;
+	border-color: #f89406 #f89406 #ad6704;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffbb450', endColorstr='#fff89406', GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.plx-button.cyan {
+	color: #ffffff !important;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	background-color: #49afcd;
+	*background-color: #2f96b4;
+	background-image: -moz-linear-gradient(top, #5bc0de, #2f96b4);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#5bc0de), to(#2f96b4));
+	background-image: -webkit-linear-gradient(top, #5bc0de, #2f96b4);
+	background-image: -o-linear-gradient(top, #5bc0de, #2f96b4);
+	background-image: linear-gradient(to bottom, #5bc0de, #2f96b4);
+	background-repeat: repeat-x;
+	border-color: #2f96b4 #2f96b4 #1f6377;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5bc0de', endColorstr='#ff2f96b4', GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+ul.guiList, .guiList { list-style-type: none; padding: 0; border-top: 1px solid #CCC; }
+.guiList .guiListItem { border-bottom: 1px solid #CCC; padding: 10px; }
+
+.plexusTrackbacks .guiListItem { background: rgba(<?=$color1rgb?>,0.1); }
+.plexusTrackbacks .guiListItem.own { background: rgba(<?=$color2rgb?>,0.1); }
+
+.plexusGUI .hpanel { margin: 0 0 20px 0; }
+.plexusGUI .hpanel > * { margin: 3px 20px 0 0; float: left; }
+.plexusGUI .hpanel h1 { margin-top: 0; }
+.plexusGUI .hpanel h2 { margin-top: 0; }
+.plexusGUI .hpanel .clear { float: none; }
+
+.plexusGUI .tabs { background: #ebebeb; border-bottom: 1px solid #CCC; height: 31px; line-height: 30px; padding: 10px 10px 0 10px; }
+.plexusGUI .tabs ul { list-style-type: none; margin: 0; padding: 0; }
+.plexusGUI .tabs ul li { float: left; }
+.plexusGUI .tabs ul li a { display: block; padding: 1px 10px 0 10px; text-decoration: none; color: #333; }
+.plexusGUI .tabs ul li a.active { padding-top: 0; background: #F5F5F5; border: 1px solid #CCC; border-bottom: 1px solid #F5F5F5; }
+
+body.backend .fieldStringWrap,
+body.backend .fieldTextareaWrap { margin: 5px 0; border: 0 none; border-bottom: 1px solid #FFF; }
+body.backend .fieldString,
+body.backend .fieldTextareaWrap textarea { border: 1px solid #CCC; box-shadow: inset 3px 3px 3px #EEE; }
+body.backend .formField { margin: 0 0 20px 0; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

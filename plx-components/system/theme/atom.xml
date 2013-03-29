@@ -1,0 +1,27 @@
+<?='<?xml version="1.0" encoding="utf-8"?>'?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<id><?=$feed->link?></id>
+	<title><?=$feed->title?></title>
+	<updated><?=$feed->updated?></updated>
+	<generator uri="<?=$feed->generatorURI?>" version="<?=$feed->generatorVersion?>"><?=$feed->generatorName?></generator>
+	<author>
+		<name><?=$feed->authorName?></name>
+		<uri><?=$feed->authorURI?></uri>
+	</author>
+	<link rel="self" href="<?=$feed->link?>"/>
+
+<? foreach ($items as $item) : ?>
+	<entry>
+		<id><?=$item->link?></id>
+		<title><?=$item->title?></title>
+		<published><?=$item->published?></published>
+		<updated><?=$item->updated?></updated>
+		<summary><?=$item->summary?></summary>
+		<link rel="alternate" href="<?=$item->link?>"/>
+<? foreach ($item->tags as $tag) : ?>
+		<category term="<?=$tag->name?>" scheme="<?=$tag->link?>"/>
+<? endforeach; ?>
+	</entry>
+<? endforeach; ?>
+
+</feed>

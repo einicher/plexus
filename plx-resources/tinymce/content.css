@@ -1,0 +1,103 @@
+body, td, pre {
+	font-family: "Verdana", sans-serif;
+	font-size: 11pt;
+}
+
+samp, pre, code { font-family: "Lucida Console", monospace; }
+
+samp, pre {
+    border: 1px dashed #CCC;
+    background-color: #FAFAFA;
+    padding: 5px;
+    overflow: auto;
+    max-height: 300px;
+    margin: 0;
+    tab-size: 4;
+}
+
+code { color: #00B; }
+
+.plxEditorVideo {
+    border: 1px solid #406880;
+    background: #C3D1D9;
+    padding: 1em;
+    text-align: center;
+    margin: 0 0 1em 0;
+}
+
+.plxEditorWidget {
+	border: 1px solid #541C41;
+    background: #F2DAEA;
+    padding: 1em;
+    text-align: center;
+    margin: 0 0 1em 0;
+}
+
+.plxEditorGallery {
+	border: 1px solid #007700;
+    background: #E7F3E7;
+    padding: 1em;
+    text-align: center;
+    margin: 0 0 1em 0;
+}
+
+.plxEditorVideoSymbol {
+	text-indent: -9999px;
+	background: url('../tango-icons.png') no-repeat -355px -429px;
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+	margin-right: 5px;
+	float: left;
+	cursor: pointer;
+}
+
+.plxEditorGallerySymbol {
+	text-indent: -9999px;
+	background: url('../tango-icons.png') no-repeat -204px -460px;
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+	margin-right: 5px;
+	float: left;
+	cursor: pointer;
+}
+
+.plxEditorEdit {
+	text-indent: -9999px;
+	background: url('../tango-icons.png') no-repeat -474px -639px;
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+	margin-right: 5px;
+	float: left;
+}
+
+.plxEditorRemove, .plxEditorRemovePrompt {
+	text-indent: -9999px;
+	background: url('../tango-icons.png') no-repeat -624px -639px;
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+	margin-right: 5px;
+	float: right;
+}
+
+.alignLeft { text-align: left; }
+.alignRight { text-align: right; }
+.alignCenter { text-align: center; }
+.alignJustify { text-align: justify; }
+del { color: inherit; text-decoration: line-through; }
+
+.left { float: left;  }
+.right { float: right; }
+.clear { clear: both; }
+.half { width: 48%; }
+.third { width: 33%; }
+.quart { width: 25%; }
+.form {}
+
+img.alignLeft { clear: both; float: left; margin: 0 10px 10px 0; }
+img.alignRight { clear: both; float: left; margin: 0 0 10px 10px; }
+
+.image {}

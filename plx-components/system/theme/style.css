@@ -1,0 +1,124 @@
+/* Uncomment PHP code for setup
+<?
+	$color1 = '#B1BF41';
+	$color2 = '#4A666A';
+?>
+*/
+
+body { font-family: Verdana, sans-serif; background: #F3F3F3; font-size: 13px; color: #333; }
+a { color: <?=$color2?>; }
+h1, h2, h3  { font-weight: normal; }
+h1 { font-size: 26px; }
+h2 { font-size: 23px; }
+h3 { font-size: 20px; }
+p, ul, ol, dl, h1, h2, h3, h4 { margin: 0 0 20px 0; }
+ul { list-style: square; padding: 0 0 0 1.5em; }
+ol { list-style: decimal; padding: 0 0 0 2em; }
+dt { font-weight: bold; }
+dd { margin: 0 0 0 20px; }
+
+input, textarea, select, button { vertical-align: middle; }
+.fieldStringWrap, .fieldTextareaWrap, .fieldDateWrap { border: 1px solid #666666; }
+input.fieldString, textarea { border: 0 none; border-top: 1px solid #AAAAAA; border-left: 1px solid #AAAAAA; background: #FFF; font-size: larger; line-height: 150%; padding: 5px; font-family: inherit; }
+textarea { font-size: inherit; padding: 5px; }
+input, textarea { border: 1px solid #CCC; padding: 2px; background: #FFF; }
+button, input[type=submit], a.button { display: inline-block; padding: 2px 10px; border: 1px solid #CCC; border-radius: 3px; background: url('gradient-white-grey.png'); }
+button:hover, input[type=submit]:hover, a.button:hover { box-shadow: 0 0 3px #CCCCCC; }
+button:active, input[type=submit]:active, a.button:active { box-shadow: none }
+textarea.wysiwyg { border: 1px solid #CCC; }
+
+.red { font-weight: bold; color: #D00; }
+.green { font-weight: bold; color: #070; }
+.plxPagination a { color: <?=$color1?>; text-decoration: none; padding: 2px; border: 1px solid <?=$color1?>; }
+.plxPagination a.active { background: <?=$color1?>; color: #FFF; font-weight: bold; }
+
+#container { width: 900px; margin: 0 auto; background: url('shadow.png'); padding: 0 30px; }
+#containerTop { position: relative; z-index: 25; background: #F3F3F3 url('shadow-top.png'); width: 960px; height: 60px; margin: 0 -30px -30px -30px; }
+#containerBottom { position: relative; z-index: 25; background: #F3F3F3 url('shadow-bottom.png'); width: 960px; height: 60px; margin: -30px -30px 0 -30px; }
+
+header.main { background: #000; position: relative; z-index: 50; }
+header.main h1 { color: #FFF; padding: 0 20px; font-weight: normal; margin: 0; height: 50px; line-height: 50px; }
+header.main h1 a { text-decoration: none; color: #FFF;  }
+header.main #headerImage .wrap { background: <?=$color1?>; min-height: 10px; }
+header.main #headerImage .wrap img { float: left; }
+
+nav { background: #000; }
+nav ul { margin: 0; padding: 0; list-style-type: none; }
+nav ul li { float: left; }
+nav ul li a { display: block; color: #FFF; text-decoration: none; padding: 0 20px; height: 30px; line-height: 30px; }
+nav ul li.active a { background: #381C2D; background: rgba(255,255,255,0.15); }
+nav ul:hover li a { background: transparent; }
+nav ul li:hover a { background: #381C2D; background: rgba(255,255,255,0.15); }
+
+#wrap { background: #FFF; }
+#main { padding: 30px; width: 500px; float: left; }
+body.sidebarDisabled #main { width: 860px; }
+
+article.main.image h1.main { margin: 0 0 1em 0; }
+article.main .info { padding: 1em; background: #EEEEEE; border-top: 1px solid #CCC; margin: 1em 0 0 0; }
+article.main.gallery .thumbs, .gallery.thumbs { width: 505px; margin: 0 0 15px 0; }
+article.main.link h1 { margin: 0; }
+article.main.link h2 { margin: 0; }
+article.main.link .thumb { margin: 10px 10px 0 0; }
+article.main.link .description p { color: #666; margin: 5px 0 0 0; }
+article.main.link .description.hasThumb { margin-left: 110px; }
+article.main.link .description .more { margin: 5px 0 0 0; }
+article.main.link .comment { margin: 10px 0 0 0; }
+article.main.link div.source { margin: 10px 0 0 0; }
+article.main.link .link { padding: 5px;text-decoration: none; display: block; border-left: 2px solid <?=$color2?>; margin: 20px 0 0 0; background: #EBEEF3; }
+article.main.link .link h2 { color: <?=$color2?>; font-size: inherit; font-weight: bold; }
+article.main.link .link:hover h2 { text-decoration: underline; }
+
+article.result { margin: 16px 0 0 0; }
+article.result a { text-decoration: none; }
+article.result h1, .result.clustered { display: block; text-decoration: none; line-height: 125%; font-weight: bold; font-size: 16px; margin: 0; }
+.result.clustered { border-left: 5px solid; padding-left: 5px; margin: 2px 0; }
+.plxPagination.siteFeedWidget { margin: 2em 0 0 0; }
+article.result .thumb { float: left; margin: 5px 10px 0 0; }
+article.result .excerpt { margin: 0; color: #333; }
+article.result .excerpt.hasThumb { margin: 0 0 0 110px; }
+article.result .meta { margin: 0.5em 0 0 0; }
+article.result .meta .type { text-decoration: none; background: #000; color: #FFF; font-weight: bold; padding: 0 5px; }
+article.result .meta .date { text-decoration: none; color: #666; }
+
+#sidebar { float: right; width: 300px; padding: 20px; }
+#sidebar aside.widget { margin: 0 0 20px 0; }
+#sidebar aside.widget h1 { margin: 0 0 0.5em 0; }
+
+footer.main { min-height: 30px; background: #000; position: relative; z-index: 50; }
+footer.main .plxDock { width: 880px; padding: 20px 0 0 20px; color: #A88F9F; }
+footer.main a { color: #999; text-decoration: none; }
+footer.main a.external { background: transparent; padding: 0; }
+footer.main aside.widget { width: 200px; float: left; margin: 0 20px 20px 0; }
+footer.main aside.widget.last { margin: 0; }
+footer.main .plxDock span.edit.addNewWidget { padding: 10px 0; }
+footer.main aside.widget h1 { font-weight: bold; font-size: inherit; text-transform: uppercase; color: #AAA; border-bottom: 2px solid #191919; margin: 0;  }
+footer.main .MenuWidget ul { list-style-type: none; padding: 0; margin: 0; }
+footer.main .MenuWidget ul li { border-bottom: 1px solid #191919; }
+footer.main .MenuWidget ul li a { display: block; }
+
+.result .comment { color: #333; margin-bottom: 0.5em; }
+.result.link .body { display: block; border-left: 3px solid; padding-left: 0.5em; margin-left: 0.5em; }
+
+form.login { display: inline-block; }
+form.login p { margin: 0 0 0.5em 0; }
+form.login label { display: inline-block; width: 120px; }
+form.login label.checkbox { width: auto; }
+form.login button { padding: 0 20px; }
+form.login input[type=text], form.login input[type=password] { width: 150px; }
+form.login .submit { margin: 1em 0 0 0; }
+form.login .submit a { float: right; }
+
+body.link #main h2 { margin: 1em 0 0 0; }
+
+.chronological { margin: 2em 0; }
+.chronological .prev { float: right; font-size: larger; text-decoration: none; }
+.chronological .next { float: left; font-size: larger; text-decoration: none; }
+
+.trackbacksFeed article.trackback a { text-decoration: none; background: none; }
+.trackbacksFeed article.trackback a .sitename { font-weight: bold; display: inline; }
+.trackbacksFeed article.trackback a .title { display: inline; }
+.trackbacksFeed article.trackback a .excerpt { color: #333; }
+
+
+

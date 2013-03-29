@@ -1,0 +1,12 @@
+.bzrignore
+.bzr
+plx-storage/*
+!plx-storage/themes
+plx-storage/themes/*
+!plx-storage/themes/.gitignore
+plx-components/*
+!plx-components/system
+.project
+.buildpath
+.settings
+.project

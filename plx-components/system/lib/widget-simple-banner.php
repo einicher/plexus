@@ -1,0 +1,58 @@
+<?php
+	class SimpleBannerWidget extends Widget
+	{
+		public $name = 'Simple Banner';
+		public $description = 'Have just an image and link it somewhere.';
+		public $version = 1;
+		public $link = 'http://plexus.setanodus.net/Components/System';
+		public $author = 'Markus René Einicher';
+		public $authorMail = 'markus.einicher@gmail.com';
+		public $authorLink = 'http://einicher.plexus.at';
+		public $target = 'simple-banner';
+
+		function editFields()
+		{
+			return array('type' => 'widget',
+				array('type' => 'file', 'name' => 'image', 'required' => TRUE, 'options' => array(
+					'label' => $this->lang->get('Image'),
+					'target' => $this->target
+				)),
+				array('type' => 'string', 'name' => 'link', 'required' => FALSE, 'options' => array(
+					'label' => $this->lang->get('Link'),
+					'caption' => $this->lang->get('To link to homepage use “/”, page links sould start with “/” too. For example: /Develop/Database.')
+				))
+			);
+		}
+		
+		function view()
+		{
+			if (empty($this->data->image)) {
+				return;
+			}
+
+			$src = $this->addr->getRoot($this->getStorage($this->target.'/'.$this->data->image));
+
+			if (!empty($this->dock->width) && !empty($this->dock->height)) {
+				$src = $this->imageScaleLink($this->getStorage($this->target.'/'.$this->data->image), $this->dock->width, $this->dock->height);
+			} elseif (!empty($this->dock->width)) {
+				$src = $this->imageScaleLink($this->getStorage($this->target.'/'.$this->data->image), $this->dock->width);
+			} elseif (!empty($this->dock->height)) {
+				$src = $this->imageScaleLink($this->getStorage($this->target.'/'.$this->data->image), '', $this->dock->height);
+			}
+
+			if (!empty($this->data->link)) {
+				if ($this->data->link == '/') {
+					$this->data->link = $this->addr->getRoot();
+				}
+				return $this->tpl->cut('widget-simple-banner.php', 'linked', array(
+					'href' =>  $this->data->link,
+					'src' => $src
+				));
+			} else {
+				return $this->tpl->cut('widget-simple-banner.php', 'unlinked', array(
+					'src' => $src
+				));
+			}
+		}
+	}
+?>
