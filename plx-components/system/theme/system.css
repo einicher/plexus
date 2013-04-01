@@ -135,7 +135,7 @@ table.browser .thumb { margin: 3px 3px 0 0; padding: 1px; border: 1px solid #CCC
 .plxDel:hover .plxDelIcon { display: block; }
 .plxDelIcon { text-indent: -9999px; width: 16px; height: 16px; background: url('../../../plx-resources/tango-icons.png') -153px -184px; cursor: pointer; display: none; position: absolute; right: 3px; top: 3px; }
 .formField #title { font-size: x-large; }
-input, label, select, textarea { vertical-align: middle; }
+input, label, select, textarea, button { vertical-align: middle; }
 
 #trackbackInputs .trackbackInput { margin: 0 0 5px 0; }
 #trackbackInputs .trackbackInput .fieldStringWrap { float: left; width: 90%; }
@@ -297,12 +297,14 @@ body.backend #plexusPanel {  }
 
 body.backend { background: #FFF; color: #333; font-family: Verdana, sans-serif; font-size: 14px; }
 body.backend .container { margin: 0; width: auto; position: absolute; top: 40px; left: 0; bottom: 0; right: 0; padding: 0; }
-body.backend .sidebar { overflow:auto; background: #ebebeb;  width: 200px; position: absolute; top: 0; bottom: 0; left: 0; }
+body.backend .sidebar { z-index: 25; overflow: auto; background: #ebebeb; width: 200px; position: absolute; top: 0; bottom: 0; left: 0; }
+body.backend .sidebar .w3cSucksWrap { width: 199px; border-right: 1px solid #CCC; position: absolute; top: 0; bottom: 0; }
 body.backend .sidebar ul.menu { list-style-type: none; padding: 0; margin: 20px 0; }
+body.backend .sidebar ul.menu li {  }
 body.backend .sidebar ul.menu li a { text-align: right; display: block; padding: 10px 20px; color: #333; text-decoration: none; }
 body.backend .sidebar ul.menu li a:hover { background: #e0e0e0; }
 body.backend .sidebar ul.menu li.active a { border-bottom: 1px solid #CCC; border-top: 1px solid #CCC; background: #f5f5f5; margin-right: -1px; }
-body.backend .main { border-left: 1px solid #CCC; background: #f5f5f5; padding: 20px; position: absolute; top: 0; right: 0; bottom: 0; left: 200px; overflow: auto; }
+body.backend .main { z-index: 10; background: #f5f5f5; padding: 20px; position: absolute; top: 0; right: 0; bottom: 0; left: 200px; overflow: auto; }
 
 body.backend#plexus #panelMenuItem-plexus a { border-radius: 3px; background: #444; color: #eee; }
 body.backend#preferences #panelMenuItem-preferences a { border-radius: 3px; background: #444; color: #eee; }
@@ -310,7 +312,7 @@ body.backend#database #panelMenuItem-database a { border-radius: 3px; background
 
 body.backend form#request input { font-size: 20px; width: 75%; }
 body.backend form#request button { font-size: 20px; width: 20%; }
-body.backend form#request p { margin: 0; }
+body.backend form#request p { margin: 0 0 10px 0; }
 body.backend .connections ul { list-style-type: none; margin: 0; padding: 0; border-top: 1px solid #CCC; }
 body.backend .connections ul li { border-bottom: 1px solid #CCC; padding: 5px; }
 body.backend .connections ul li a.accept,

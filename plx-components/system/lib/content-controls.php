@@ -53,8 +53,10 @@
 						if ($key < 0) $key = 0;
 						if (!empty($cache)) {
 							$homepage = $this->d->get('SELECT id FROM `#_index` WHERE `address`="" && `parent`=0 && `language`="'.Control::$language.'"');
-							$current->parent = $cache[count($cache)-2]->id;
-							if ($current->parent == $homepage->id) {
+							if (isset($cache[count($cache)-2])) {
+								$current->parent = $cache[count($cache)-2]->id;
+							}
+							if (!empty($homepage) && $current->parent == $homepage->id) {
 								$current->parent = 0;
 							}
 						}

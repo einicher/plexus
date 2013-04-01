@@ -5,7 +5,7 @@
 ?>
 */
 
-body { font-family: Verdana, sans-serif; background: #F3F3F3; font-size: 13px; color: #333; }
+body { font-family: Verdana, sans-serif; background: #E6E6E6; font-size: 14px; color: #333; }
 a { color: <?=$color2?>; }
 h1, h2, h3  { font-weight: normal; }
 h1 { font-size: 26px; }
@@ -32,26 +32,27 @@ textarea.wysiwyg { border: 1px solid #CCC; }
 .plxPagination a { color: <?=$color1?>; text-decoration: none; padding: 2px; border: 1px solid <?=$color1?>; }
 .plxPagination a.active { background: <?=$color1?>; color: #FFF; font-weight: bold; }
 
-#container { width: 900px; margin: 0 auto; background: url('shadow.png'); padding: 0 30px; }
-#containerTop { position: relative; z-index: 25; background: #F3F3F3 url('shadow-top.png'); width: 960px; height: 60px; margin: 0 -30px -30px -30px; }
-#containerBottom { position: relative; z-index: 25; background: #F3F3F3 url('shadow-bottom.png'); width: 960px; height: 60px; margin: -30px -30px 0 -30px; }
+#container { margin: 30px 0 0 0; }
+.container { width: 960px; margin: 0 auto; }
 
-header.main { background: #000; position: relative; z-index: 50; }
-header.main h1 { color: #FFF; padding: 0 20px; font-weight: normal; margin: 0; height: 50px; line-height: 50px; }
-header.main h1 a { text-decoration: none; color: #FFF;  }
-header.main #headerImage .wrap { background: <?=$color1?>; min-height: 10px; }
+header.main { position: relative; z-index: 50; }
+header.main h1 { padding: 0 0 0 15px; background: #FFF; border-bottom: 1px solid #CCC; color: #FFF; font-weight: normal; margin: 0; height: 50px; line-height: 50px; }
+header.main h1 a { text-decoration: none; color: #333;  }
+header.main #headerImage .plexusControls { left: 960px; }
+header.main #headerImage .wrap { margin: -1px 0 0 0; }
 header.main #headerImage .wrap img { float: left; }
 
-nav { background: #000; }
+nav {  }
+nav .container { background: #F5F5F5; border-bottom: 1px solid #CCC; }
 nav ul { margin: 0; padding: 0; list-style-type: none; }
 nav ul li { float: left; }
-nav ul li a { display: block; color: #FFF; text-decoration: none; padding: 0 20px; height: 30px; line-height: 30px; }
-nav ul li.active a { background: #381C2D; background: rgba(255,255,255,0.15); }
+nav ul li a { display: block; color: #333; text-decoration: none; padding: 0 20px; height: 30px; line-height: 30px; }
+nav ul li.active a { background: #381C2D; background: #CCC; }
 nav ul:hover li a { background: transparent; }
-nav ul li:hover a { background: #381C2D; background: rgba(255,255,255,0.15); }
+nav ul li:hover a { background: #381C2D; background: #CCC; }
 
-#wrap { background: #FFF; }
-#main { padding: 30px; width: 500px; float: left; }
+#wrap { background: #FFF; margin: 0 auto 30px auto; }
+#main { padding: 30px; line-height: 150%; width: 600px; float: left; }
 body.sidebarDisabled #main { width: 860px; }
 
 article.main.image h1.main { margin: 0 0 1em 0; }
@@ -81,16 +82,21 @@ article.result .meta { margin: 0.5em 0 0 0; }
 article.result .meta .type { text-decoration: none; background: #000; color: #FFF; font-weight: bold; padding: 0 5px; }
 article.result .meta .date { text-decoration: none; color: #666; }
 
-#sidebar { float: right; width: 300px; padding: 20px; }
+#sidebar { float: right; width: 300px; padding: 30px 0 0 0; }
 #sidebar aside.widget { margin: 0 0 20px 0; }
-#sidebar aside.widget h1 { margin: 0 0 0.5em 0; }
+#sidebar aside.widget h1 { text-transform: uppercase; margin: 0; font-size: 16px; padding: 10px 20px; background: #EEE; border-bottom: 1px solid #CCC; }
+#sidebar aside.widget .wrap { background: #F5F5F5; line-height: 125%; font-size: 13px; padding: 0px 20px 20px 20px; }
+#sidebar aside.widget .wrap p { margin: 0; padding: 20px 0 0 0; }
+#sidebar aside.widget article.result h1 { margin: 0; border: 0 none; background: transparent; padding: 0; font-size: inherit; }
+#sidebar aside.widget article.result { margin: 0; padding: 20px 0 0 0; }
+#sidebar aside.widget article.result p { margin: 0; padding: 0; }
 
 footer.main { min-height: 30px; background: #000; position: relative; z-index: 50; }
-footer.main .plxDock { width: 880px; padding: 20px 0 0 20px; color: #A88F9F; }
+footer.main .plxDock { padding: 20px 0 0 0; color: #A88F9F; }
 footer.main a { color: #999; text-decoration: none; }
 footer.main a.external { background: transparent; padding: 0; }
 footer.main aside.widget { width: 200px; float: left; margin: 0 20px 20px 0; }
-footer.main aside.widget.last { margin: 0; }
+footer.main aside.widget.last { margin-right: 0; }
 footer.main .plxDock span.edit.addNewWidget { padding: 10px 0; }
 footer.main aside.widget h1 { font-weight: bold; font-size: inherit; text-transform: uppercase; color: #AAA; border-bottom: 2px solid #191919; margin: 0;  }
 footer.main .MenuWidget ul { list-style-type: none; padding: 0; margin: 0; }

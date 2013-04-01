@@ -198,14 +198,13 @@
 			);
 
 			if (!empty($_POST['plexusForm']) && !empty($_POST['plxSetupAdmin'])) {
-				$empty = FALSE;
+				$empty = false;
 				foreach ($_POST as $name => $value) {
 					$admin->$name = $value;
 					if (empty($value)) {
-						$empty = TRUE;
+						$empty = true;
 					}
 				}
-
 				if ($empty) {
 					$this->error($this->lang->get('Please fill out all fields.'));
 				} elseif ($admin->password1 != $admin->password2) {
@@ -217,9 +216,10 @@
 					$u->name = $admin->name;
 					$u->email = $admin->email;
 					$u->password = $admin->password1;
-					$u->doRedirect = FALSE;
-					$u->autoFormatAddress = TRUE;
+					$u->doRedirect = false;
+					$u->autoFormatAddress = true;
 					$u->groups = -1;
+					$u->rights = '';
 					$u->plexusImport = 1;
 					$u->author = 0;
 					$id = $u->save();

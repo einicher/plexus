@@ -32,10 +32,6 @@
 				exit('TRUE');
 			}
 
-			if (empty($_SERVER['REMOTE_ADDR']) || Plexus::instance()->isBlockedIP($_SERVER['REMOTE_ADDR'])) {
-				exit($this->lang->get('Sorry sweety, but your ip address “{{'.$_SERVER['REMOTE_ADDR'].'}}” is blocked on this website.'));
-			}
-
 			if (empty(self::$instance)) {
 				/*if (!empty($_GET['sid'])) {
 					session_id($_GET['sid']);
@@ -88,7 +84,7 @@
 
 				$this->addr->assign('system.permalink', 'permalink', array('System::instance()', 'permalink'), '', true);
 				$this->addr->assign('system.cache', 'plx-cache', array('System::instance()', 'plxCache'), '', true);
-				$this->addr->assign('system.style', 'style.css', array('System::instance()', 'getCss'), '', true);
+				$this->addr->assign('system.style', 'style.css', array('System::instance()', 'getCss'), array('', 'preceded_empty'), true);
 				$this->addr->assign('system.feed', 'atom.xml', array('System::instance()', 'getAtom'), '', true);
 				$this->addr->assign('system.sitemap', 'sitemap.xml', array('System::instance()', 'getSitemap'), '', true);
 				$this->addr->assign('system.favicon', 'favicon.ico', array('System::instance()', 'getFavicon'), '', true);
@@ -102,7 +98,6 @@
 				$this->addr->assign('system.standaloneWidget', 'PlexusStandaloneWidget', array(&$this, 'plxStandaloneWidget'), '', true);
 
 				$this->addr->assign('plexus.pack', 'plx-pack', array('Components::instance()', 'plxPack'));
-				$this->addr->assign('system.plexus', 'plx-plexus', array('Plexus::instance()', 'control'));
 
 				$this->addr->assign('system.database', 'plx-database', array('PlexusDatabase::instance()', 'control'));
 				$this->addr->assign('system.database.edit', 'edit', array('PlexusDatabase::instance()', 'control'), 'system.database');
@@ -208,11 +203,6 @@
 				}
 
 				self::$instance =& $this;
-			}
-
-			if (!empty($_POST['plexusConnectionRequest']) && !empty($_POST['plexusConnectionToken']) && !empty($_POST['plexusConnectionName'])) {
-				echo $this->api->connectionReceive((object) $_POST);
-				exit;
 			}
 
 			$this->debug('Control::construct READY');
@@ -559,22 +549,12 @@
 
 		function publishToTheWorld($data)
 		{
-			if (isset($data->ajaxCreate) || $this->addr->getLevel(-2) == $this->lang->get('Create') || $this->addr->getLevel(1) == $this->lang->get('New')) {
+			if (isset($data->ajaxCreate) || $data->justCreated) {
 
 				//Ping Google
 				$google = $this->getOption('site.pingGoogle');
 				if (!empty($google)) {
 					file_get_contents('http://blogsearch.google.com/ping?name='.urlencode($this->getOption('site.name')).'&url='.urlencode($this->addr->getHome()).'&changesURL='.urlencode($this->addr->getHome('atom.xml')));
-				}
-
-				//Plexus Connect
-				if ($data->type == 'IMAGE' && $data->status == 2 || isset($data->doNotPush)) {
-					// don't push that
-				} else {
-					$connections = $this->api->getConnections(2);
-					foreach ($connections as $connection) {
-						$this->api->setPush($connection, $data);
-					}
 				}
 			}
 		}

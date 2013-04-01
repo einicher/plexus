@@ -17,7 +17,9 @@ Whats next until release of v0.6
 * Plexus connect will be moved to own component so you can disable or remove it but will be shipped with by default (cannot remove the functionality that gave the whole thing its name)
 * New default theme with “flat layout” (less shadows)
 * Facebook component needs a solution for the “tokens get invalid after sixty days problem“ <- this really sucks!
+* Import from Wordpress
 
 Planned for 0.7
 ======
 * More twitter bootstrap like backend style (maybe a php GUI class?)
+* Export to Wordpress

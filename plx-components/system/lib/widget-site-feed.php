@@ -163,7 +163,9 @@
 
 			// new start
 			if (!empty($rid)) {
-				$fetched = $this->d->get('SELECT parent,name,value FROM #_properties WHERE parent IN('.implode(',', $rid).')');
+				$fetched = $this->d->get('SELECT parent,name,value FROM #_properties WHERE parent IN('.implode(',', $rid).')', array(
+					'force_array' => true
+				));
 				foreach ($fetched as $fetch) {
 					$r[$fetch->parent]->{$fetch->name} = $fetch->value;
 				}

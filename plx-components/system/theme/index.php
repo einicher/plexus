@@ -6,17 +6,18 @@
 	</head>
 	<body id="data-<?=$content->id?>" class="<?=$site->bodyClass()?>">
 		<div id="container">
-			<div id="containerTop"></div>
 			<header class="main">
-				<h1><a href="<?=$site->getHome()?>"><?=$site->getName()?></a></h1>
-<?=$site->getWidget('SimpleBannerWidget', 'headerImage', array('width' => 900, 'height' => 200))?>
-				<div class="clear"></div>
+				<div class="container clearfix">
+					<h1><a href="<?=$site->getHome()?>"><?=$site->getName()?></a></h1>
+<?=$site->getWidget('SimpleBannerWidget', 'headerImage', array('width' => 960, 'height' => 250))?>
+				</div>
 			</header>
 			<nav>
+				<div class="container clearfix">
 <?=$site->getWidget('MenuWidget', 'headerMenu')?>
+				</div>
 			</nav>
-			<div class="clear"></div>
-			<div id="wrap">
+			<div id="wrap" class="container clearfix">
 				<div id="main">
 <?=$site->getContent()?>
 				</div>
@@ -28,9 +29,10 @@
 				<div class="clear"></div>
 			</div>
 			<footer class="main">
+				<div class="container clearfix">
 <?=$site->getDock('footer', array('addPositionFirst' => FALSE))?>
+				</div>
 			</footer>
-			<div id="containerBottom"></div>
 		</div>
 <?=$site->getFooter()?>
 	</body>

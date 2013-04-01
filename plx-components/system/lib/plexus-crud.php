@@ -24,6 +24,7 @@
 		public $noRealAddress = false; // if tur this data type will not be available trough an url
 		public $disableSidebar = false;
 		public $takeOverMainLoop = false; // used to tell main loop in $control->run that this objects assigned method will process further path levels on their own
+		public $justCreated = false;
 
 		protected $inDatabase2Mode = false;
 
@@ -322,8 +323,10 @@
 		function save($data = '', $autoAddress = 'deprecated', $redirect = 'deprecated')
 		{
 
-			$data = (object) $data;
-			
+			if (is_array($data)) {
+				$data = (object) $data;
+			}
+
 			if (isset($data->plexusRemove)) {
 				$this->delete();
 				if ($this->doRedirect) {
@@ -367,7 +370,6 @@
 					$fields[] = @$field['options']['label'];
 					$errors[] = $field;
 				} elseif ($field['type'] == 'captcha') {
-					echo µ(strtolower($this->$field['name']).' == '.strtolower(strrev($_SESSION['captcha'][$field['name']]->string)));
 					if (strtolower($this->$field['name']) == strtolower(strrev($_SESSION['captcha'][$field['name']]->string))) {
 						$_SESSION['captcha'][$field['name']]->hold = TRUE;
 					} else {
@@ -379,9 +381,11 @@
 			}
 
 			if (empty($errors)) {
-				//mail('markus.einicher@gmail.com', 'Debug', print_r($_SESSION, true).print_r($_POST, true).print_r($data, true).print_r($errors, true).var_dump(empty($errors)));
 				if ($this->beforeSave($data) !== FALSE) {
 					$this->_cache = '';
+					if (empty($this->id)) {
+						$this->justCreated = true;
+					}
 					$id = PlexusDataControl::save(self::$bluePrints[$this->type], $this, $this->autoFormatAddress);
 					unset(self::$bluePrints[$this->type]);
 					if (!empty($this->translation)) {

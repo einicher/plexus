@@ -16,6 +16,7 @@
 		static $options; // cache
 		static $debug = array();
 		static $api;
+		static $extendedApis = array();
 
 		static $d; // Database2
 		static $t; // Template2
@@ -497,6 +498,15 @@
 					}
 				}
 			}
-		} 
+		}
+
+		function extendPlexusAPI($section, $file, $callback)
+		{
+			self::$extendedApis[$section] = array(
+				'section' => $section,
+				'file' => $file,
+				'callback' => $callback
+			);
+		}
 	}
 ?>
