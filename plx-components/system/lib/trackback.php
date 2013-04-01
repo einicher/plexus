@@ -28,6 +28,46 @@
 	<message>Trackbacks are disabled on <?=$this->addr->getHome()?>.</message>
 </response>
 <?php
+					exit;
+				}
+				if (!isset($_GET['hash'])) {
+					echo '<?xml version="1.0" encoding="utf-8"?>';
+?>
+
+<response>
+	<error>1</error>
+	<message>Your trackback does not have a valid trackback hash.</message>
+</response>
+<?php
+					exit;
+				} else {
+					$hash = $this->getOption('trackbackHash', $_GET['hash']);
+					if (empty($hash)) {
+						echo '<?xml version="1.0" encoding="utf-8"?>';
+?>
+
+<response>
+	<error>1</error>
+	<message>Your trackback does not have a valid trackback hash.</message>
+</response>
+<?php
+						exit;
+					} else {
+						$hash = explode(',', $hash->value);
+						if ($hash[0] != $object->id || time() > $hash[1]+960) {
+							echo '<?xml version="1.0" encoding="utf-8"?>';
+?>
+
+<response>
+	<error>1</error>
+	<message>Your trackback hash is invalid, maybe it is timed out or belongs to another link, get a new one.</message>
+</response>
+<?php
+							exit;
+						} else {
+							$this->delOption('trackbackHash', '', $_GET['hash']);
+						}
+					}
 				}
 				$receive = $this->receive($object, (object) $_POST);
 				if ($receive == 1) {
@@ -50,7 +90,6 @@
 			</item>
 		</channel>
 	</rss>
-
 </response>
 <?php
 				} elseif ($receive == 2) {
@@ -75,8 +114,15 @@
 				exit;
 			}
 
+			$hash = '';
+			if (!empty($_POST['trackbackCaptcha'])) {
+				$hash = substr(sha1(md5(time())), 5, 5);
+				$this->setOption('trackbackHash', $object->id.','.time(), $hash);
+			}
+
 			return new Page('Trackbacks', $this->t->get('system', 'trackbacks.php', array(
-				'data' => $object
+				'data' => $object,
+				'hash' => $hash
 			)));
 		}
 
@@ -99,7 +145,7 @@
 					$send = @explode("\r\n\r\n", $this->sendTrackback($trackback, $data));
 					$send = @simplexml_load_string(@$send[1]);
 					if (isset($send->error) && $send->error == 0) {
-						$trackbacks['link'][] = $trackback;
+						$tb = $trackbacks['link'][] = $trackback;
 						$trackbacks['status'][] = 1;
 						$trackback = (object) array(
 							'id' => $data->id,
@@ -114,6 +160,7 @@
 							$trackback->excerpt = (string) $item->description;
 						}
 						$this->setOption('trackback', json_encode($trackback), $data->id, true);
+						$this->info(§('Trackback to {{'.$tb.'}} successfull.'), true);
 					} else {
 						$trackbacks['link'][] = $trackback;
 						$trackbacks['status'][] = 0;
@@ -162,8 +209,6 @@
 				}
 				fclose($fp);
 			}
-			#header('Content-Type: text/plain; charset=UTF-8');
-			#print_r($buffer);
 			return $buffer;
 		}
 
@@ -201,6 +246,82 @@
 			$this->setOption('trackback', json_encode($trackback), $object->id, true);
 
 			return 1;
+		}
+
+		static function getPendingTrackbacks()
+		{
+			return Core::getOption('pendingTrackbacks');
+		}
+
+		function preferencesPage()
+		{
+			ob_start();
+			$this->delOption('pendingTrackbacks');
+			$trackbacks = $this->getOption('trackback');
+			if (empty($trackbacks)) {
+?>
+				<h1><?=§('Trackbacks')?></h1>				
+				<p><?=§('Currently there are no trackbacks.')?></p>
+<?php
+			} else {
+				if (!empty($_GET['delete'])) {
+					$this->delOption($_GET['delete']);
+					header('Location: '.$this->addr->current('', false, '', 0, array('delete')));
+					exit;
+				}
+				if (!is_array($trackbacks)) {
+					$trackbacks = array($trackbacks);
+				}
+?>
+				<div class="hpanel">
+					<h1><?=§('Trackbacks')?></h1>
+					<div class="toggleButtons">
+						<a href="?filter="<?=empty($_GET['filter']) ? ' class="active"' : ''?>><?=§('All')?></a>
+						<a href="?filter=own"<?=!empty($_GET['filter']) && $_GET['filter'] == 'own' ? ' class="active"' : ''?>><?=§('Own')?></a>
+						<a href="?filter=foreign"<?=!empty($_GET['filter']) && $_GET['filter'] == 'foreign' ? ' class="active"' : ''?>><?=§('Foreign')?></a>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="guiListWrap plexusTrackbacks">
+					<ul class="guiList">
+<?php
+				foreach ($trackbacks as $trackback) {
+					$association = $this->getData($trackback->association);
+					$t = json_decode($trackback->value);
+?>
+<? if (empty($t->target)) : $empty = 0; ?>
+	<? if (empty($_GET['filter']) || $_GET['filter'] == 'foreign') : $empty = 1; ?>
+					<li class="guiListItem">
+						<a href="<?=$t->url?>" title="<?=$t->title?>"><strong><?=$t->blog_name?></strong> » <?=$t->title?></a>
+						<?=§('trackbacked')?>
+						<a href="<?=$association->getLink()?>"><?=$association->getTitle()?></a>
+						<span><?=$this->tools->detectTime($t->time)?></span>
+						<a href="?delete=<?=$trackback->id?>"><?=§('Delete')?></a>
+						<a href="<?=$this->addr->assigned('system.plexus')?>/blocked-ips?block=<?=$t->ip?>"><?=§('Block IP')?></a> (<?=$t->ip?>)
+					</li>
+	<? endif; ?>
+<? else : $empty = 0; ?>
+	<? if (empty($_GET['filter']) || $_GET['filter'] == 'own') : $empty = 1; ?>
+					<li class="guiListItem own">
+						<a href="<?=$association->getLink()?>"><?=$association->getTitle()?></a>
+						<?=§('trackbacked')?>
+						<a href="<?=$t->url?>" title="<?=$t->title?>"><strong><?=$t->blog_name?></strong> » <?=$t->title?></a>
+						<span><?=$this->tools->detectTime($t->time)?></span>
+						<a href="?delete=<?=$trackback->id?>"><?=§('Delete')?></a>
+					</li>
+	<? endif; ?>
+<? endif; ?>
+<?php
+				}
+?>
+	<? if (!$empty) : ?>
+					<li class="guiListItem"><?=§('No items in this view.')?></li>
+	<? endif; ?>
+					</ul>
+				</div>
+<?php
+			}
+			return ob_get_clean();
 		}
 	}
 ?>

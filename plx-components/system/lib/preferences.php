@@ -23,6 +23,8 @@
 						case 'languages': $this->main = $this->languages(); break;
 						case 'cache': $this->main = Cache::instance()->preferences($level, $levels, $cache); break;
 						case 'components': $this->main = Components::instance()->index($level, $levels, $cache); break;
+						case 'trackbacks': $this->main = Trackback::instance()->preferencesPage($level, $levels, $cache); break;
+						case 'blocked-ips': $this->main = $this->blockedIps($level, $levels, $cache); break;
 					}
 					if (isset(Core::$preferences[$levels[2]])) {
 						$p = Core::$preferences[$levels[2]];
@@ -31,7 +33,7 @@
 				}
 				return $this;
 			} else {
-				return new Page(§('Please login'), §('To access the preferences section you need do be logged in.'));
+				return new Page(§('Please login'), §('To access the preferences section you need do be logged in.').'<br /><br />'.$this->access->getLoginDialog());
 			}
 		}
 
@@ -187,14 +189,132 @@
 		function getDescription()
 		{
 		}
-		
+
+		function blockedIPs()
+		{
+			if (!empty($_POST['block'])) {
+				$this->blockIP($_POST['block']);
+				header('Location: '.$this->addr->current());
+				exit;
+			}
+			if (!empty($_GET['unblock'])) {
+				$this->unblockIP($_GET['unblock']);
+				header('Location: '.$this->addr->current('', false, '', 0, array('unblock')));
+				exit;
+			}
+			if (!empty($_GET['block'])) {
+				$this->blockIP($_GET['block']);
+				header('Location: '.$this->addr->current('', false, '', 0, array('block')));
+				exit;
+			}
+
+			ob_start();
+			$ips = $this->getBLockedIPs();
+?>
+			<h1><?=§('Blocked IP addresses')?></h1>
+			<div class="blockIpForm">
+				<form method="post" action="">
+					<input type="text" name="block" />
+					<button type="submit"><?=§('Block IP')?></button>
+				</form>
+			</div>
+			<br />
+			<br />
+			<div class="connections">
+				<ul>
+<?php
+			if (empty($ips)) {
+?>
+				<li><?=§('Currently there are no blocked IPs.')?></li>
+<?php
+			} else {
+				foreach ($ips as $ip) {
+?>
+					<li>
+						<?=$ip?> <a href="?unblock=<?=$ip?>"><?=§('unblock')?></a>
+					</li>
+<?php
+				}
+			}
+?>
+				</ul>
+			</div>
+<?php
+			return ob_get_clean();
+		}
+
+		function blockIP($ip)
+		{
+			$trackbacks = $this->getOption('trackback', '', 2);
+			foreach ($trackbacks as $trackback) {
+				$id = $trackback->id;
+				$trackback = json_decode($trackback->value);
+				if ($ip == $trackback->ip) {
+					$this->delOption($id);
+				}
+			}
+
+			$ips = $this->getOption('blockedIPs', '', true);
+			if (empty($ips)) {
+				$this->setOption('blockedIPs', json_encode(array($ip)));
+			} else {
+				$id = $ips->id;
+				$ips = json_decode($ips->value);
+				if (!in_array($ip, $ips)) {
+					$ips[] = $ip;
+				}
+				$this->setOption($id, json_encode($ips));
+				$trackbacks = $this->getOption('trackback');
+			}
+		}
+
+		function getBlockedIPs()
+		{
+			$ips = $this->getOption('blockedIPs', '', true);
+			if (empty($ips)) {
+				return array();
+			} else {
+				return json_decode($ips->value);
+			}
+		}
+
+		function unblockIP($ip)
+		{
+			$ips = $this->getOption('blockedIPs', '', true);
+			if (!empty($ips)) {
+				$id = $ips->id;
+				$ips = json_decode($ips->value);
+				$key = array_search($ip, $ips);
+				if ($key !== false) {
+					unset($ips[$key]);
+					$this->setOption($id, json_encode(array_merge($ips)));
+				}
+			}
+		}
+
+		function isBlockedIP($ip)
+		{
+			$ips = $this->getOption('blockedIPs', '', true);
+			if (empty($ips)) {
+				return false;
+			} else {
+				$ips = json_decode($ips->value);
+				if (in_array($ip, $ips)) {
+					return true;
+				}
+				return false;
+			}
+		}
+
 		function getMenu()
 		{
 			$menu = array(
 				array('general', §('General Settings'), $this->addr->assigned('system.preferences', 2), true),
-				array('languages', §('Languages'), $this->addr->assigned('system.preferences.languages', 2)),
+				array('cache', §('Cache'), $this->addr->assigned('system.preferences.cache', 2)),
 				array('components', §('Components'), $this->addr->assigned('system.preferences.components', 2)),
-				array('cache', §('Cache'), $this->addr->assigned('system.preferences.cache', 2))
+				array('languages', §('Languages'), $this->addr->assigned('system.preferences.languages', 2)),
+				array('trackbacks', §('Trackbacks'), $this->addr->assigned('system.preferences.trackbacks', 2), false, Trackback::instance()->getPendingTrackbacks()),
+				array('blocked-ips', §('Blocked IPs'), $this->addr->assigned('system.preferences.blockedIps', 2))
 			);
 			foreach (Core::$preferences as $p) {
 				$name = $this->addr->transform(strtolower($p->name));

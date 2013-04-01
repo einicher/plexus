@@ -16,9 +16,6 @@
 
 		function construct()
 		{
-			if (!empty(self::$instance) && empty($_SERVER['REMOTE_ADDR']) || $this->isBlockedIP($_SERVER['REMOTE_ADDR'])) {
-				exit($this->lang->get('Sorry sweety, but your ip address “{{'.$_SERVER['REMOTE_ADDR'].'}}” is blocked on this website.'));
-			}
 			if (!empty($_POST['plexusConnectionRequest']) && !empty($_POST['plexusConnectionToken']) && !empty($_POST['plexusConnectionName'])) {
 				require_once PLX_COMPONENTS.'plexus/lib/api.php';
 				echo PlexusApi::instance()->connectionReceive((object) $_POST);
@@ -27,8 +24,6 @@
 			$this->addr->assign('system.plexus', 'plx-plexus', array(&$this, 'control'));
 			$this->addr->assign('system.plexus.requests', 'requests', array(&$this, 'control'), 'system.plexus');
 			$this->addr->assign('system.plexus.connections', 'connections', array(&$this, 'control'), 'system.plexus');
-			$this->addr->assign('system.plexus.trackbacks', 'trackbacks', array(&$this, 'control'), 'system.plexus');
-			$this->addr->assign('system.plexus.blockedIps', 'blocked-ips', array(&$this, 'control'), 'system.plexus');
 			$this->observer->connect('system.panel', 'addPanelMenuItem', &$this);
 			$this->extendPlexusAPI('connect', PLX_COMPONENTS.'plexus/lib/api.php', array('PlexusAPI::instance()', 'control'));
 			$this->observer->connect('data.onSaveReady', 'onSaveReady', $this);
@@ -72,7 +67,6 @@
 			$indicator = 0;
 			$indicator += self::getUnreadCount();
 			$indicator += self::getOpenRequests();
-			$indicator += self::getPendingTrackbacks();
 			return $indicator;
 		}
 
@@ -102,25 +96,6 @@
 				}
 			}
 			return $indicator;
-		}
-
-		static function getPendingTrackbacks()
-		{
-			return Core::getOption('pendingTrackbacks');
-		}
-
-		function isBlockedIP($ip)
-		{
-			$ips = $this->getOption('blockedIPs', '', true);
-			if (empty($ips)) {
-				return false;
-			} else {
-				$ips = json_decode($ips->value);
-				if (in_array($ip, $ips)) {
-					return true;
-				}
-				return false;
-			}
 		}
 	}
 ?>

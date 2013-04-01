@@ -115,6 +115,8 @@
 				$this->addr->assign('system.preferences.components.remove', 'remove', array('Preferences::instance()', 'control'), 'system.preferences.components');
 				$this->addr->assign('system.preferences.cache', 'cache', array('Preferences::instance()', 'control'), 'system.preferences');
 				$this->addr->assign('system.preferences.cache.clear', 'clear', array('Preferences::instance()', 'control'), 'system.preferences.cache');
+				$this->addr->assign('system.preferences.trackbacks', 'trackbacks', array('Preferences::instance()', 'control'), 'system.plexus');
+				$this->addr->assign('system.preferences.blockedIps', 'blocked-ips', array('Preferences::instance()', 'control'), 'system.plexus');
 
 				// MAKE SOME DATA TYPES OCCUPY ADDRESSES
 				$this->addr->occupy('USER', 'system.users');
@@ -203,6 +205,10 @@
 				}
 
 				self::$instance =& $this;
+			}
+
+			if (!empty(self::$instance) && empty($_SERVER['REMOTE_ADDR']) || Preferences::instance()->isBlockedIP($_SERVER['REMOTE_ADDR'])) {
+				exit($this->lang->get('Sorry sweety, but your ip address “{{'.$_SERVER['REMOTE_ADDR'].'}}” is blocked on this website.'));
 			}
 
 			$this->debug('Control::construct READY');

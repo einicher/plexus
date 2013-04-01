@@ -134,7 +134,9 @@
 				}
 			}
 
-			$data->address = self::unifyAddress($data->parent, $data->address);
+			if ($data->justCreated) {
+				$data->address = self::unifyAddress($data->parent, $data->address);
+			}
 
 			self::checkForUpToDateTables();
 

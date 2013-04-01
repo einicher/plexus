@@ -17,7 +17,7 @@
 	</p>
 </form>
 <? else : ?>
-<p><?=§('Just send a Trackback to the following URL: {{<code class="code">'.$this->addr->current('', false, '', true).'</code>}}')?></p>
+<p><?=§('You can send a Trackback to the following URL now, it will be valid for 15 minutes: {{<code class="code">'.$this->addr->current('', false, '', true).'?hash='.$hash.'</code>}}')?></p>
 <? endif; ?>
 
 <? $trackbacks = $data->getTrackbacks(); ?>
