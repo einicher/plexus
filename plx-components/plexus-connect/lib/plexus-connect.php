@@ -1,10 +1,11 @@
 <?php
-	class Plexus extends Component
+	class PlexusConnect extends Component
 	{
 		static $instance;
 
-		public $name = 'Plexus';
+		public $name = 'Plexus Connect';
 		public $description = 'Connect Plexus driven websites together. Get and send push notifications when content is published.';
+		public $version = 0.6;
 
 		static function instance()
 		{
@@ -17,7 +18,7 @@
 		function construct()
 		{
 			if (!empty($_POST['plexusConnectionRequest']) && !empty($_POST['plexusConnectionToken']) && !empty($_POST['plexusConnectionName'])) {
-				require_once PLX_COMPONENTS.'plexus/lib/api.php';
+				require_once PLX_COMPONENTS.'plexus-connect/lib/api.php';
 				echo PlexusApi::instance()->connectionReceive((object) $_POST);
 				exit;
 			}
@@ -25,14 +26,14 @@
 			$this->addr->assign('system.plexus.requests', 'requests', array(&$this, 'control'), 'system.plexus');
 			$this->addr->assign('system.plexus.connections', 'connections', array(&$this, 'control'), 'system.plexus');
 			$this->observer->connect('system.panel', 'addPanelMenuItem', &$this);
-			$this->extendPlexusAPI('connect', PLX_COMPONENTS.'plexus/lib/api.php', array('PlexusAPI::instance()', 'control'));
+			$this->extendPlexusAPI('connect', PLX_COMPONENTS.'plexus-connect/lib/api.php', array('PlexusAPI::instance()', 'control'));
 			$this->observer->connect('data.onSaveReady', 'onSaveReady', $this);
 		}
 
 		function control($level, $levels, $cache)
 		{
 			Control::$standalone = true;
-			require_once PLX_COMPONENTS.'plexus/lib/backend.php';
+			require_once PLX_COMPONENTS.'plexus-connect/lib/backend.php';
 			$backend = new PlexusBackend;
 			$backend->levels = $levels;
 			return $backend;
@@ -44,7 +45,7 @@
 				if ($data->type == 'IMAGE' && $data->status == 2 || isset($data->doNotPush)) {
 					// don't push that
 				} else {
-					require_once PLX_COMPONENTS.'plexus/lib/api.php';
+					require_once PLX_COMPONENTS.'plexus-connect/lib/api.php';
 					$connections = PlexusApi::instance()->getConnections(2);
 					foreach ($connections as $connection) {
 						PlexusApi::instance()->setPush($connection, $data);

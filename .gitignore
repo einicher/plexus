@@ -7,7 +7,7 @@ plx-storage/themes/*
 plx-components/*
 plx-components/.gitignore
 !plx-components/system
-!plx-components/plexus
+!plx-components/plexus-connect
 .project
 .buildpath
 .settings

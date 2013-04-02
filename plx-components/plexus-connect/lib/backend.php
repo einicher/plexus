@@ -37,31 +37,31 @@
 				}
 			}
 			$menu = array(
-				array('dashboard', §('Dashboard'), $this->addr->assigned('system.plexus', 2), true, Plexus::getUnreadCount()),
-				array('requests', §('Requests'), $this->addr->assigned('system.plexus.requests', 2), false, Plexus::getOpenRequests()),
+				array('dashboard', §('Dashboard'), $this->addr->assigned('system.plexus', 2), true, PlexusConnect::getUnreadCount()),
+				array('requests', §('Requests'), $this->addr->assigned('system.plexus.requests', 2), false, PlexusConnect::getOpenRequests()),
 				array('connections', §('Connections'), $this->addr->assigned('system.plexus.connections', 2), false),
 			);
 			return $this->t->get('system', 'backend.php', array(
 				'main' => $main,
 				'menu' => $menu,
-				'requests' => Plexus::getOpenRequests(),
-				'unread' => Plexus::getUnreadCount(),
+				'requests' => PlexusConnect::getOpenRequests(),
+				'unread' => PlexusConnect::getUnreadCount(),
 				'backendID' => 'plexus'
 			));
 		}
 
 		function dashboard()
 		{
-			require_once PLX_COMPONENTS.'plexus/lib/api.php';
+			require_once PLX_COMPONENTS.'plexus-connect/lib/api.php';
 			$show = @$this->getOption('system.plexus.show', Access::$user->id)->value;
-			return $this->t->get('plexus', 'dashboard.php', array(
+			return $this->t->get('plexus-connect', 'dashboard.php', array(
 				'show' => $show
 			));
 		}
 
 		function requests()
 		{
-			require_once PLX_COMPONENTS.'plexus/lib/api.php';
+			require_once PLX_COMPONENTS.'plexus-connect/lib/api.php';
 
 			$send = '';
 
@@ -126,7 +126,7 @@
 
 			$connections = PlexusApi::instance()->getConnections(false, array(2, 5));
 
-			return $this->t->get('plexus', 'requests.php', array(
+			return $this->t->get('plexus-connect', 'requests.php', array(
 				'send' => $send,
 				'connections' => $connections
 			));
@@ -153,10 +153,10 @@
 				exit;
 			}
 
-			require_once PLX_COMPONENTS.'plexus/lib/api.php';
+			require_once PLX_COMPONENTS.'plexus-connect/lib/api.php';
 			$connections = PlexusApi::instance()->getConnections(array(2,5));
 
-			return $this->t->get('plexus', 'connections.php', array(
+			return $this->t->get('plexus-connect', 'connections.php', array(
 				'connections' => $connections
 			));
 		}
