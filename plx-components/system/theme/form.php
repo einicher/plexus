@@ -10,7 +10,7 @@
 		<input type="hidden" name="plexusForm" value="TRUE" />
 		<div class="fieldSaveWrap"><button type="submit" class="special save"><?=$saveButtonLabel?></button></div>
 <tpl name="remove">
-		<div class="fieldRemoveWrap"><button type="submit" class="special remove" name="plexusRemove" value="TRUE" onclick="var ccc = confirm('<?=§('Do you really want to remove this?')?>'); if (ccc) { return true; } else { return false; }"><?=§('Remove')?></button></div>
+		<div class="fieldRemoveWrap"><button type="submit" class="special remove" name="plexusRemove" value="TRUE" onclick="var ccc = confirm('<?=§('Do you really want to remove this?')?>'); if (ccc) { return true; } else { return false; }"><?=§('Delete')?></button></div>
 </tpl>
 		<div class="clear"></div>
 <tpl name="formAdvanced">
@@ -115,7 +115,36 @@
 </script>
 </tpl>
 	<div id="plxUiTabs<?=ucfirst($field->name)?>" class="plxUiTabs">
-		<ul>
+<? if (!empty($field->value)) : ?>
+	<span class="formFieldFileDelete"><?= isset($field->isImage) ? §('Delete image') : §('Delete file') ?></span>
+	<script type="text/javascript">
+		jQuery('#file<?=ucfirst($field->name)?> .formFieldFileDelete').click(function() {
+			var c = confirm('<?=§('Are you sure you want to delete this?')?>');
+			if (c) {
+				jQuery.ajax({
+					url: plxRoot + 'plxAjax/plxFormDeleteFile',
+					type: 'POST',
+					data: {
+						id: '<?=$field->id?>',
+						property: '<?=$field->name?>',
+						target: '<?=$field->options->target?>'
+					},
+					success: function(data) {
+						if (data == 'OK') {
+							jQuery('#file<?=ucfirst($field->name)?> .formFieldFileDelete').remove();
+							jQuery('#file<?=ucfirst($field->name)?> a.fancybox').remove();
+						} else {
+							console.log(data);
+						}
+					}
+				});
+			} else {
+				return false;
+			}
+		});
+	</script>
+<? endif; ?>
+		<ul class="clearfix">
 			<li><a href="#file<?=ucfirst($field->name)?>Computer"><span>Computer</span></a></li>
 			<li><a href="#file<?=ucfirst($field->name)?>URL"><span>URL</span></a></li>
 		</ul>

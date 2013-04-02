@@ -242,7 +242,9 @@
 							$field->enlargedSrc = $this->imageScaleLink($field->originalSrc, $this->getOption('content.fullsize'));
 							$field->src = $this->imageScaleLink($field->originalSrc, $this->getOption('content.width'));
 							$this->tpl->cut('form.php', 'imageFile', array('image' => $field));
+							$field->isImage = true;
 						}
+						$field->id = $this->values->id;
 					break;
 
 					case 'select':
@@ -408,7 +410,7 @@
 				$attributes = $collect;
 			}
 
-			if (!empty($this->values->id)) {
+			if (!empty($this->values->id) && $this->access->granted('system.delete')) {
 				Template::cut('form.php', 'remove');
 			}
 			if (!empty($advanced) && !$advancedOff && $this->access->granted('system.edit.advanced')) {

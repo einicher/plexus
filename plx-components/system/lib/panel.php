@@ -15,6 +15,8 @@
 		function view()
 		{
 			$m = array();
+			$m['left'] = array();
+			$m['right'] = array();
 
 			foreach ($this->items as $name => $item) {
 				if (empty($item['link'])) {

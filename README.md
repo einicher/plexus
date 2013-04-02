@@ -9,15 +9,16 @@ Docs are here: http://plexus-cms.org/develop
 
 Whats next until release of v0.6
 ======
-* Page cache, clear page cache and image cache (99% done)
-* Trackbacks: to prevent trackback spam trackback links will get randomized hashes that are only valid for 15 minutes. To see the trackback link you have to fill out a captcha like here http://einicher.net/3kv/trackback (50% done)
 * Newsletter Plugin will get a backend to organize and send newsletters
 * Multi site setup will get a backend and aliases for hosts
-* Multi language support will be finished (25% done)
-* Plexus connect will be moved to own component so you can disable or remove it but will be shipped with by default (cannot remove the functionality that gave the whole thing its name)
-* New default theme with “flat layout” (less shadows)
 * Facebook component needs a solution for the “tokens get invalid after sixty days problem“ <- this really sucks!
 * Import from Wordpress
+* [25%] Multi language support will be finished
+* [50%] New default theme with “flat layout” (less shadows)
+* [99%] Plexus connect will be moved to own component so you can disable or remove it but will be shipped with by default (cannot remove the functionality that gave the whole thing its name)
+* [99%] Page cache, clear page cache and image cache (99% done)
+* [99%] Trackbacks: to prevent trackback spam trackback links will get randomized hashes that are only valid for 15 minutes. To see the trackback link you have to fill out a captcha like here http://einicher.net/3kv/trackback (50% done)
+
 
 Planned for 0.7
 ======

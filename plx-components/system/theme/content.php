@@ -15,9 +15,9 @@
 	<div class="plxEditPanel plexusControls">
 	<? if ($site->showEditLink()) : ?>
 		<a href="<?=$content->getEditLink()?>" class="edit plexusControls"><?=§('Edit')?></a>
-<? if ($this->access->granted('system.copy')) : ?>
+	<? if ($this->access->granted('system.copy')) : ?>
 		<a href="<?=$content->getCopyLink()?>" class="copy plexusControls"><?=§('Copy')?></a>
-<? endif; ?>
+	<? endif; ?>
 	<? if (count(Control::$languages) > 1) : ?>
 		<a href="<?=$content->getTranslateLink()?>" class="translate plexusControls"><?=§('Translate')?></a>
 	<? endif; ?>

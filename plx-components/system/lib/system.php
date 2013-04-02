@@ -176,13 +176,10 @@
 				$style .= "\n";
 			}
 			if ($exclude != 'all') {
-				$ds = opendir(PLX_COMPONENTS);
-				while ($c = readdir($ds)) {
-					if ($c != '.' && $c != '..' && $c != 'system' && is_dir(PLX_COMPONENTS.$c)) {
-						$file = $this->tpl->locateFile('style.css', $c);
-						if (!in_array($c.'/style.css', $exclude) && file_exists($file)) {
-							$style .= preg_replace('/url\(\'(.*)\'\)/ieU', '\'url(\\\'\'.$this->tpl->locateFile(\'\\1\', \''.$c.'\').\'\\\')\'', $this->tpl->get($file));
-						}
+				foreach (Control::$activeComponentsDirs as $c) {
+					$file = $this->tpl->locateFile('style.css', $c);
+					if (file_exists($file) && !in_array($c.'/style.css', $exclude)) {
+						$style .= "\n/*".$file."*/\n\n".preg_replace('/url\(\'(.*)\'\)/ieU', '\'url(\\\'\'.$this->tpl->locateFile(\'\\1\', \''.$c.'\').\'\\\')\'', $this->tpl->get($file));
 					}
 					$style .= "\n";
 				}

@@ -5,6 +5,7 @@
 		static $current = array();
 		static $activeComponents = array();
 		static $componentsCallback = array();
+		static $activeComponentsDirs = array();
 		static $language = '';
 		static $languages = array();
 		static $standalone = false;
@@ -135,6 +136,7 @@
 				$this->registerAjaxCall('multiUpload', $this);
 				$this->registerAjaxCall('load', $this);
 				$this->registerAjaxCall('reloadPanel', $this);
+				$this->registerAjaxCall('plxFormDeleteFile', $this);
 
 				// REGISTER WIDGETS
 				$this->registerWidget($this->lang->get('Simple Text'), 'SimpleTextWidget', 'lib/widget-simple-text.php');
@@ -151,8 +153,9 @@
 				$this->access->registerRight('system.manageConnect', 'Manage Plexus Connect');
 				$this->access->registerRight('system.create', 'May create new data objects on given addresses');
 				$this->access->registerRight('system.new', 'May create new data objects with automated addresses');
-				$this->access->registerRight('system.edit', 'May edit/delete data objects');
+				$this->access->registerRight('system.edit', 'May edit data objects');
 				$this->access->registerRight('system.copy', 'May copy data objects');
+				$this->access->registerRight('system.delete', 'May delete data objects');
 				$this->access->registerRight('system.editOwnData', 'May edit/delete own data objects');
 				$this->access->registerRight('system.edit.advanced', 'See the advanced section in edit forms');
 				$this->access->registerRight('system.edit.docks', 'create/edit/delete widgets in docks');
@@ -429,6 +432,7 @@
 					if (on_exist_require(PLX_COMPONENTS.$c->file.'/lib/'.$c->file.'.php')) {
 						self::$componentsCallback[$c->class] = new $c->class;
 						$active[] = $c->class;
+						self::$activeComponentsDirs[] = $c->file;
 					}
 				}
 			}
@@ -956,6 +960,14 @@ exit;
 					}
 				}
 			}
+		}
+
+		function plxFormDeleteFile($levels)
+		{
+			$file = PlexusDataControl::getProperty($_POST['id'], $_POST['property']);
+			PlexusDataControl::deleteProperty($_POST['id'], $_POST['property']);
+			unlink($this->getStorage($_POST['target'].'/'.$file));
+			return 'OK';
 		}
 		
 		function clearCache()

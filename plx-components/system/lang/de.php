@@ -257,9 +257,9 @@ Wenn das nicht du warst ignoriere dieses E-Mail einfach, das Passwort läuft in 
 	$this->set('Language name', 'Name der Sprache');
 	$this->set('+ Add Language', '+ Sprache hinzufügen');
 	$this->set('Next Post', 'Nächster Beitrag');
-	$this->set('Previous Post', 'Vorheriger Betrag');
-	$this->set('', '');
-	$this->set('', '');
-	$this->set('', '');
+	$this->set('Previous Post', 'Vorheriger Beitrag');
+	$this->set('Delete image', 'Bild löschen');
+	$this->set('Delete file', 'Datei löschen');
+	$this->set('Are you sure you want to delete this?', 'Bist du dir sicher, dass du das löschen willst?');
 	$this->set('', '');
 ?>

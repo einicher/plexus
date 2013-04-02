@@ -1,7 +1,7 @@
 <?php
 	class Site extends Core
 	{
-		protected $content;
+		public $content;
 		static $components = array();
 		static $cache = array();
 
@@ -171,6 +171,8 @@
 
 		function getContentEdit()
 		{
+			$this->observer->notify('site.beforeContentEdit', &$this);
+			
 			if (isset($_GET['ajax'])) {
 				$this->content->doRedirect = FALSE;
 			}
@@ -179,7 +181,9 @@
 				if ($this->addr->getLevel(-2) == $this->addr->assigned('system.new')) {
 					$this->content->autoFormatAddress = TRUE;
 				}
-				$save = $this->content->save((object) $_POST);
+				$data = (object) $_POST;
+				$data = $this->observer->notify('site.data.beforeSave', $data, &$this->content);
+				$save = $this->content->save($data);
 				if (is_numeric($save) && $save !== FALSE && isset($_GET['ajax'])) {
 					echo $save;
 					exit;
@@ -213,7 +217,7 @@
 		<script type="text/javascript" src="<?=$this->getRoot(PLX_SYSTEM.'theme/footer.js')?>"></script>
 <?php
 			$script = ob_get_clean();
-			return $this->observer->notify('siteFooter', $this->panel().$script);
+			return $this->observer->notify('site.footer', $this->panel().$script);
 		}
 
 		function panel()
