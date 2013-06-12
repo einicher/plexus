@@ -129,7 +129,7 @@
 
 		function correctRootPaths($path)
 		{
-			if (strpos($path, '://') !== FALSE) {
+			if (substr($path, 0, 7) == 'mailto:' || substr($path, 0, 1) == '#' || strpos($path, '://') !== FALSE) {
 				return $path;
 			} else {
 				$chunks = str_split($path, 3);

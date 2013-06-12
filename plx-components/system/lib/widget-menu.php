@@ -104,6 +104,14 @@
 			if (empty($this->data->label)) {
 				return '<br />';
 			}
+
+			$hasSub = false;
+			foreach ($this->data->label as $key => $value) {
+				if (substr($this->data->link[$key], 0, 1) != '/') {
+					$hasSub = true;
+				}
+			}
+
 			$c = 0;
 			$items = array();
 			$count = count($this->data->label);
@@ -128,7 +136,13 @@
 						$href = str_replace('//', '/', $this->addr->current(-1).'/'.$link);
 					}
 				}
-				$active = (substr('/'.$this->addr->path, 0, $l+1) == $link || ($link == '/' && empty($this->addr->path))) ? TRUE : FALSE;
+
+				if (($hasSub === false || '/'.$this->addr->path == $link) && substr($link, 0, 1) == '/') {
+					$active = ((substr('/'.$this->addr->path, 0, strlen($link)) == $link && $link != '/') || ($link == '/' && empty($this->addr->path))) ? TRUE : FALSE;
+				} else {
+					$active = $link == substr($this->addr->path, 0-strlen($link));
+				}
+
 				if ($c == 1) {
 					$classes .= ' first';
 				} elseif ($c == $count) {

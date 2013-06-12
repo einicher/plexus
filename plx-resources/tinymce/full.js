@@ -14,7 +14,7 @@ var plexusFullTinyMCE = {
 	theme_advanced_buttons2: 'uploadbutton,|,imagebutton,gallerybutton,videobutton,filebutton,embedbutton,|,codebutton,|,tablecontrols',
 	theme_advanced_buttons3: '',
 
-	valid_elements: '@[class],a[!href|target|rel|class],h1,h2,h3,h4,p,br,img[!src|alt=|width|height],strong/b,em/i,ul,ol,li,big,small,blockquote,cite,code,samp,pre,sub,sup,del,div[!class|!style],span[!class|!style],audio,video,object,embed,param,dl,dt,dd,table[width|height|cellpadding|cellspacing|border|class],tr,th[rowspan|colspan],td[rowspan|colspan],iframe[width|height|scrolling|frameborder|src]',
+	valid_elements: '@[class|id],a[!href|target|rel|class],h1,h2,h3,h4,p,br,img[!src|alt=|width|height],strong/b,em/i,ul,ol,li,big,small,blockquote,cite,code,samp,pre,sub,sup,del,div[!class|!style],span[!class|!style],audio,video,object,embed,param,dl,dt,dd,table[width|height|cellpadding|cellspacing|border|class],tr,th[rowspan|colspan],td[rowspan|colspan|nowrap],iframe[width|height|scrolling|frameborder|src]',
 	content_css: root + 'plx-resources/tinymce/content.css?get=9',
 	fix_list_elements: true,
     convert_urls : false,

@@ -116,8 +116,8 @@
 				$this->addr->assign('system.preferences.components.remove', 'remove', array('Preferences::instance()', 'control'), 'system.preferences.components');
 				$this->addr->assign('system.preferences.cache', 'cache', array('Preferences::instance()', 'control'), 'system.preferences');
 				$this->addr->assign('system.preferences.cache.clear', 'clear', array('Preferences::instance()', 'control'), 'system.preferences.cache');
-				$this->addr->assign('system.preferences.trackbacks', 'trackbacks', array('Preferences::instance()', 'control'), 'system.plexus');
-				$this->addr->assign('system.preferences.blockedIps', 'blocked-ips', array('Preferences::instance()', 'control'), 'system.plexus');
+				$this->addr->assign('system.preferences.trackbacks', 'trackbacks', array('Preferences::instance()', 'control'), 'system.preferences');
+				$this->addr->assign('system.preferences.blockedIps', 'blocked-ips', array('Preferences::instance()', 'control'), 'system.preferences');
 
 				// MAKE SOME DATA TYPES OCCUPY ADDRESSES
 				$this->addr->occupy('USER', 'system.users');

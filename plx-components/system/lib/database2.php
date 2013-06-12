@@ -5,7 +5,7 @@
 
 		static function instance()
 		{
-			$db = Core::$conf->database;
+			$db = (object) Core::$conf->database;
 			if (empty(self::$instance)) {
 				self::$instance = new self($db->host, $db->user, $db->password, $db->name);
 				self::$instance->set_charset('utf8');
