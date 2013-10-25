@@ -16,6 +16,14 @@
 					)
 				),
 				array(
+					'type' => 'string',
+					'name' => 'tags',
+					'required' => FALSE,
+					'options' => array(
+						'label' => $this->lang->get('Tags')
+					)
+				),
+				array(
 					'type' => 'number',
 					'name' => 'limit',
 					'required' => FALSE,
@@ -133,8 +141,18 @@
 				}
 			}
 			$types = ' && ('.substr($types, 4).')';
+//echo µ($this->data);
+			$tags = '';
+			if (!empty($this->data->tags)) {
+				$tags = array();
+				$tagQuery = $this->d->query('SELECT parent FROM '.$this->d->table('properties').' WHERE name="tags" && (FIND_IN_SET("'.$this->data->tags.'", value) || FIND_IN_SET(" '.$this->data->tags.'", value))') OR exit($this->d->error);
+				while ($result = $tagQuery->fetch_object()) {
+					$tags[] = $result->parent;
+				}
+				$tags = ' && id IN ('.implode(',', $tags).') ';
+			}
 
-			$sql = 'SELECT * FROM '.$this->db->table('index').' WHERE (status=1'.$draft.')'.$types.$publish.' ORDER BY published DESC';
+			$sql = 'SELECT * FROM '.$this->db->table('index').' WHERE (status=1'.$draft.')'.$types.$publish.$tags.' ORDER BY published DESC';
 			if (!empty($this->sql)) {
 				$sql = $this->sql;
 			}

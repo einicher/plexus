@@ -92,4 +92,92 @@
 	{
 		return pi();
 	}
+
+	class FsockopenMultipartFormDataClass
+	{
+		protected $values = array();
+		protected $files = array();
+
+		function addValue($name, $value)
+		{
+			$this->values[$name] = $value;
+		}
+
+		function removeValue($name)
+		{
+			unset($this->values[$name]);
+		}
+
+		function addFile($name, $file)
+		{
+			$this->files[$name] = $file;
+		}
+
+		function removeFile($name)
+		{
+			unset($this->files[$name]);
+		}
+
+		function send($host, $path, $secure = false)
+		{
+			$boundary = sha1(1);
+			$crlf = "\r\n";
+			$data = '';
+
+			if (!empty($this->values)) {
+				foreach ($this->values as $name => $value) {
+					$data .= '--'.$boundary.$crlf
+							.'Content-Disposition: form-data; name="'.$name.'"'.$crlf
+							.'Content-Length: '.strlen($value).$crlf.$crlf
+							.$value.$crlf;
+				}
+			}
+
+			if (!empty($this->files)) {
+				foreach ($this->files as $name => $file) {
+					$finfo = new \finfo(FILEINFO_MIME);
+					$mimetype = $finfo->file($file);
+
+					$file_contents = file_get_contents($file);
+
+					$data .= '--'.$boundary.$crlf
+							.'Content-Disposition: form-data; name="'.$name.'"; filename="'.basename($file).'"'.$crlf
+							.'Content-Type: '.$mimetype.$crlf
+							.'Content-Length: '.strlen($file_contents).$crlf
+							.'Content-Type: application/octet-stream'.$crlf.$crlf
+							.$file_contents.$crlf;
+				}
+			}
+
+			$data .= '--'.$boundary.'--';
+//echo µ($data);
+			$response = '';
+			if ($secure) {
+				$fp = fsockopen('ssl://'.$host, 443, $errno, $errstr, 30);
+			} else {
+				$fp = fsockopen($host, 80, $errno, $errstr, 20);
+			}
+			if ($fp) {
+				$write = 'POST '.$path.' HTTP/1.1'.$crlf
+						.'Host: '.$host.$crlf
+						.'Content-type: multipart/form-data; boundary='.$boundary.$crlf
+						.'Content-Length: '.strlen($data).$crlf
+						.'Connection: Close'.$crlf.$crlf
+						.$data;
+
+				fwrite($fp, $write);
+				while ($line = fgets($fp)) {
+					if ($line !== false) {
+						$response .= $line;
+					}
+				}
+				fclose($fp);
+				$response = explode($crlf.$crlf, $response);
+				unset($response[0]);
+				return implode($crlf.$crlf, $response);
+			} else {
+				return $errstr;
+			}
+		}
+	}
 ?>

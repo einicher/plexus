@@ -242,6 +242,7 @@
 								@chmod($targetDir.$filename, 0777);
 							}
 							self::saveProperty($data->id, $field['name'], $filename);
+							$data->$field['name'] = $filename;
 						break;
 					}
 				}
@@ -535,6 +536,12 @@
 			if (!$language) {
 				mysql_query('ALTER TABLE '.Database::table('index').' ADD `language` varchar(255) NOT NULL');
 			}
+		}
+
+		function deleteProperty($id, $property)
+		{
+			$db = Database2::instance();
+			return $db->query('DELETE FROM `#_properties` WHERE parent='.$id.' && name="'.$db->escape($property).'"') OR exit($db->error);
 		}
 	}
 ?>

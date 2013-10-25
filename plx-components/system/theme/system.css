@@ -523,6 +523,8 @@ body.backend .fieldString,
 body.backend .fieldTextareaWrap textarea { border: 1px solid #CCC; box-shadow: inset 3px 3px 3px #EEE; }
 body.backend .formField { margin: 0 0 20px 0; }
 
+.formFieldFileDelete { float: right; cursor: pointer; margin: 3px 5px 0 0; }
+
 
 
 

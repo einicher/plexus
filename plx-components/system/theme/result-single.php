@@ -14,7 +14,7 @@
 			<img class="image" src="<?=$image->src?>" width="<?=$image->width?>" alt="" />
 		<? endif; ?>
 		<? if (!empty($result->excerpt)) : ?>
-			<p class="excerpt<?= isset($result->hasThumb) ? ' hasThumb' : '' ?>"<?= isset($result->hasThumb) ? ' style="margin-left: <?=($siteFeedThumb+10)?>px"' : '' ?>><?=$result->excerpt?></p>
+			<p class="excerpt<?= isset($result->hasThumb) ? ' hasThumb' : '' ?>"<?= isset($result->hasThumb) ? ' style="margin-left: <?=($siteFeedThumb+10)?>px"' : '' ?>><?=$this->tools->cutByWords($result->excerpt, $result->excerptLength)?></p>
 		<? endif; ?>
 			<span class="clear cl0" style="display: block;"></span>
 		</a>
