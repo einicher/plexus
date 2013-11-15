@@ -109,11 +109,13 @@
 
 				$this->addr->assign('system.preferences', 'plx-preferences', array('Preferences::instance()', 'control'), '', false, true);
 				$this->addr->assign('system.preferences.languages', 'languages', array('Preferences::instance()', 'control'), 'system.preferences');
+
 				$this->addr->assign('system.preferences.components', 'components', array('Preferences::instance()', 'control'), 'system.preferences');
 				$this->addr->assign('system.preferences.components.install', 'install', array('Preferences::instance()', 'control'), 'system.preferences.components');
 				$this->addr->assign('system.preferences.components.activate', 'activate', array('Preferences::instance()', 'control'), 'system.preferences.components');
 				$this->addr->assign('system.preferences.components.deactivate', 'deactivate', array('Preferences::instance()', 'control'), 'system.preferences.components');
 				$this->addr->assign('system.preferences.components.remove', 'remove', array('Preferences::instance()', 'control'), 'system.preferences.components');
+
 				$this->addr->assign('system.preferences.cache', 'cache', array('Preferences::instance()', 'control'), 'system.preferences');
 				$this->addr->assign('system.preferences.cache.clear', 'clear', array('Preferences::instance()', 'control'), 'system.preferences.cache');
 				$this->addr->assign('system.preferences.trackbacks', 'trackbacks', array('Preferences::instance()', 'control'), 'system.preferences');
@@ -373,7 +375,7 @@
 				return $current;
 			} elseif (!empty($current)) {
 				$current = $this->getData($current);
-				$current->_cache->content = $this->tools->detectSpecialSyntax($current->getContent()); // pagination in widgets
+				$current->view(); // pagination in widgets
 				if ($this->paginationActive && !$this->paginationUsed) {
 					$current = null;
 				}

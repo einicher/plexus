@@ -67,12 +67,22 @@
 				$query .= ' '.$this->options->order;
 			}
 
+			$count = Database2::instance()->query($query)->num_rows;
+
+			// limit
+			$page = 1;
+			if (Control::getInstance()->paginationActive) {
+				$page = Control::getInstance()->paginationPage;
+			}
+			$limit = $this->option('limit');
+			$query .= $page > 1 ? ' LIMIT '.(($page*$limit)-$limit).','.$limit : ' LIMIT '.$limit;
+
 			$r = array();
 			$rid = array();
 
 			$results = Database2::instance()->query($query);
+
 			if ($results || $results->num_rows) {
-				$count = $results->num_rows;
 				while ($f = $results->fetch_object()) {
 					$r[$f->id] = $f;
 					$rid[] = $f->id;
@@ -83,19 +93,15 @@
 				return;
 			}
 
-			// limit
-			$page = 1;
-			if (Control::getInstance()->paginationActive) {
-				$page = Control::getInstance()->paginationPage;
-			}
-			$limit = $this->option('limit');
-			$query .= $page > 1 ? ' LIMIT '.(($page*$limit)-$limit).','.$limit : ' LIMIT '.$limit;
-
 			$results = Database2::instance()->query('SELECT parent,name,value FROM `#_properties` WHERE parent IN('.implode(',', $rid).')');
 			if ($results && $results->num_rows) {
 				while ($f = $results->fetch_object()) {
 					$r[$f->parent]->{$f->name} = $f->value;
 				}
+			}
+
+			if ($page > 1 && count($results) > 0 && Control::getInstance()->paginationActive) {
+				Control::getInstance()->paginationUsed = true;
 			}
 
 			$i = 0;

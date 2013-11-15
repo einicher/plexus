@@ -166,7 +166,7 @@
 
 		function getMeta()
 		{
-			preg_match_all('/<img[^\>]*src="([^"]*)"/iU', $this->getContent(), $results);
+			preg_match_all('/<img[^\>]*src="([^"]*)"/iU', $this->view(), $results);
 			if (!empty($results[1][0])) {
 				return '<meta property="og:image" content="'.$this->addr->getHome(str_replace('../', '', $results[1][0])).'" />';
 			}

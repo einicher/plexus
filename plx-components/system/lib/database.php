@@ -62,6 +62,22 @@
 						INDEX (`parent`)
 					) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 				') OR exit(mysql_error());
+				Core::setOption('gallery.thumbSize', '96');
+			}
+
+			$check = Core::getOption('plexus.Upgrade-0.6-numeric');
+			if ($this->checkForTable($this->table('numeric', FALSE)) && empty($check)) {
+				mysql_query('INSERT INTO '.$this->table('properties').' SELECT * FROM '.$this->table('numeric').'');
+				Core::setOption('plexus.Upgrade-0.6-numeric', 1);
+				Core::info('Your '.$this->table('numeric', FALSE).' table was merged into '.$this->table('properties', FALSE).', its no longer required and should be deleted.');
+			}
+
+			$check = Core::getOption('plexus.Upgrade-0.6-textual');
+			if ($this->checkForTable($this->table('textual', FALSE)) && empty($check)) {
+				mysql_query('INSERT INTO '.$this->table('properties').' SELECT * FROM '.$this->table('textual').'');
+				mysql_query('ALTER TABLE '.$this->table('properties').' ORDER BY `parent` ');
+				Core::setOption('plexus.Upgrade-0.6-textual', 1);
+				Core::info('Your '.$this->table('textual', FALSE).' table was merged into '.$this->table('properties', FALSE).', its no longer required and should be deleted.');
 			}
 
 			if (!$this->checkForTable($this->table('options', FALSE))) {

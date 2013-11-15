@@ -342,7 +342,7 @@
 			if (!empty($this->conf->preReleases)) {
 				$request .= '&dev=1';
 			}
-			$check = file_get_contents($this->system->home.'Components/CheckForUpdates'.$request);
+			$check = file_get_contents($this->system->home.'components/CheckForUpdates'.$request);
 			if ($check) {
 				$check = json_decode($check);
 				if ($check->status == 1) {
