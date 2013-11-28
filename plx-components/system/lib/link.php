@@ -118,7 +118,7 @@
 				if (link.substr(0,7) != 'http://') {
 					link = 'http://' + link;
 				}
-				jQuery.get(root + 'plxAjax/analyseLink?url=' + link, function(data) {
+				jQuery.get(root + 'plxAjax/analyseLink?url=' + encodeURI(link), function(data) {
 					data = jQuery.parseJSON(data);
 					jQuery('#title').val(data.title);
 
@@ -194,99 +194,102 @@
 				return $data;
 			}
 
-			$page = utf8_encode(@file_get_contents($url));
+			$page = @file_get_contents(urldecode($url));
 			if (!empty($page)) {
-				$page = preg_replace('/\<script[^\>]*\>.*\<\/script\>/isU', '', $page);
-				$page = preg_replace('/\<noscript[^\>]*\>.*\<\/noscript\>/isU', '', $page);
+				$page = mb_convert_encoding($page, 'UTF-8', mb_detect_encoding($page));
+				if (!empty($page)) {
+					$page = preg_replace('/\<script[^\>]*\>.*\<\/script\>/isU', '', $page);
+					$page = preg_replace('/\<noscript[^\>]*\>.*\<\/noscript\>/isU', '', $page);
 
-				preg_match('/\<title\>([^\<]*)\<\/title\>/', $page, $title);
-				if (!empty($title)) {
-					$data->title = $title[1];
-				}
+					preg_match('/\<title\>([^\<]*)\<\/title\>/', $page, $title);
+					if (!empty($title)) {
+						$data->title = $title[1];
+					}
 				
-				preg_match_all('/\<meta([^\>]*)>/', $page, $meta);
-				foreach ($meta[1] as $m) {
-					preg_match_all('/(\S*)\=\"([^"]*)\"/isU', $m, $m);
-					$use = 0;
-					$atts = array();
-					foreach ($m[1] as $key => $n) {
-						if ($n == 'name' && $m[2][$key] == 'description') {
-							$atts[$n] = $m[2][$key];
-							$use = 1;
+					preg_match_all('/\<meta([^\>]*)>/', $page, $meta);
+					foreach ($meta[1] as $m) {
+						preg_match_all('/(\S*)\=\"([^"]*)\"/isU', $m, $m);
+						$use = 0;
+						$atts = array();
+						foreach ($m[1] as $key => $n) {
+							if ($n == 'name' && $m[2][$key] == 'description') {
+								$atts[$n] = $m[2][$key];
+								$use = 1;
+							}
+							if ($n == 'property' && $m[2][$key] == 'og:description') {
+								$atts[$n] = $m[2][$key];
+								$use = 2;
+							}
+							if ($n == 'name' && $m[2][$key] == 'keywords') {
+								$atts[$n] = $m[2][$key];
+								$use = 3;
+							}
+							if ($n == 'property' && $m[2][$key] == 'og:image') {
+								$atts[$n] = $m[2][$key];
+								$use = 4;
+							}
+							if ($n == 'property' && $m[2][$key] == 'og:title') {
+								$atts[$n] = $m[2][$key];
+								$use = 5;
+							}
+							if ($n == 'content') {
+								$atts[$n] = $m[2][$key];
+							}
 						}
-						if ($n == 'property' && $m[2][$key] == 'og:description') {
-							$atts[$n] = $m[2][$key];
-							$use = 2;
-						}
-						if ($n == 'name' && $m[2][$key] == 'keywords') {
-							$atts[$n] = $m[2][$key];
-							$use = 3;
-						}
-						if ($n == 'property' && $m[2][$key] == 'og:image') {
-							$atts[$n] = $m[2][$key];
-							$use = 4;
-						}
-						if ($n == 'property' && $m[2][$key] == 'og:title') {
-							$atts[$n] = $m[2][$key];
-							$use = 5;
-						}
-						if ($n == 'content') {
-							$atts[$n] = $m[2][$key];
+						if ($use) {
+							switch ($use) {
+								case 1:
+								case 2:
+									$data->description = str_replace("\r", '', str_replace("\n", '', $atts['content']));
+								break;
+								case 3:
+									$data->keywords = str_replace("\r", '', str_replace("\n", '', $atts['content']));
+								break;
+								case 4:
+									if (empty($data->images)) {
+										$data->images = array(str_replace("\r", '', str_replace("\n", '', $atts['content'])));
+									} else {
+										$data->images[] = str_replace("\r", '', str_replace("\n", '', $atts['content']));
+									}
+								break;
+								case 5:
+									$data->title = str_replace("\r", '', str_replace("\n", '', $atts['content']));
+								break;
+							}
 						}
 					}
-					if ($use) {
-						switch ($use) {
-							case 1:
-							case 2:
-								$data->description = str_replace("\r", '', str_replace("\n", '', $atts['content']));
-							break;
-							case 3:
-								$data->keywords = str_replace("\r", '', str_replace("\n", '', $atts['content']));
-							break;
-							case 4:
-								if (empty($data->images)) {
-									$data->images = array(str_replace("\r", '', str_replace("\n", '', $atts['content'])));
-								} else {
-									$data->images[] = str_replace("\r", '', str_replace("\n", '', $atts['content']));
-								}
-							break;
-							case 5:
-								$data->title = str_replace("\r", '', str_replace("\n", '', $atts['content']));
-							break;
+
+					if (empty($data->images)) {
+						preg_match_all('/\<img[^\>]*src="([^\"]*)"[^\>]*>/', $page, $images);
+
+						$data->images = array();
+						foreach ($images[1] as $img) {
+							$img = trim($img);
+							if (empty($img)) {
+								continue;
+							} elseif (substr($img, 0, 1) == '/') {
+								$host = explode('/', $url);
+								$img = 'http://'.$host[2].$img;
+							} elseif (substr($img, 0, 7) != 'http://') {
+								$host = explode('/', $url);
+								array_pop($host);
+								$host = implode('/', $host);
+								$img = $host.'/'.$img;
+							}
+
+							$size = @getimagesize($img);
+							if (!empty($size) && $size[0] >= 100 || $size[1] >= 100) {
+								$data->images[] = $img;
+							}
 						}
 					}
+
+					@$data->title = strip_tags(html_entity_decode(@$data->title, ENT_QUOTES, 'UTF-8'));
+				   	@$data->description = strip_tags(html_entity_decode(@$data->description, ENT_QUOTES, 'UTF-8'));
+					@$data->keywords = strip_tags(html_entity_decode(@$data->keywords, ENT_QUOTES, 'UTF-8'));
 				}
-
-				if (empty($data->images)) {
-					preg_match_all('/\<img[^\>]*src="([^\"]*)"[^\>]*>/', $page, $images);
-
-					$data->images = array();
-					foreach ($images[1] as $img) {
-						$img = trim($img);
-						if (empty($img)) {
-							continue;
-						} elseif (substr($img, 0, 1) == '/') {
-							$host = explode('/', $url);
-							$img = 'http://'.$host[2].$img;
-						} elseif (substr($img, 0, 7) != 'http://') {
-							$host = explode('/', $url);
-							array_pop($host);
-							$host = implode('/', $host);
-							$img = $host.'/'.$img;
-						}
-
-						$size = @getimagesize($img);
-						if (!empty($size) && $size[0] >= 100 || $size[1] >= 100) {
-							$data->images[] = $img;
-						}
-					}
-				}
-
-				@$data->title = strip_tags(html_entity_decode(@$data->title, ENT_QUOTES, 'UTF-8'));
-			   	@$data->description = strip_tags(html_entity_decode(@$data->description, ENT_QUOTES, 'UTF-8'));
-				@$data->keywords = strip_tags(html_entity_decode(@$data->keywords, ENT_QUOTES, 'UTF-8'));
+				return $data;
 			}
-			return $data;
 		}
 
 		function result()

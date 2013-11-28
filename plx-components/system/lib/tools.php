@@ -177,6 +177,23 @@
 			return $content;
 		}
 
+		function stripSpecialSyntax($content)
+		{
+			$content = preg_replace('=<div class\="widget\">(.*)</div>=iU', '', $content);
+			$content = preg_replace('=<div class\="video\">(.*)</div>=iU', '', $content);
+			$content = preg_replace('=<div class\="gallery\">(.*)</div>=iU', '', $content);
+			
+			$content = $this->detectProblems($content);
+			
+			$content = preg_replace('=\[\[([^|[]*)\|([^]]*)\]\]=U', '\\2', $content);
+			$content = preg_replace('=\[\[(.*)\]\]=Ue', '\\1', $content);
+
+			$content = $this->detectStoragePaths($content);
+			$content = preg_replace('=href\="plx-file://(.*)"=ieU', '\'href="\'.$this->plexusFile(\'\\1\').\'"\'', $content);
+
+			return $content;
+		}
+
 		function detectStoragePaths($text)
 		{
 			$text = preg_replace('=src\="plx-storage://(.*)"=ieU', '\'src="\'.$this->overwriteCacheParams(\'\\1\').\'"\'', $text);

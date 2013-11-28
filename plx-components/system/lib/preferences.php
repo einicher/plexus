@@ -57,6 +57,20 @@
 							Core::setOption('site.'.substr($name, 5), $value);
 						}
 					}
+					if (substr($name, 0, 8) == 'content_') {
+						if (empty($value)) {
+							Core::delOption('content.'.substr($name, 8));
+						} else {
+							Core::setOption('content.'.substr($name, 8), $value);
+						}
+					}
+					if (substr($name, 0, 8) == 'gallery_') {
+						if (empty($value)) {
+							Core::delOption('gallery.'.substr($name, 8));
+						} else {
+							Core::setOption('gallery.'.substr($name, 8), $value);
+						}
+					}
 				}
 				if (!isset($_POST['site_pingGoogle'])) {
 					Core::delOption('site.pingGoogle');
@@ -72,7 +86,10 @@
 				array('type' => 'string', 'name' => 'site_theme', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Theme'), 'caption' => $this->lang->get('The way this site looks.'))),
 				array('type' => 'checkbox', 'name' => 'site_pingGoogle', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Ping Google'), 'caption' => $this->lang->get('Ping Google when a content is published.'))),
 				array('type' => 'checkbox', 'name' => 'site_trackbacks', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Enable Trackbacks'), 'caption' => $this->lang->get('Will display a trackback link in the info field beneath all data types.'))),
-				array('type' => 'text', 'name' => 'site_code', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Header Codes'), 'caption' => $this->lang->get('Insert code to be inserted in the head of every page (f.e. Google Analytics)')))
+				array('type' => 'text', 'name' => 'site_code', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Header Codes'), 'caption' => $this->lang->get('Insert code to be inserted in the head of every page (f.e. Google Analytics)'))),
+				array('type' => 'string', 'name' => 'content_width', 'required' => TRUE, 'options' => array('label' => $this->lang->get('Content width'), 'caption' => $this->lang->get('Width of main content.'))),
+				array('type' => 'string', 'name' => 'content_fullsize', 'required' => TRUE, 'options' => array('label' => $this->lang->get('Content fullsize'), 'caption' => $this->lang->get('Width of fullsize content.'))),
+				array('type' => 'string', 'name' => 'gallery_thumbSize', 'required' => TRUE, 'options' => array('label' => $this->lang->get('Gallery thumb size'), 'caption' => $this->lang->get('Width of gallery thumbs.')))
 			), array(
 				'site_name' => Core::getOption('site.name'),
 				'site_owner' => Core::getOption('site.owner'),
@@ -82,7 +99,10 @@
 				'site_theme' => Core::getOption('site.theme'),
 				'site_pingGoogle' => Core::getOption('site.pingGoogle'),
 				'site_trackbacks' => Core::getOption('site.trackbacks'),
-				'site_code' => Core::getOption('site.code')
+				'site_code' => Core::getOption('site.code'),
+				'content_width' => Core::getOption('content.width'),
+				'content_fullsize' => Core::getOption('content.fullsize'),
+				'gallery_thumbSize' => Core::getOption('gallery.thumbSize')
 			));
 			
 			ob_start();

@@ -34,13 +34,17 @@
 			if (substr($this->path, 0, 1) == '/') {
 				$this->path = substr($this->path, 1);
 			}
-			$this->levels = preg_split('=/=', $this->path, -1, PREG_SPLIT_NO_EMPTY);
-			foreach ($this->levels as $name) { $this->root .= '../'; }
+			$this->levels = explode('/', $this->path);
+			foreach ($this->levels as $name) {
+				$this->root .= '../';
+			}
 			if (!empty($this->root)) $this->root = substr($this->root, 3);
 			if (!empty($_GET['ajax'])) {
 				$this->root = $_GET['ajax'];
 			}
-			array_unshift($this->levels, '');
+			if (!empty($this->levels[0])) {
+				array_unshift($this->levels, '');
+			}
 		}
 
 		function getLevel($level, $levels = '')

@@ -292,75 +292,79 @@
 
 			// SYSTEM MAIN LOOP
 			$lvs = $levels;
-			foreach ($levels as $level => $address) {
-				if (!empty($next)) {
-					$current = $next;
-					unset($next);
-				} else {
-					$current = $this->addr->isAssigned($level, $lvs, $cache);
-				}
-				if (defined('PLX_CONTROL_EXIT')) {
-					if (is_array($current)) {
-						$current = $this->processCallback($current['call'], $level, $levels, $cache);
+			if (isset($levels[2]) && empty($levels[2])) {
+				$current = '';
+			} else {
+				foreach ($levels as $level => $address) {
+					if (!empty($next)) {
+						$current = $next;
+						unset($next);
+					} else {
+						$current = $this->addr->isAssigned($level, $lvs, $cache);
 					}
-					return $current;
-				}
-				if (is_object($current) && !empty($current->id)) {
-					self::$current[] = $cache[] = $current;
-					$parent = $current->id;
-					continue;
-				}
-				if (is_array($current)) {
-					$cache[] = $current;
-				}
+					if (defined('PLX_CONTROL_EXIT')) {
+						if (is_array($current)) {
+							$current = $this->processCallback($current['call'], $level, $levels, $cache);
+						}
+						return $current;
+					}
+					if (is_object($current) && !empty($current->id)) {
+						self::$current[] = $cache[] = $current;
+						$parent = $current->id;
+						continue;
+					}
+					if (is_array($current)) {
+						$cache[] = $current;
+					}
 
-				if (empty($current)) {
-					$sql = 'SELECT * FROM #_index WHERE (parent=?'.$additional.') && address=? && (status>0'.$draft.') '.$publish.' '.$language;
-					//echo µ($sql);
-					$current = $this->d->getPrepared($sql, 'is', $parent, urldecode($address));
-					$additional = '';
 					if (empty($current)) {
-						$next = $this->addr->isAssigned($level+1, $lvs, $cache);
-						if ($next && isset($next['preceded_empty'])) {
-							$nexted = true;
-							continue;
-						} else {
-							if (isset($nexted)) {
-								$current = end($cache);
-								unset($nexted);
+						$sql = 'SELECT * FROM #_index WHERE (parent=?'.$additional.') && address=? && (status>0'.$draft.') '.$publish.' '.$language;
+						//echo µ($sql);
+						$current = $this->d->getPrepared($sql, 'is', $parent, urldecode($address));
+						$additional = '';
+						if (empty($current)) {
+							$next = $this->addr->isAssigned($level+1, $lvs, $cache);
+							if ($next && isset($next['preceded_empty'])) {
+								$nexted = true;
+								continue;
+							} else {
+								if (isset($nexted)) {
+									$current = end($cache);
+									unset($nexted);
+								}
+								#break;
 							}
-							#break;
+						} else {
+							if (isset(Address::$occupied[$current->type]) && (
+								!isset($levels[$level-1]) || $this->addr->getAddress(Address::$occupied[$current->type]) != $levels[$level-1]
+							)) {
+								unset($current);
+								break;
+							}
+							if (in_array($current->type, $notReal)) {
+								unset($current);
+								break;
+							}
+							self::$current[] = $cache[] = $current;
+							$this->observer->notify('system.loop', $current);
+							$parent = $current->id;
+						}
+						if (empty($current) && is_numeric($address) && $level == (count($levels)-1)) {
+							$current = end($cache);
+							$this->paginationActive = true;
+							$this->paginationPage = $address;
+						}
+						if (empty($current)) {
+							break;
 						}
 					} else {
-						if (isset(Address::$occupied[$current->type]) && (
-							!isset($levels[$level-1]) || $this->addr->getAddress(Address::$occupied[$current->type]) != $levels[$level-1]
-						)) {
-							unset($current);
+						if (!empty($current['takeOverMainLoop'])) {
 							break;
 						}
-						if (in_array($current->type, $notReal)) {
-							unset($current);
-							break;
-						}
-						self::$current[] = $cache[] = $current;
-						$this->observer->notify('system.loop', $current);
-						$parent = $current->id;
 					}
-					if (empty($current) && is_numeric($address) && $level == (count($levels)-1)) {
-						$current = end($cache);
-						$this->paginationActive = true;
-						$this->paginationPage = $address;
+					if (empty($address) && empty($this->addr->multihost)) {
+						$additional = ' OR parent=0';
 					}
-					if (empty($current)) {
-						break;
-					}
-				} else {
-					if (!empty($current['takeOverMainLoop'])) {
-						break;
-					}
-				}
-				if (empty($address) && empty($this->addr->multihost)) {
-					$additional = ' OR parent=0';
 				}
 			}
 
