@@ -5,20 +5,23 @@
 		<? if (isset($result->pre)) : ?>
 		<?=$result->pre?>
 		<? endif; ?>
-		<a class="body" href="<?=$result->link()?>">
-			<h1><?= htmlspecialchars(empty($result->titleLength) ? $result->title : $this->tools->cutByChars($result->title, $result->titleLength)) ?></h1>
+		<a class="body clearfix" href="<?=$result->link()?>">
+		<? if (empty($result->headingBelowThumb)) : ?>
+			<h1><?= htmlspecialchars(empty($result->titleLength) || $result->titleLength == -1  ? $result->title : $this->tools->cutByChars($result->title, $result->titleLength)) ?></h1>
+		<? endif; ?>
 		<? if (!empty($result->hasThumb)) : ?>
-			<img class="thumb" src="<?=htmlspecialchars($this->imageScaleLink($result->thumbSrc, $siteFeedThumb, $siteFeedThumb))?>" width="<?=$siteFeedThumb?>" alt="" />
+			<img class="thumb" src="<?=htmlspecialchars($this->imageScaleLink($result->thumbSrc, $result->thumbWidth, $result->thumbHeight))?>" width="<?=$result->thumbWidth?>" alt="" />
+		<? endif; ?>
+		<? if (!empty($result->headingBelowThumb)) : ?>
+			<h1><?= htmlspecialchars(empty($result->titleLength) || $result->titleLength == -1 ? $result->title : $this->tools->cutByChars($result->title, $result->titleLength)) ?></h1>
 		<? endif; ?>
 		<? if (!empty($image)) : ?>
 			<img class="image" src="<?=$image->src?>" width="<?=$image->width?>" alt="" />
 		<? endif; ?>
 		<? if (!empty($result->excerpt)) : ?>
-			<p class="excerpt<?= isset($result->hasThumb) ? ' hasThumb' : '' ?>"<?= isset($result->hasThumb) ? ' style="margin-left: <?=($siteFeedThumb+10)?>px"' : '' ?>><?=$this->tools->cutByWords($result->excerpt, $result->excerptLength)?></p>
+			<p class="excerpt<?= isset($result->hasThumb) ? ' hasThumb' : '' ?>"><?=$result->excerptLength == -1 ? $result->excerpt : $this->tools->cutByWords($result->excerpt, $result->excerptLength)?></p>
 		<? endif; ?>
-			<span class="clear cl0" style="display: block;"></span>
 		</a>
-		<div class="clear cl1"></div>
 		<? if (!empty($result->footer)) : ?>
 		<footer class="meta">
 			<span class="type <?=strtolower($result->getType())?>"><?=§($result->getType())?></span>

@@ -26,11 +26,11 @@
 
 		function addMenu($label, $call, &$actor = '', $indicator = 0)
 		{
-			$address = strtolower($this->addr->transform($label));
-			$this->addr->assign('system.preferences.'.$address, $address, array(&$actor, $call), 'system.preferences');
+			$address = strtolower($this->a->transform($label));
+			$this->a->assign('system.preferences.'.$address, $address, array(&$actor, $call), 'system.preferences');
 			Site::$components[] = (object) array(
 				'label' => $label,
-				'link' => $this->addr->assigned('system.preferences').'/'.$this->addr->transform($label),
+				'link' => $this->a->assigned('system.preferences').'/'.$this->a->transform($label),
 				'popup' => true,
 				'actor' => &$actor,
 				'call' => $call,

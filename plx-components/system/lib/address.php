@@ -12,7 +12,7 @@
 		public $levels;
 		public $constants;
 
-		static function getInstance()
+		static public function &instance()
 		{
 			if (empty(self::$instance)) {
 				self::$instance = new self;
@@ -30,7 +30,7 @@
 				$this->home = substr('http://'.$_SERVER['SERVER_NAME'].$root, 0, -1);
 				$this->path = substr($_SERVER['REQUEST_URI'], strlen($root));
 			}
-			$this->path = parse_url('http://www.example.com'.$this->path, PHP_URL_PATH);
+			$this->path = parse_url('http://'.str_replace('//', '/', 'www.example.com/'.$this->path), PHP_URL_PATH);
 			if (substr($this->path, 0, 1) == '/') {
 				$this->path = substr($this->path, 1);
 			}
@@ -94,7 +94,7 @@
 		// deprecated
 		function register()
 		{
-			//trigger_error('Address::register is deprecated as of plexus version 0.6 '.print_r(func_get_args(), true), E_USER_ERROR);
+			trigger_error('Address::register is deprecated as of plexus version 0.6 '.print_r(func_get_args(), true), E_USER_ERROR);
 		}
 
 		function assign($name, $address, $call, $dependency = '', $exit = false, $takeOverMainLoop = false)
@@ -246,7 +246,7 @@
 
 		function getLink($id, $address = '')
 		{
-			$fetch = $this->db->fetch('SELECT id,type,parent,address,language FROM '.$this->db->table('index').' WHERE id='.$id);
+			$fetch = $this->d->get('SELECT id,type,parent,address,language FROM `#_index` WHERE id='.$id);
 			if (empty($fetch->address)) {
 				if (!empty($address)) {
 					return $address;
@@ -371,7 +371,7 @@
 			$id = $descendend;
 			$descendends = array($id);
 			while (1) {
-				$fetch = $this->db->fetch('SELECT parent FROM '.$this->db->table('index').' WHERE id='.$id);
+				$fetch = $this->d->get('SELECT parent FROM `#_index` WHERE id='.$id);
 				if ($fetch->parent == 0) {
 					break;
 				}
@@ -441,7 +441,7 @@
 			return $url;
 		}
 
-		function transform($string, $strict = FALSE)
+		static public function transform($string, $strict = FALSE)
 		{
 			$string = trim($string);
 

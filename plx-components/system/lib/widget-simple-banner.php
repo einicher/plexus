@@ -14,23 +14,23 @@
 		{
 			return array('type' => 'widget',
 				array('type' => 'file', 'name' => 'image', 'required' => TRUE, 'options' => array(
-					'label' => $this->lang->get('Image'),
+					'label' => §('Image'),
 					'target' => $this->target
 				)),
 				array('type' => 'string', 'name' => 'link', 'required' => FALSE, 'options' => array(
-					'label' => $this->lang->get('Link'),
-					'caption' => $this->lang->get('To link to homepage use “/”, page links sould start with “/” too. For example: /Develop/Database.')
+					'label' => §('Link'),
+					'caption' => §('To link to homepage use “/”, page links sould start with “/” too. For example: /Develop/Database.')
 				))
 			);
 		}
 		
-		function view()
+		function view($type = '')
 		{
 			if (empty($this->data->image)) {
 				return;
 			}
 
-			$src = $this->addr->getRoot($this->getStorage($this->target.'/'.$this->data->image));
+			$src = $this->a->getRoot($this->getStorage($this->target.'/'.$this->data->image));
 
 			if (!empty($this->dock->width) && !empty($this->dock->height)) {
 				$src = $this->imageScaleLink($this->getStorage($this->target.'/'.$this->data->image), $this->dock->width, $this->dock->height);
@@ -42,15 +42,17 @@
 
 			if (!empty($this->data->link)) {
 				if ($this->data->link == '/') {
-					$this->data->link = $this->addr->getRoot();
+					$this->data->link = $this->a->getRoot();
 				}
-				return $this->tpl->cut('widget-simple-banner.php', 'linked', array(
+				return $this->t->get('widget-simple-banner.php', array(
 					'href' =>  $this->data->link,
-					'src' => $src
+					'src' => $src,
+					'linked' => true
 				));
 			} else {
-				return $this->tpl->cut('widget-simple-banner.php', 'unlinked', array(
-					'src' => $src
+				return $this->t->get('widget-simple-banner.php', array(
+					'src' => $src,
+					'linked' => false
 				));
 			}
 		}

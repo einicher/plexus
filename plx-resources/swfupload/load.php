@@ -3,7 +3,7 @@
 
 	function loadSWFUpload($actor, $siteHead)
 	{
-		$path = $actor->addr->getRoot(PLX_RESOURCES.'swfupload/');
+		$path = $actor->a->getRoot(PLX_RESOURCES.'swfupload/');
 		define('PLX_SWFUPLOAD_PATH', $path);
 		return $siteHead.swfUploadScripts();
 	}

@@ -3,7 +3,7 @@
 	{
 		static $instance;
 
-		function instance()
+		static public function &instance()
 		{
 			if (empty(self::$instance)) {
 				self::$instance = new self;
@@ -13,38 +13,43 @@
 
 		function permalink($level, $levels, $cache)
 		{
-			header('Location:'.$this->addr->getHomeLink($this->addr->getLevel(2, $levels)));
+			header('Location:'.$this->a->getHomeLink($this->a->getLevel(2, $levels)));
 			exit;
 		}
 
 		function search($level, $levels, $cache)
 		{
-			$this->tpl->connect('siteFeedThumb', 100);
+			$buttonWidth = round($this->getOption('content.width')*0.2);
+			$inputWidth = $this->getOption('content.width')-$buttonWidth-10;
+			
 			if (empty($levels[2])) {
 				$search = (object) array(
 					'pattern' => '',
-					'action' => $this->addr->getRoot($this->addr->assigned('system.search')),
-					'results' => ''
+					'action' => $this->a->getRoot($this->a->assigned('system.search')),
+					'results' => '',
+					'inputWidth' => $inputWidth,
+					'buttonWidth' => $buttonWidth
 				);
-				$this->tpl->cut('result.php', 'search', array('search' => $search));
-				$page = new Page($this->lang->get('Search'), $this->tpl->get('result.php', array(
+				$page = new Page(§('Search'), $this->t->get('search.php', array(
 					'search' => $search
 				)));
 			} else {
-				$search = (object) array(
-					'pattern' => urldecode(@$levels[2]),
-					'action' => $this->addr->getRoot($this->addr->assigned('system.search')),
-					'results' => $this->pdb->search(array(
-						'pattern' => urldecode(@$levels[2]),
-						'order' => ' ORDER BY score DESC'
-					))
-				);
-				$this->tpl->cut('result.php', 'search', array('search' => $search));
-				$page = new Page($this->lang->get('Search for “{{'.urldecode($levels[2]).'}}”'), $this->tpl->get('result.php', array(
-					'search' => $search
+				$pattern = urldecode(@$levels[2]);
+				$feed = new Feed;
+				$feed->set('search', $pattern);
+
+				$page = new Page(§('Search for “{{'.$pattern.'}}”'), $this->t->get('search.php', array(
+					'pattern' => $pattern,
+					'action' => $this->a->getRoot($this->a->assigned('system.search')),
+					'results' => $feed->view(),
+					'hits' => $feed->getCount(),
+					'feed' => &$feed,
+					'search' => (object) array(
+						'inputWidth' => $inputWidth,
+						'buttonWidth' => $buttonWidth
+					)
 				)));
 			}
-			$this->tpl->set('result.php');
 			return $page;
 		}
 
@@ -53,24 +58,22 @@
 			if (empty($levels[2])) {
 				require_once PLX_SYSTEM.'lib/widget-tag-cloud.php';
 				$tags = new TagCloudWidget;
-				$tags = $this->observer->notify('system.tags', $tags);
-				return new Page($this->lang->get('Tags'), $tags->view(1));
+				$tags = $this->o->notify('system.tags', $tags);
+				return new Page(§('Tags'), $tags->view(1));
 			} else {
-				$this->tpl->connect('siteFeedThumb', 100);
-				$tag = urldecode(str_replace('+', ' ', $levels[2]));
-				$search = $this->pdb->search(array(
-					'tags' => $tag
-				));
-				return new Page($this->lang->get('Tag “{{'.$tag.'}}”'), $search);
+				$tag = urldecode(@$levels[2]);
+				$feed = new Feed;
+				$feed->set('tag', $tag);
+				return new Page(§('Tag “{{'.$tag.'}}”'), $feed->view());
 			}
 		}
 
-		function login($level, $levels, $cache)
+		static public function login($level, $levels, $cache)
 		{
-			if ($this->access->granted()) {
-				return new Page($this->lang->get('Login'), $this->lang->get('You are currently logged in.'));
+			if (Access::instance()->granted()) {
+				return new Page(§('Login'), §('You are currently logged in.'));
 			} else {
-				return $this->access->showLogin($level, $levels, $cache);
+				return Access::instance()->showLogin($level, $levels, $cache);
 			}
 		}
 
@@ -89,7 +92,7 @@
 						AND p.parent=i.id AND i.type="USER"'
 					));
 					if (empty($fetch)) {
-						$this->error($this->lang->get('Sorry, but we found no account with a username or email like the value you entered.'));
+						$this->error(§('Sorry, but we found no account with a username or email like the value you entered.'));
 					} else {
 						$user = $this->type($fetch);
 
@@ -103,21 +106,21 @@
 						$header = 'From: '.$this->getOption('site.name').' <'.$this->getOption('site.mail').'>' . "\r\n" .
 						'Content-type: text/plain; charset=UTF-8' . "\r\n" .
 					    'X-Mailer: PHP/' . phpversion();
-					    $subject = $this->lang->get('Your temporary password for {{'.$this->getOption('site.name').'}}');
+					    $subject = §('Your temporary password for {{'.$this->getOption('site.name').'}}');
 					    $message = Template::get2('mail-lost-password.php', array(
 					    	'user' => $user->name,
 					    	'email' => $user->email,
 					    	'password' => $temporary,
 					    	'website' => $this->getOption('site.name'),
-					    	'homepage' => str_replace('http://', '', substr($this->addr->getHome(), 0, -1)),
-					    	'login' => $this->addr->getHome($this->addr->getAddress('system.login'))
+					    	'homepage' => str_replace('http://', '', substr($this->a->getHome(), 0, -1)),
+					    	'login' => $this->a->getHome($this->a->getAddress('system.login'))
 					    ));
 						mail($user->name.' <'.$user->email.'>', $subject, $message, $header);
-						return new Page($this->lang->get('Success'), $this->lang->get('A temporary password was sent to you via email.'));
+						return new Page(§('Success'), §('A temporary password was sent to you via email.'));
 					}
 				}
 			}
-			return new Page($this->lang->get('Lost password'), Template::get2('lost-password.php'));
+			return new Page(§('Lost password'), Template::get2('lost-password.php'));
 		}
 
 		function plxUsers($level, $levels, $cache)
@@ -130,7 +133,7 @@
 
 		function getFavicon($level, $levels, $cache)
 		{
-			$ico = $this->tpl->locateFile('favicon.ico');
+			$ico = $this->t->locateFile('favicon.ico');
 			$create = getimagesize($ico);
 			if ($create == FALSE) {
 				return FALSE;
@@ -172,20 +175,20 @@
 			}
 			$style = '';
 			if (!in_array('system.css', $exclude)) {
-				$style .= preg_replace('/url\(\'(.*)\'\)/ieU', '\'url(\\\'\'.$this->tpl->locateFile(\'\\1\').\'\\\')\'', $this->tpl->get('system.css'));
+				$style .= preg_replace_callback('/url\(\'(.*)\'\)/iU', create_function('$m', 'return \'url(\\\'\'.Template::instance()->locateFile($m[1]).\'\\\')\';'), $this->t->get('system.css'));
 				$style .= "\n";
 			}
 			if ($exclude != 'all') {
 				foreach (Control::$activeComponentsDirs as $c) {
-					$file = $this->tpl->locateFile('style.css', $c);
+					$file = $this->t->locateFile('style.css', $c);
 					if (file_exists($file) && !in_array($c.'/style.css', $exclude)) {
-						$style .= "\n/*".$file."*/\n\n".preg_replace('/url\(\'(.*)\'\)/ieU', '\'url(\\\'\'.$this->tpl->locateFile(\'\\1\', \''.$c.'\').\'\\\')\'', $this->tpl->get($file));
+						$style .= "\n/*".$file."*/\n\n".preg_replace_callback('/url\(\'(.*)\'\)/iU', create_function('$m', 'return \'url(\\\'\'.Template::instance()->locateFile($m[1], \''.$c.'\').\'\\\')\';'), $this->t->get($file));
 					}
 					$style .= "\n";
 				}
 			}
 			if (!in_array('style.css', $exclude)) {
-				$style .= preg_replace('/url\(\'(.*)\'\)/ieU', '\'url(\\\'\'.$this->tpl->locateFile(\'\\1\').\'\\\')\'', $this->tpl->get('style.css'));
+				$style .= preg_replace_callback('/url\(\'(.*)\'\)/iU', create_function('$m', 'return \'url(\\\'\'.Template::instance()->locateFile($m[1]).\'\\\')\';'), $this->t->get('style.css'));
 			}
 			header('content-type: text/css; charset=utf-8');
 			return $style;
@@ -196,8 +199,9 @@
 			header('content-type: text/xml; charset=utf-8');
 			$items = array();
 			$updated = '';
-			while ($fetch = $this->db->fetch('SELECT * FROM '.$this->db->table('index').' WHERE status=1 ORDER BY published DESC LIMIT 20', 1)) {
-				$fetch = $this->type($fetch);
+			$i = $this->d->get('SELECT * FROM #_index WHERE status=1 ORDER BY published DESC LIMIT 20');
+			foreach ($i as $fetch) {
+				$fetch = $this->getData($fetch);
 				if (empty($updated)) {
 					$updated = $fetch->published;
 				}
@@ -212,7 +216,7 @@
 						} else {
 							$tags[$key] = (object) array(
 								'name' => htmlspecialchars($tag),
-								'link' => str_replace(' ', '%20', $this->addr->assigned('system.tags', '', 1).'/'.urlencode($tag))
+								'link' => str_replace(' ', '%20', $this->a->assigned('system.tags', '', 1).'/'.urlencode($tag))
 							);
 						}
 					}
@@ -229,7 +233,7 @@
 			}
 
 			$feed = (object) array(
-				'link' => $this->addr->getHome('atom.xml'),
+				'link' => $this->a->getHome('atom.xml'),
 				'title' => htmlspecialchars($this->getOption('site.name')),
 				'updated' => date('c', $updated),
 				'generatorURI' => htmlspecialchars($this->system->home),
@@ -239,7 +243,7 @@
 				'authorURI' => htmlspecialchars($this->getOption('site.ownerLink'))
 			);
 
-			return Template::get2('atom.xml', array(
+			return $this->t->get('atom.xml', array(
 				'feed' => $feed,
 				'items' => $items
 			));
@@ -249,7 +253,7 @@
 		{
 			header('content-type: text/xml; charset=utf-8');
 
-			$xsl = $this->tpl->locateFile('sitemap.xsl');
+			$xsl = $this->t->locateFile('sitemap.xsl');
 			if (!file_exists($xsl)) {
 				$xsl = PLX_SYSTEM.'theme/sitemap.xsl';
 			}
@@ -274,15 +278,15 @@
 			}
 
 			$urls = '';
-			$sql = 'SELECT `id`,`published`,`type`,`status` FROM '.$this->db->table('index').' WHERE address!="" AND (status=1 OR status=2) AND published<='.time().$exclude.' ORDER BY published DESC';
-			$qry = mysql_query($sql);
-			while ($fetch = mysql_fetch_object($qry)) {
+			$sql = 'SELECT `id`,`published`,`type`,`status` FROM `#_index` WHERE address!="" AND (status=1 OR status=2) AND published<='.time().$exclude.' ORDER BY published DESC';
+			$q = $this->d->query($sql);
+			while ($fetch = $q->fetch_object()) {
 				if ($fetch->type == 'IMAGE' && $fetch->status == 2) {
 					continue;
 				}
 				$urls .= '
    <url>
-	<loc>'.htmlspecialchars($this->addr->getHomeLink($fetch->id)).'</loc>
+	<loc>'.htmlspecialchars($this->a->getHomeLink($fetch->id)).'</loc>
 	<lastmod>'.date('c', $fetch->published).'</lastmod>
    </url>';
 			}

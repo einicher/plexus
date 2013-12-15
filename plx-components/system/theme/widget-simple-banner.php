@@ -1,8 +1,7 @@
-<tpl name="linked">
+<? if ($linked) : ?>
 <a class="simpleBanner" href="<?=$href?>"><img class="simpleBanner" src="<?=$src?>" alt="" /></a>
 <div class="clear"></div>
-</tpl>
-<tpl name="unlinked">
+<? else : ?>
 <img class="simpleBanner" src="<?=$src?>" alt="" />
 <div class="clear"></div>
-</tpl>
+<? endif; ?>

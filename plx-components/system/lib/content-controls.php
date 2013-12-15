@@ -4,7 +4,7 @@
 		static $instance;
 		static $editMode = false;
 
-		function instance()
+		static public function &instance()
 		{
 			if (empty(self::$instance)) {
 				self::$instance = new self;
@@ -21,7 +21,7 @@
 				|| $this->access->granted('system.data.video')
 				|| $this->access->granted('system.data.file')) {
 					if (count($levels) == 2) {
-						$current = new Page($this->lang->get('Choose data type'), $this->choose());
+						$current = new Page(§('Choose data type'), $this->choose());
 						$current->showEditPanel = FALSE;
 						return $current;
 					} else {
@@ -29,7 +29,7 @@
 						return $this->detectTypeByAddress($levels[2]);
 					}
 				} else {
-					$page = new Page($this->lang->get('Access rights needed'), $this->lang->get('You do not have the necessary permissions to add new contents.'));
+					$page = new Page(§('Access rights needed'), §('You do not have the necessary permissions to add new contents.'));
 					$page->type = 'ERROR403';
 					return $page;
 				}
@@ -42,13 +42,13 @@
 		{
 			if ($this->access->granted()) {
 				if ($this->access->granted('system.create')) {
-					if ($this->addr->getLevel(-2, $levels) == $this->addr->getAddress('system.create')) {
+					if ($this->a->getLevel(-2, $levels) == $this->a->getAddress('system.create')) {
 						self::$editMode = TRUE;
-						$current = $this->detectTypeByAddress($this->addr->getLevel(-1, $levels));
+						$current = $this->detectTypeByAddress($this->a->getLevel(-1, $levels));
 						if (isset($current->title)) {
-							$current->title = urldecode($this->addr->getLevel(-3, $levels));
+							$current->title = urldecode($this->a->getLevel(-3, $levels));
 						}
-						$current->address = $this->addr->transform($this->addr->getLevel(-3, $levels));
+						$current->address = $this->a->transform($this->a->getLevel(-3, $levels));
 						$key = count($cache)-1;
 						if ($key < 0) $key = 0;
 						if (!empty($cache)) {
@@ -62,12 +62,12 @@
 						}
 						return $current;
 					} else {
-						$current = new Page($this->lang->get('Choose data type'), $this->choose());
+						$current = new Page(§('Choose data type'), $this->choose());
 						$current->showEditPanel = FALSE;
 						return $current;
 					}
 				} else {
-					$page = new Page($this->lang->get('Access rights needed'), $this->lang->get('You do not have the necessary permissions to create this content.'));
+					$page = new Page(§('Access rights needed'), §('You do not have the necessary permissions to create this content.'));
 					$page->type = 'ERROR403';
 					return $page;
 				}
@@ -116,7 +116,7 @@
 				$current = $cache[count($cache)-2];
 				if ($this->access->granted('system.edit') || ($this->access->granted('system.editOwnData') && $current->author == Access::$user->id) || ($this->access->granted('system.editOwnData') && $current->id == Access::$user->id)) {
 					self::$editMode = TRUE;
-					$type = $this->getType($current->type);
+					$type = $this->getDataType($current->type);
 					$type->id = 0;
 					require_once $type->file;
 					$type = new $type->class($current->id);
@@ -126,7 +126,7 @@
 					$type->doRedirect = 1;
 					return $type;
 				} else {
-					$page = new Page($this->lang->get('Access rights needed'), $this->lang->get('You do not have the necessary permissions to edit this content.'));
+					$page = new Page(§('Access rights needed'), §('You do not have the necessary permissions to edit this content.'));
 					$page->type = 'ERROR403';
 					return $page;
 				}
@@ -144,11 +144,11 @@
 				|| ($this->access->granted('system.editOwnData') && $current->id == Access::$user->id)
 				) {
 					self::$editMode = TRUE;
-					$type = $this->getType($current->type);
+					$type = $this->getDataType($current->type);
 					require_once $type->file;
 					return new $type->class($current->id);
 				} else {
-					$page = new Page($this->lang->get('Access rights needed'), $this->lang->get('You do not have the necessary permissions to edit this content.'));
+					$page = new Page(§('Access rights needed'), §('You do not have the necessary permissions to edit this content.'));
 					$page->type = 'ERROR403';
 					return $page;
 				}
@@ -159,16 +159,19 @@
 
 		public function choose()
 		{
+			$types = array();
 			foreach (Core::$types as $name => $type)
 			{
 				if ($this->access->granted('system.data.'.strtolower($name))) {
 					$type = (object) $type;
-					$type->label = $this->lang->get($type->label);
-					$type->address = $this->addr->current($this->addr->transform($type->label));
-					$this->tpl->repeat('choose.php', 'type', array('type' => $type));
+					$type->label = §($type->label);
+					$type->address = $this->a->current($this->a->transform($type->label));
+					$types[] = $type;
 				}
 			}
-			return $this->tpl->get('choose.php');
+			return $this->t->get('choose.php', array(
+				'types' => $types
+			));
 		}
 
 		public function detectTypeByAddress($label)
@@ -176,13 +179,13 @@
 			foreach (Core::$types as $name => $type)
 			{
 				$type = (object) $type;
-				$address = $this->addr->transform($type->label);
+				$address = $this->a->transform($type->label);
 				if ($address == $label) {
 					if ($this->access->granted('system.data.'.strtolower($name))) {
 						require_once $type->file;
 						return new $type->class;
 					} else {
-						$page = new Page($this->lang->get('Access rights needed'), $this->lang->get('You do not have the necessary permissions to create this content type.'));
+						$page = new Page(§('Access rights needed'), §('You do not have the necessary permissions to create this content type.'));
 						$page->type = 'ERROR403';
 						return $page;					
 					}

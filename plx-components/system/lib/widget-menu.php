@@ -8,7 +8,7 @@
 		{
 			return array('type' => 'widget',
 				array('type' => 'string', 'name' => 'title', 'required' => FALSE, 'options' => array(
-					'label' => $this->lang->get('Title')
+					'label' => §('Title')
 				)),
 				array('type' => 'custom', 'name' => 'items', 'required' => FALSE, 'options' => array(
 					'actor' => &$this,
@@ -28,9 +28,9 @@
 ?>
 	<li>
 		<span class="handle" style="background: #070; cursor: move;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-		<label><?=$this->lang->get('Label')?></label>
+		<label><?=§('Label')?></label>
 		<input type="text" name="label[]" value="<?=$value?>" />
-		<label for=""><?=$this->lang->get('Link')?></label>
+		<label for=""><?=§('Link')?></label>
 		<input type="text" name="link[]" value="<?=$this->data->link[$key]?>" />
 		<br />
 	</li>
@@ -41,26 +41,26 @@
 ?>
 	<li>
 		<span class="handle" style="background: #070; cursor: move;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-		<label><?=$this->lang->get('Label')?></label>
+		<label><?=§('Label')?></label>
 		<input type="text" name="label[]" value="" />
-		<label for=""><?=$this->lang->get('Link')?></label>
+		<label for=""><?=§('Link')?></label>
 		<input type="text" name="link[]" value="" />
 	</li>
 </ul>
 <div id="menuEditorDefault" style="display: none;">
 	<li>
 		<span class="handle" style="background: #070; cursor: move;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-		<label><?=$this->lang->get('Label')?></label>
+		<label><?=§('Label')?></label>
 		<input type="text" name="label[]" value="" />
-		<label for=""><?=$this->lang->get('Link')?></label>
+		<label for=""><?=§('Link')?></label>
 		<input type="text" name="link[]" value="" />
 	</li>
 </div>
 <br />
-<button id="menuEditorButton" type="button"><?=$this->lang->get('+ Add Item')?></button>
-<p><?=$this->lang->get('Use the green handles to sort your menu.')?></p>
-<p><?=$this->lang->get('If you leave a link field empty, the link will be made autmotaicly from the label text.')?></p>
-<p><?=$this->lang->get('Link to homepage/frontpage is a single slash: “/”.')?></p>
+<button id="menuEditorButton" type="button"><?=§('+ Add Item')?></button>
+<p><?=§('Use the green handles to sort your menu.')?></p>
+<p><?=§('If you leave a link field empty, the link will be made autmotaicly from the label text.')?></p>
+<p><?=§('Link to homepage/frontpage is a single slash: “/”.')?></p>
 <script type="text/javascript">
 	jQuery('#menuEditorButton').click(function(e) {
 		jQuery('#menuEditorBody').append(
@@ -99,7 +99,7 @@
 			}
 		}
 
-		function view()
+		function view($type = '')
 		{
 			if (empty($this->data->label)) {
 				return '<br />';
@@ -107,7 +107,7 @@
 
 			$hasSub = false;
 			foreach ($this->data->label as $key => $value) {
-				if (substr($this->data->link[$key], 0, 1) != '/') {
+				if (substr($this->data->link[$key], 0, 1) != '/' || count(explode('/', $this->data->link[$key])) > 1) {
 					$hasSub = true;
 				}
 			}
@@ -126,21 +126,21 @@
 					$external = TRUE;
 					$classes .= ' external';
 				} elseif ($link == '/') {
-					$href = $this->addr->getRoot();
+					$href = $this->a->getRoot();
 				} elseif (substr($link, 0, 1) == '/') {
-					$href = $this->addr->getRoot(substr($link, 1));
+					$href = $this->a->getRoot(substr($link, 1));
 				} else {
 					if ($this->data->status == -77 && $this->dock->page == $this->data->includes[0]) {
-						$href = $this->addr->current($link);
+						$href = $this->a->current($link);
 					} else {
-						$href = str_replace('//', '/', $this->addr->current(-1).'/'.$link);
+						$href = str_replace('//', '/', $this->a->current(-1).'/'.$link);
 					}
 				}
 
-				if (($hasSub === false || '/'.$this->addr->path == $link) && substr($link, 0, 1) == '/') {
-					$active = ((substr('/'.$this->addr->path, 0, strlen($link)) == $link && $link != '/') || ($link == '/' && empty($this->addr->path))) ? TRUE : FALSE;
+				if (($hasSub === false || '/'.$this->a->path == $link) && substr($link, 0, 1) == '/') {
+					$active = ((substr('/'.$this->a->path, 0, strlen($link)) == $link && $link != '/') || ($link == '/' && empty($this->a->path))) ? TRUE : FALSE;
 				} else {
-					$active = $link == substr($this->addr->path, 0-strlen($link));
+					$active = $link == substr($this->a->path, 0-strlen($link));
 				}
 
 				if ($c == 1) {
@@ -160,9 +160,9 @@
 				);
 			}
 
-			$items = $this->observer->notify('system.menuWidgetView.Items', $items, $this);
+			$items = $this->o->notify('system.menuWidgetView.Items', $items, $this);
 
-			return Template::get2('widget-menu.php', array(
+			return $this->t->get('widget-menu.php', array(
 				'menu' => $this,
 				'items' => $items
 			));

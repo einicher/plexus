@@ -6,26 +6,26 @@
 		function construct()
 		{
 			$this->add('string', 'title', FALSE, array(
-				'label' => $this->lang->get('Title'),
+				'label' => §('Title'),
 				'transformToAddress' => 1
 			));
 			$this->add('text', 'code', TRUE, array(
-				'label' => $this->lang->get('Code'),
-				'caption' => $this->lang->get('Add a code snippet you can copy from the various video platforms (You Tube for example).')
+				'label' => §('Code'),
+				'caption' => §('Add a code snippet you can copy from the various video platforms (You Tube for example).')
 			));
 			$this->add('wysiwyg', 'description', FALSE, array(
-				'label' => $this->lang->get('Description')
+				'label' => §('Description')
 			));
 			$this->add('string', 'tags', FALSE, array(
-				'label' => $this->lang->get('Tags'),
-				'caption' => $this->lang->get('Separate with commas')
+				'label' => §('Tags'),
+				'caption' => §('Separate with commas')
 			));
 			$this->add('datetime', 'published', TRUE, array(
-				'label' => $this->lang->get('Published'),
-				'caption' => $this->lang->get('May be in the future.')
+				'label' => §('Published'),
+				'caption' => §('May be in the future.')
 			));
 			$this->add('status', 'status', TRUE, array(
-				'label' => $this->lang->get('Status')
+				'label' => §('Status')
 			));
 		}
 
@@ -71,7 +71,7 @@
 			if (isset($image)) {
 				$result['image'] = $image;
 			}
-			return Template::get2('result-single.php', $result);
+			return $this->t->get('result-single.php', $result);
 		}
 
 		static function detectAndFit($code)

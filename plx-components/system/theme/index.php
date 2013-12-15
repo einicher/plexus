@@ -9,9 +9,14 @@
 			<header class="main">
 				<div class="container clearfix">
 					<h1><a href="<?=$site->getHome()?>"><?=$site->getName()?></a></h1>
-<?=$site->getWidget('SimpleBannerWidget', 'headerImage', array('width' => 960, 'height' => 250))?>
+<?=$site->getWidget('SearchWidget', 'headerSearch', array('width' => 302))?>
 				</div>
 			</header>
+			<div id="feature">
+				<div class="container clearfix">
+<?=$site->getWidget('SimpleBannerWidget', 'featureImage', array('width' => 960, 'height' => 250))?>
+				</div>
+			</div>
 			<nav>
 				<div class="container clearfix">
 <?=$site->getWidget('MenuWidget', 'headerMenu')?>

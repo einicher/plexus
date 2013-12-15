@@ -9,7 +9,7 @@
 				<div class="w3cSucksWrap">
 					<ul class="menu">
 <? foreach ($menu as $key => $m) : ?>
-						<li id="sidebar-menu-<?=$m[0]?>"<?= $this->addr->isActive($m[2], isset($m[3]) ? true : false) ? ' class="active"' : '' ?>><a href="<?=$m[2]?>"><?=$m[1]?> <span class="indicator"><?= empty($m[4]) ? '' : '('.$m[4].')' ?></span></a></li>
+						<li id="sidebar-menu-<?=$m[0]?>"<?= $this->a->isActive($m[2], isset($m[3]) ? true : false) ? ' class="active"' : '' ?>><a href="<?=$m[2]?>"><?=$m[1]?> <span class="indicator"><?= empty($m[4]) ? '' : '('.$m[4].')' ?></span></a></li>
 <? endforeach; ?>
 					</ul>
 				</div>

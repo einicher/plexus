@@ -3,7 +3,7 @@
 	{
 		static $instance;
 
-		function instance()
+		static public function &instance()
 		{
 			if (empty(self::$instance)) {
 				self::$instance = new self;

@@ -6,9 +6,9 @@
 
 		function getContent()
 		{
-			$c = $this->observer->notify('post.getContent', $this->tpl->get('view-post.php', array('post' => $this)));
-			$this->tpl->set('view-post.php');
-			return $c;
+			return $this->o->notify('post.getContent', $this->t->get('view-post.php', array(
+				'post' => &$this
+			)));
 		}
 	}
 ?>

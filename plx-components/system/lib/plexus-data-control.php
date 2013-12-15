@@ -15,23 +15,23 @@
 		{
 		}
 
-		function getDataById($id, &$assignment = '', $sql = '')
+		static public function getDataById($id, &$assignment = '', $sql = '')
 		{
 			return self::fetchDataSet($id, $assignment, $sql);
 		}
 
-		function getDataByObject($object, &$assignment = '', $sql = '')
+		static public function getDataByObject($object, &$assignment = '', $sql = '')
 		{
 			return self::fetchDataSet($object, $assignment, $sql);
 		}
 
-		function fetchDataSet($mixed, &$assignment = '', $sql = '')
+		static public function fetchDataSet($mixed, &$assignment = '', $sql = '')
 		{
 			$init = false;
 
 			if (is_numeric($mixed)) {
 				$id = $mixed;
-				$fetch = $this->d->get('SELECT * FROM `#_index` WHERE `id`='.$id);
+				$fetch = Database::instance()->get('SELECT * FROM `#_index` WHERE `id`='.$id);
 			} elseif (is_object($mixed)) {
 				$id = $mixed->id;
 				$fetch = $mixed;
@@ -58,7 +58,7 @@
 				$assignment->$name = $value;
 			}
 
-			$properties = $this->d->get('SELECT `name`,`value` FROM `#_properties` WHERE `parent`='.$id, array(
+			$properties = Database::instance()->get('SELECT `name`,`value` FROM `#_properties` WHERE `parent`='.$id, array(
 				'force_array' => true
 			));
 			if (!empty($properties)) {
@@ -74,18 +74,18 @@
 			return $assignment;
 		}
 
-		function getProperty($parent, $name)
+		static public function getProperty($parent, $name)
 		{
-			$fetch = $this->d->getPrepared('SELECT `value` FROM `#_properties` WHERE `parent`=? && `name`=?', 'is', $parent, $name);
+			$fetch = Database::instance()->getPrepared('SELECT `value` FROM `#_properties` WHERE `parent`=? && `name`=?', 'is', $parent, $name);
 			if (!empty($fetch->value)) {
 				return $fetch->value;
 			}
 			return null;
 		}
 
-		function unifyAddress($parent, $address)
+		static public function unifyAddress($parent, $address)
 		{
-			$fetch = Database2::instance()->getPrepared('SELECT * FROM `#_index` WHERE `parent`=? && `address`=?', 'is', $parent, $address);
+			$fetch = Database::instance()->getPrepared('SELECT * FROM `#_index` WHERE `parent`=? && `address`=?', 'is', $parent, $address);
 			if (empty($fetch)) {
 				return $address;
 			}
@@ -106,11 +106,11 @@
 			return self::unifyAddress($parent, $address);
 		}
 
-		function save(&$bluePrint, &$data, $autoAddress = FALSE)
+		static public function save(&$bluePrint, &$data, $autoAddress = FALSE)
 		{
 			$force = false;
-			$addr = Address::getInstance();
-			$d = Database2::instance();
+			$addr = Address::instance();
+			$d = Database::instance();
 
 			if (($addr->getLevel(-2) == Address::$reserved['system.create']['address'] && $addr->getLevel(-3) == '')
 				|| ($addr->getLevel(-1) == Address::$reserved['system.edit']['address'] && $addr->getLevel(-2) == '')
@@ -179,6 +179,7 @@
 						case 'select':
 						case 'checkbox':
 						case 'custom':
+						case 'map':
 							if ($field['type'] == 'checkbox') {
 								if (!empty($data->$field['name'])) {
 									$data->$field['name'] = 1;
@@ -251,9 +252,9 @@
 			return $data->id;
 		}
 
-		function saveProperty($id, $name, $value)
+		static public function saveProperty($id, $name, $value)
 		{
-			$d = Database2::instance();
+			$d = Database::instance();
 			$check = $d->query('SELECT * FROM `'.$d->table('properties').'` WHERE name="'.$d->escape($name).'" AND parent='.$id) OR exit($d->error);
 			if ($check && $check->num_rows) {
 				if (empty($value)) {
@@ -288,7 +289,7 @@
 		}
 
 		// mixed $type: if type is array they were treatend as conditions
-		function get($type, $conditions = '', $multi = FALSE)
+		function _get($type, $conditions = '', $multi = FALSE)
 		{
 			$sql = '';
 			$cols = array(
@@ -412,7 +413,7 @@
 			}
 		}
 
-		function search($options = '', $directSQL = '')
+		function _search($options = '', $directSQL = '') //deprecated
 		{
 			$excludedTypes = array('USER', 'GROUP');
 			foreach (Core::$types as $type => $props) {
@@ -517,28 +518,11 @@
 			return $collect;
 		}
 
-		static function checkForUpToDateTables()
+		public static function checkForUpToDateTables()
 		{
-			$language = '';
-			$query = mysql_query('SHOW columns FROM '.Database::table('index'));
-			while ($fetch = mysql_fetch_object($query)) {
-
-				// removed due to conflict with $this->lang
-				if ($fetch->Field == 'lang') {
-					mysql_query('ALTER TABLE '.Database::table('index').' DROP `lang`'); 
-				}
-
-				// added in 0.4.1
-				if ($fetch->Field == 'language') {
-					$language = 1;
-				}
-			}
-			if (!$language) {
-				mysql_query('ALTER TABLE '.Database::table('index').' ADD `language` varchar(255) NOT NULL');
-			}
 		}
 
-		function deleteProperty($id, $property)
+		public static function deleteProperty($id, $property)
 		{
 			$db = Database2::instance();
 			return $db->query('DELETE FROM `#_properties` WHERE parent='.$id.' && name="'.$db->escape($property).'"') OR exit($db->error);

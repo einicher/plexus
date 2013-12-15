@@ -22,7 +22,7 @@
 					} else {
 						$m = $this->processInstall('install', $levels[4], $levels[5], $this->install());
 						if ($m['status'] == 1) {
-							header('Location: '.$this->addr->assigned('system.preferences.components'));
+							header('Location: '.$this->a->assigned('system.preferences.components'));
 							exit;
 						} else {
 							$this->install($m['message']);
@@ -33,7 +33,7 @@
 				case 'remove':
 					$message = $this->remove($levels[4]);
 					$this->overview($message);
-					echo $this->tpl->get('admin-components.php', array(
+					echo $this->t->get('admin-components.php', array(
 						'message' => $message
 					));
 					exit;
@@ -43,53 +43,40 @@
 					$m = $this->upgrade($levels[4]);
 					if ($m['status'] == 1) {
 						$this->overview($m['message']);
-						echo $this->tpl->get('admin-components.php', array(
+						echo $this->t->get('admin-components.php', array(
 							'message' => $m['message']
 						));
 						exit;
 					}
 					if ($m['status'] == 0) {
 						$this->overview($m['message'], true);
-						echo $this->tpl->get('admin-components.php', array('message' => 1));
+						echo $this->t->get('admin-components.php', array('message' => 1));
 						exit;
 					}
 				break;
 
 				case 'activate':
 					$message = $this->activate($levels[4], $levels[5]);
-					$this->overview($message);
-					echo $this->tpl->get('admin-components.php', array(
-						'message' => $message
-					));
-					exit;
+					$plxContent = $this->overview($message);
 				break;
 
 				case 'deactivate':
 					$message = $this->deactivate($levels[4]);
-					$this->overview($message);
-					echo $this->tpl->get('admin-components.php', array(
-						'message' => $message
-					));
-					exit;
+					$plxContent = $this->overview($message);
 				break;
 
-				default: $this->overview();
+				default: $plxContent = $this->overview();
 			}
 
-			return $this->tpl->get('admin-components.php', array(
-				'message' => $message
+			return $this->t->get('components.php', array(
+				'message' => $message,
+				'plxContent' => $plxContent
 			));
 		}
 
 		function overview($message = '', $error = false)
 		{
-			if (!empty($message) && !$error) {
-				$this->tpl->cut('admin-components.php', 'message', array(
-					'message' => $message
-				));
-			}
-
-			$this->checkForUpdates();
+			#$this->checkForUpdates();
 
 			$versions = array();
 			$upgrades = array();
@@ -100,44 +87,45 @@
 					$versions[] = $upgrade->version;
 				}
 			}
+
 			$components = $this->detectComponents();
 			asort($components);
 			foreach ($components as $c => $class) {
-				$e = new $class(TRUE);
+				$e = new $class(true);
 				$e->class = $class;
 				$e->file = $c;
 				if (in_array($class, Control::$activeComponents)) {
-					$this->tpl->cut('admin-components.php', 'deactivate', array('component' => $e));
+					$e->active = true;
 				} else {
-					$this->tpl->cut('admin-components.php', 'activate', array('component' => $e));
+					$e->active = false;
 				}
 				$upgrade = array_search($c, $upgrades);
-				if (is_array($upgrades) && $upgrade !== FALSE) {
-					$this->tpl->repeat('admin-components.php', 'upgrade', array('component' => $c));
-					$this->tpl->repeat('admin-components.php', 'upgradeAvailable', array('component' => $e, 'version' => $versions[$upgrade]));
+				if (is_array($upgrades) && $upgrade !== false) {
+					$e->upgrade = true;
+					$e->newVersion = $versions[$upgrade];
+				} else {
+					$e->upgrade = false;
 				}
-				$this->tpl->repeat('admin-components.php', 'component', array('component' => $e));
-				$this->tpl->set('admin-components.php', 'activate');
-				$this->tpl->set('admin-components.php', 'deactivate');
-				$this->tpl->set('admin-components.php', 'upgrade');
-				$this->tpl->set('admin-components.php', 'upgradeAvailable');
+				$components[$c] = $e;
 			}
+
+			$plexusUpgrade = '';
 			$system = array_search('plexus', $upgrades);
 			if (is_array($upgrades) && in_array('plexus', $upgrades)) {
-				$this->tpl->cut('admin-components.php', 'plexusUpgrade', array('newVersion' => $versions[$system]));
+				$plexusUpgrade = array('newVersion' => $versions[$system]);
 			}
 			unset($upgrades[$system]);
+
+			$overviewUpgrades = '';
 			if (is_array($upgrades) && !empty($upgrades)) {
-				if (count($upgrades) == 1) {
-					$this->tpl->cut('admin-components.php', 'overviewUpgradesSingular', array('upgrades' => count($upgrades)));
-				} else {
-					$this->tpl->cut('admin-components.php', 'overviewUpgradesPlural', array('upgrades' => count($upgrades)));
-				}
-				$this->tpl->cut('admin-components.php', 'overviewUpgrades', array('upgrades' => count($upgrades)));
+				$overviewUpgrades = count($upgrades);
 			}
-			$this->tpl->cut('admin-components.php', 'overview', array(
+
+			return $this->t->get('components-overview.php', array(
 				'error' => $error,
-				'message' => $message
+				'message' => $message,
+				'components' => $components,
+				'plexusUpgrade' => $plexusUpgrade
 			));
 		}
 
@@ -148,26 +136,26 @@
 			if (!empty($_POST)) {
 				$results = json_decode(file_get_contents($this->system->home.'components/JSON/'.urldecode($_POST['searchComponent'])));
 				if (empty($results->matches)) {
-					$this->tpl->cut('admin-components.php', 'noResults');
+					$this->t->cut('admin-components.php', 'noResults');
 				} else {
 					foreach ($results->results as $key => $result) {
-						$this->tpl->repeat('admin-components.php', 'result', array(
+						$this->t->repeat('admin-components.php', 'result', array(
 							'key' => $key,
 							'result' => $result
 						));
 					}
-					$this->tpl->cut('admin-components.php', 'results', array(
+					$this->t->cut('admin-components.php', 'results', array(
 						'results' => $results
 					));
 				}
 			}
 
-			$level4 = $this->addr->getLevel(4);
+			$level4 = $this->a->getLevel(4);
 			if (empty($results) && !empty($level4)) {
 				$results = json_decode(file_get_contents($this->system->home.'components/JSON/'.urldecode($level4).'?exactMatch'));
 			}
 
-			$this->tpl->cut('admin-components.php', 'install', array(
+			$this->t->cut('admin-components.php', 'install', array(
 				'searchComponent' => @$_POST['searchComponent'],
 				'message' => $message
 			));
@@ -200,7 +188,7 @@
 					'file' => $file
 				);
 				Control::$activeComponents[] = $class;
-				$message = $this->lang->get('The component has been successfully activated.');
+				$message = §('The component has been successfully activated.');
 			} else {
 				foreach ($components as $key => $c) {
 					if ($c->class == $class) {
@@ -209,7 +197,7 @@
 					}
 				}
 				$components = array_merge($components);
-				$message = $this->lang->get('The component has been successfully deactivated.');
+				$message = §('The component has been successfully deactivated.');
 			}
 
 			$this->setOption('system.activeComponents', json_encode($components));
@@ -230,7 +218,7 @@
 		{
 			$target = PLX_COMPONENTS.$homedir;
 			$this->deleteRecursive($target);
-			return $this->lang->get('The component has been successfully removed.');
+			return §('The component has been successfully removed.');
 		}
 
 		function processInstall($type, $component, $source, $results)
@@ -241,7 +229,7 @@
 					$source = json_decode(file_get_contents($this->system->home.'Components/JSON/plexus?exactMatch'));
 					if (empty($source->results[0]->source)) {
 						return array(
-							'message' => $this->lang->get('Failed to get the link to the plexus core source file.'),
+							'message' => §('Failed to get the link to the plexus core source file.'),
 							'status' => 0
 						);
 					} else {
@@ -249,7 +237,7 @@
 						$script = @file_get_contents($source);
 						if (empty($script)) {
 							return array(
-								'message' => $this->lang->get('Failed to fetch the plexus core source from „{{'.$source.'}}“.'),
+								'message' => §('Failed to fetch the plexus core source from „{{'.$source.'}}“.'),
 								'status' => 0
 							);
 						} else {
@@ -279,7 +267,7 @@
 					}
 					if (!@mkdir($target, 0777)) {
 						return array(
-							'message' => $this->lang->get('Target directory {{'.$target.'}} could not be created. Maybe you need to set write permissions to the plx-components directory?'),
+							'message' => §('Target directory {{'.$target.'}} could not be created. Maybe you need to set write permissions to the plx-components directory?'),
 							'status' => 0
 						);
 					}
@@ -288,25 +276,25 @@
 					$script = @file_get_contents(@base64_decode($source));
 					if (empty($script)) {
 						return array(
-							'message' => $this->lang->get('Download of install script failed.'),
+							'message' => §('Download of install script failed.'),
 							'status' => 0
 						);
 					} else {
 						$process = eval($script);
 						if ($process === FALSE) {
 							return array(
-								'message' => $this->lang->get('Install failed.').(empty($message) ? '' : '<p>'.$message.'</p>'),
+								'message' => §('Install failed.').(empty($message) ? '' : '<p>'.$message.'</p>'),
 								'status' => 0
 							);
 						} else {
 							if ($type == 'upgrade') {
 								return array(
-									'message' => $this->lang->get('Upgrade of component {{<strong>'.$results->results[0]->name.'</strong>}} was successfull.'),
+									'message' => §('Upgrade of component {{<strong>'.$results->results[0]->name.'</strong>}} was successfull.'),
 									'status' => 1
 								);
 							} else {
 								return array(
-									'message' => $this->lang->get('Component successfully installed. You need to enable it in the overview if you want to use it.'),
+									'message' => §('Component successfully installed. You need to enable it in the overview if you want to use it.'),
 									'status' => 1
 								);
 							}
@@ -316,12 +304,12 @@
 			} else {
 				if ($type == 'upgrade') {
 					return array(
-						'message' => $this->lang->get('Your {{<strong>plx-components</strong>}} directory is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.$this->lang->get('the components page').'</a>}} to download the new version on your own and install it by hand.'),
+						'message' => §('Your {{<strong>plx-components</strong>}} directory is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.§('the components page').'</a>}} to download the new version on your own and install it by hand.'),
 						'status' => 0
 					);
 				} else {
 					return array(
-						'message' => $this->lang->get('Your {{<strong>plx-components</strong>}} directory is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.$this->lang->get('the components page').'</a>}} to download the component and install it by hand by extracting amd movin it to the plx-components folder.'),
+						'message' => §('Your {{<strong>plx-components</strong>}} directory is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.§('the components page').'</a>}} to download the component and install it by hand by extracting amd movin it to the plx-components folder.'),
 						'status' => 0
 					);
 				}
@@ -385,7 +373,7 @@
 				$dir = opendir($p);
 				while ($c = readdir($dir)) {
 					if ($c != '.' && $c != '..') {
-						$collect .= '<li><a href="'.$this->addr->current($c).'">'.$c.'</a></li>';
+						$collect .= '<li><a href="'.$this->a->current($c).'">'.$c.'</a></li>';
 					}
 				}
 				$collect .= '</ul>';

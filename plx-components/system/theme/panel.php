@@ -45,12 +45,12 @@
 		</li>
 		<? endforeach; ?>
 <? if (!empty($content->id)) : ?>
-		<li style="padding: 0;"><a id="plexusPanelId" href="<?=$this->addr->assigned('system.permalink', '', 1)?>/<?=$content->id?>" title="<?=§('ID of current content, Permalink')?>">#<span id="plexusPanelCurrentContentId"><?=$content->id?></span></a></li>
+		<li style="padding: 0;"><a id="plexusPanelId" href="<?=$this->a->assigned('system.permalink', '', 1)?>/<?=$content->id?>" title="<?=§('ID of current content, Permalink')?>">#<span id="plexusPanelCurrentContentId"><?=$content->id?></span></a></li>
 		<li style="padding: 0;"><img id="plexusPanelLamp" class="iconset <?=(empty($_COOKIE['systemButtonsOff']) ? 'lampOn' : 'lampOff')?>" src="<?=$site->getRoot('blank.gif')?>" width="16" height="16" /></li>
 <? if (ContentControls::$editMode) : ?>
 		<li style="padding: 0;"><a id="plexusPanelEdit" class="cancel" href="<?=$content->getCancelLink()?>" title="<?=§('Cancel')?>"><img class="iconset" src="<?=$site->getRoot('blank.gif')?>" width="16" height="16" alt="<?=§('Edit')?>" /></a></li>
 <? else : ?>
-		<li style="padding: 0;"><a id="plexusPanelEdit" class="edit" href="<?= ($content->type == 'ERROR404') ? $this->addr->assigned('system.create') : $content->getEditLink()?>" title="<?=§('Edit')?>"><img class="iconset" src="<?=$site->getRoot('blank.gif')?>" width="16" height="16" alt="<?=§('Edit')?>" /></a></li>
+		<li style="padding: 0;"><a id="plexusPanelEdit" class="edit" href="<?= ($content->type == 'ERROR404') ? $this->a->assigned('system.create') : $content->getEditLink()?>" title="<?=§('Edit')?>"><img class="iconset" src="<?=$site->getRoot('blank.gif')?>" width="16" height="16" alt="<?=§('Edit')?>" /></a></li>
 <? endif; ?>
 <? endif; ?>
 	</ul>

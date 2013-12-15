@@ -70,7 +70,7 @@
 	function §($text)
 	{
 		global $file;
-		return Language::getInstance()->get($text);
+		return Language::instance()->get($text);
 	}
 
 	function implodeKeys($glue, $array)
@@ -180,4 +180,16 @@
 			}
 		}
 	}
+
+	if (!function_exists('get_called_class')) { // < 5.3.0
+		function get_called_class()
+		{
+			$t = debug_backtrace();
+			$t = $t[0];
+			if (isset($t['object']) && $t['object'] instanceof $t['class']) {
+				return get_class($t['object']);
+			}
+			return false;
+		}
+	}  
 ?>

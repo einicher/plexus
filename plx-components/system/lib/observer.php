@@ -4,7 +4,7 @@
 		static $instance;
 		static $observers = array();
 
-		function getInstance()
+		static public function &instance()
 		{
 			if (empty(self::$instance)) {
 				self::$instance = new self;
@@ -12,7 +12,7 @@
 			return self::$instance;
 		}
 
-		function connect($action, $call, &$actor = '', $directActor = TRUE)
+		static public function connect($action, $call, &$actor = '', $directActor = TRUE)
 		{
 			self::$observers[$action][] = array(
 				'actor' => &$actor,
@@ -21,7 +21,7 @@
 			);
 		}
 
-		function notify($action)
+		static public function notify($action)
 		{
 			$a = func_get_args();
 			$action = array_shift($a);

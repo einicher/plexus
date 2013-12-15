@@ -13,65 +13,42 @@
 		static $components;
 		static $preferences = array();
 		static $ajaxCalls;
-		static $options; // cache
+		static $cacheOptions;
 		static $debug = array();
 		static $api;
 		static $extendedApis = array();
 
-		static $d; // Database2
-		static $t; // Template2
-
 		function &__get($property)
 		{
 			switch ($property) {
+				case 'access':
+					$this->access =& Access::instance();
+					return $this->access;
+				break;
+
+				case 'api':
+					$this->api = Api::instance();
+					return $this->api;
+				break;
+
 				case 'conf':
 					$this->conf =& self::getConf();
 					return $this->conf;
 				break;
 
-				case 'addr':
-					$this->addr =& Address::getInstance();
-					return $this->addr;
+				case 'control':
+					$this->control =& Control::instance();
+					return $this->control;
 				break;
-
-				case 'db':
-					$this->db =& Database::getInstance($this->conf->database);
-					return $this->db;
-				break;
-
-				case 'pdb':
-					$this->pdb =& PlexusDataControl::instance();
-					return $this->pdb;
-				break;
-
-				case 'pdc':
-					$this->pdb =& PlexusDataControl::getInstance();
-					return $this->pdb;
-				break;
-
-				case 'tpl':
-					$this->tpl =& Template::getInstance();
-					return $this->tpl;
-				break;
-
-				case 'observer':
-					$this->observer =& Observer::getInstance();
-					return $this->observer;
-				break;
-
-				case 'lang':
-					$this->lang =& Language::getInstance();
-					return $this->lang;
+				
+				case 'components':
+					$this->components = self::$components;
+					return $this->components;
 				break;
 
 				case 'tools':
-					$this->tools =& Tools::getInstance();
+					$this->tools =& Tools::instance();
 					return $this->tools;
-				break;
-
-				case 'access':
-					$this->access =& Access::getInstance();
-					return $this->access;
 				break;
 
 				case 'user':
@@ -90,29 +67,29 @@
 					return $this->system =& self::$system;
 				break;
 
-				case 'control':
-					$this->control =& Control::getInstance();
-					return $this->control;
-				break;
-				
-				case 'components':
-					$this->components = self::$components;
-					return $this->components;
+				case 'a':
+					$this->a =& Address::instance();
+					return $this->a;
 				break;
 
 				case 'd':
-					$this->d = Database2::instance();
+					$this->d = Database::instance($this->conf->database);
 					return $this->d;
 				break;
 
-				case 't':
-					$this->t = Template2::instance();
-					return $this->t;
+				case 'l':
+					$this->l =& Language::instance();
+					return $this->l;
 				break;
 
-				case 'api':
-					$this->api = Api::instance();
-					return $this->api;
+				case 'o':
+					$this->o =& Observer::instance();
+					return $this->o;
+				break;
+
+				case 't':
+					$this->t = Template::instance();
+					return $this->t;
 				break;
 
 				default:
@@ -181,12 +158,12 @@
 
 				ob_start();
 ?>
-<<?=$container?> id="<?=$name?>" class="widget standaloneWidget">
-<? if ($this->access->granted('system.editWidgets') && !empty($page)) : ?>
-	<span id="<?=$name?>StandaloneEdit" class="plexusEdit plexusControls"><?=$this->lang->get('Edit')?></span>
+<<?php echo $container; ?> id="<?php echo $name; ?>" class="widget standaloneWidget">
+<?php if ($this->access->granted('system.editWidgets') && !empty($page)) : ?>
+	<span id="<?php echo $name; ?>StandaloneEdit" class="plexusEdit plexusControls"><?php echo §('Edit'); ?></span>
 	<script type="text/javascript">
-		jQuery('#<?=$name?>StandaloneEdit').fancybox({
-			href: root + 'PlexusStandaloneWidget/<?=$name?>/<?=$page?>/<?=$class?>?options=<?=urlencode(json_encode($options))?>',
+		jQuery('#<?php echo $name; ?>StandaloneEdit').fancybox({
+			href: root + 'PlexusStandaloneWidget/<?php echo $name; ?>/<?php echo $page; ?>/<?php echo $class; ?>?options=<?php echo urlencode(json_encode($options)); ?>',
 			autoDimensions: false,
 			centerOnScroll: true,
 			overlayOpacity: 0.5,
@@ -194,7 +171,7 @@
 			transitionIn: 'elastic',
 			transitionOut: 'elastic',
 			onComplete: function() {
-				plxWidgetHtml2AjaxForm(root + 'PlexusStandaloneWidget/<?=$name?>/<?=$page?>/<?=$class?>?options=<?=urlencode(json_encode($options))?>');
+				plxWidgetHtml2AjaxForm(root + 'PlexusStandaloneWidget/<?php echo $name; ?>/<?php echo $page; ?>/<?php echo $class; ?>?options=<?php echo urlencode(json_encode($options)); ?>');
 				jQuery('form.plexusForm button.remove').click(function() {
 					var action = jQuery('form.plexusForm').attr('action') + '&plexusRemove';
 					jQuery('form.plexusForm').attr('action', action);
@@ -202,39 +179,45 @@
 			}
 		});
 	</script>
-<? endif; ?>
-<? if ($widget->getTitle()) : ?>
-		<h1><?=$widget->getTitle()?></h1>
-<? endif; ?>
+<?php endif; ?>
+<?php if ($widget->getTitle()) : ?>
+		<h1><?php echo $widget->getTitle(); ?></h1>
+<?php endif; ?>
 		<div class="wrap">
-<?=$content?>
+<?php echo $content; ?>
 		</div>
-</<?=$container?>>
+</<?php echo $container; ?>>
 <?php
 				return ob_get_clean();
 			}
 		}
 
-		function getRoot($append = '')
-		{
-			return PLX_ROOT.$append;
-		}
-
-		function getConf()
+		static public function &getConf()
 		{
 			if (empty(self::$conf)) {
 				$storage = self::getStorage();
 				@include_once $storage.'config.php';
 				if (empty($conf)) {
-					$conf->system->lang = 'en';
-					$conf->system->theme = 'default';
+					@$conf->system->lang = 'en';
+					@$conf->system->theme = 'default';
+					@$conf->system->timezone = 'GMT';
 					self::$conf = $conf;
 					echo Control::setup($storage);
 					exit;
 				} else {
-					Database::getInstance($conf->database);
-					$conf->system->theme = self::getOption('site.theme');
-					$conf->system->lang = self::getOption('site.language');
+					Database::instance($conf->database);
+					@$conf->system->lang = self::getOption('site.language');
+					if (empty($conf->system->lang)) {
+						@$conf->system->lang = 'en';
+					}
+					@$conf->system->theme = self::getOption('site.theme');
+					if (empty($conf->system->theme)) {
+						@$conf->system->theme = 'default';
+					}
+					@$conf->system->timezone = self::getOption('site.timezone');
+					if (empty($conf->system->timezone)) {
+						@$conf->system->timezone = 'GMT';
+					}
 					self::$conf = $conf;
 				}
 			}
@@ -244,11 +227,12 @@
 			if (empty($args)) {
 				return self::$conf;
 			} else {
-				return eval('return @self::$conf->'.implode('->', $args).';');
+				$conf = eval('return @self::$conf->'.implode('->', $args).';');
+				return $conf;
 			}
 		}
 
-		function getStorage($append = '') // copy changes to plx-resources/plx-cache ! its redundant for performance reasons
+		static public function getStorage($append = '') // copy changes to plx-resources/plx-cache ! its redundant for performance reasons
 		{
 			if (empty(self::$storage)) {
 				self::$storage = PLX_STORAGE;
@@ -287,19 +271,11 @@
 			);
 		}
 
-		function getType($type)
+		function getDataType($type)
 		{
 			if (isset(self::$types[strtoupper($type)])) {
 				return (object) self::$types[strtoupper($type)];
 			}
-		}
-
-		/** @deprecated use getData instead
-		 *
-		 */
-		function type($type, $mixed = null)
-		{
-			return $this->getData($type, $mixed);
 		}
 
 		function getData($type, $mixed = null)
@@ -315,7 +291,7 @@
 				$mixed = $type;
 				$type = $type->type;
 			}
-			$type = self::getType($type);
+			$type = self::getDataType($type);
 			if (!empty($type)) {
 				require_once $type->file;
 				if ($assign) {
@@ -341,9 +317,9 @@
 		function overwriteOption($name, $value = '')
 		{
 			if (empty($value)) {
-				unset(self::$options[$name]);
+				unset(self::$cacheOptions[$name]);
 			} else {
-				self::$options[$name] = $value;
+				self::$cacheOptions[$name] = $value;
 			}
 		}
 
@@ -352,32 +328,27 @@
 			return Database::fetch('SELECT * FROM '.Database::table('options').' WHERE name="'.Database::escape($name).'" && association="'.Database::escape($association).'" && value="'.Database::escape($value).'"');
 		}
 
-		function getOption($name, $association = '', $object = false)
+		static public function getOption($name, $association = '', $object = false)
 		{
-			if (empty($association) && isset(self::$options[$name])) {
-				return self::$options[$name];
+			if (empty($association) && isset(self::$cacheOptions[$name])) {
+				return self::$cacheOptions[$name];
 			}
 			
 			if (is_numeric($name)) {
-				return Database::fetch('SELECT * FROM '.Database::table('options').' WHERE id="'.Database::escape($name).'"');
+				return Database::instance()->get('SELECT * FROM `#_options` WHERE id="'.Database::instance()->escape($name).'"');
 			}
 
 			$sql = 'SELECT * FROM '.Database::table('options').' WHERE name="'.Database::escape($name).'"';
 			if (!empty($association)) {
 				$sql .= ' && association="'.Database::escape($association).'"';
 			}
-			Database::clear($sql);
-			$query = Database::query($sql);
-			$count = Database::count();
-			if ($count > 1) {
-				$options = array();
-				while ($fetch = Database::fetch('', 1)) {
-					$options[] = $fetch;
-				}
-				return self::$options[$name] = $options;
+
+			$get = Database::instance()->get($sql);
+
+			if (count($get) > 1) {
+				return self::$cacheOptions[$name] = $get;
 			} else {
-				$fetch = Database::fetch();
-				if (empty($fetch)) {
+				if (empty($get)) {
 					if ($object === 2) {
 						return array();
 					} else {
@@ -385,10 +356,10 @@
 					}
 				} elseif ($object === 2) {
 					return array($fetch);
-				} elseif (!$object && empty($fetch->association)) {
-					return $fetch->value;
+				} elseif (!$object && empty($get->association)) {
+					return $get->value;
 				} else {
-					return $fetch;
+					return $get;
 				}
 			}
 		}
@@ -396,7 +367,7 @@
 		function setOption($name, $value, $association = '', $multi = FALSE)
 		{
 			if (is_numeric($name)) {
-				Database::query('UPDATE '.Database::table('options').' SET value="'.Database::escape($value).'" WHERE id='.$name);
+				Database::instance()->query('UPDATE `#_options` SET value="'.Database::instance()->escape($value).'" WHERE id='.$name);
 				return $name;
 			}
 			if ($multi) {
@@ -405,10 +376,10 @@
 				$check = Core::getOption($name, $association, true);
 			}
 			if (empty($check)) {
-				Database::query('INSERT INTO '.Database::table('options').' SET name="'.Database::escape($name).'", association="'.Database::escape($association).'", value="'.Database::escape($value).'"');
-				$id = Database::lastId();
+				$q = Database::instance()->query('INSERT INTO '.Database::table('options').' SET name="'.Database::instance()->escape($name).'", association="'.Database::instance()->escape($association).'", value="'.Database::instance()->escape($value).'"');
+				$id = Database::instance()->insert_id;
 			} else {
-				Database::query('UPDATE '.Database::table('options').' SET value="'.Database::escape($value).'" WHERE id='.$check->id);
+				Database::instance()->query('UPDATE '.Database::table('options').' SET value="'.Database::instance()->escape($value).'" WHERE id='.$check->id);
 				$id = $check->id;
 			}
 			return $id;
@@ -417,14 +388,14 @@
 		function delOption($mixed, $value = '', $association = '')
 		{
 			if (is_numeric($mixed)) {
-				return Database::query('DELETE FROM '.Database::table('options').' WHERE id='.$mixed);
+				return Database::instance()->query('DELETE FROM '.Database::table('options').' WHERE id='.$mixed);
 			} else {
 				if (!empty($association) && !empty($value)) {
-					return Database::query('DELETE FROM '.Database::table('options').' WHERE name="'.Database::escape($mixed).'" && value="'.Database::escape($value).'" && association="'.Database::escape($association).'"');
+					return Database::instance()->query('DELETE FROM '.Database::table('options').' WHERE name="'.Database::instance()->escape($mixed).'" && value="'.Database::instance()->escape($value).'" && association="'.Database::instance()->escape($association).'"');
 				} elseif (!empty($association)) {
-					return Database::query('DELETE FROM '.Database::table('options').' WHERE name="'.Database::escape($mixed).'" && association="'.Database::escape($association).'"');
+					return Database::instance()->query('DELETE FROM '.Database::table('options').' WHERE name="'.Database::instance()->escape($mixed).'" && association="'.Database::instance()->escape($association).'"');
 				} else {
-					return Database::query('DELETE FROM '.Database::table('options').' WHERE name="'.Database::escape($mixed).'"');
+					return Database::instance()->query('DELETE FROM '.Database::table('options').' WHERE name="'.Database::instance()->escape($mixed).'"');
 				}
 			}
 		}
@@ -432,7 +403,7 @@
 		function imageScaleLink($src, $width = 468, $height = '', $root = '')
 		{
 			if (empty($root)) {
-				$root = Address::getInstance()->root;
+				$root = Address::instance()->root;
 			}
 			$s = Core::getStorage();
 			$src = str_replace($s, '', $src);

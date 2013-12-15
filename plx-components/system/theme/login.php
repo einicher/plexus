@@ -13,7 +13,7 @@
 	</p>
 	<p class="submit">
 		<button type="submit"><?=§('Login')?></button>
-		<a href="<?=$this->addr->assigned('system.users.password', '', 1)?>"><?=§('Lost my password')?></a>
+		<a href="<?=$this->a->assigned('system.users.password', '', 1)?>"><?=§('Lost my password')?></a>
 	</p>
 	<input type="hidden" name="plexusLogin" value="1" />
 </form>

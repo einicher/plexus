@@ -3,7 +3,7 @@
 	{
 		static $instance;
 
-		function getInstance()
+		static public function &instance()
 		{
 			if (empty(self::$instance)) {
 				self::$instance = new self;
@@ -59,44 +59,44 @@
 
 			if ($dateonly == 1) {
 				if ($stamp >= $ueberMorgen && $stamp < $ueberUeberMorgen) {
-					return Language::get('the day after tomorrow');
+					return §('the day after tomorrow');
 				} elseif ($stamp >= $tomorrow && $stamp < $ueberMorgen) {
-					return Language::get('tomorrow');
+					return §('tomorrow');
 				} elseif ($stamp >= $today && $stamp < $tomorrow) {
-					return Language::get('today');
+					return §('today');
 				} elseif ($stamp >= $yesterday && $stamp < $today) {
-					return Language::get('yesterday');
+					return §('yesterday');
 				} elseif ($stamp >= $vorGestern && $stamp < $yesterday) {
-					return Language::get('two days ago');
-				} else { Language::get('two days ago at').' '.date('H:i', $stamp);
-					$date = date(Language::get('l, F j, Y'), $stamp);
+					return §('two days ago');
+				} else { §('two days ago at').' '.date('H:i', $stamp);
+					$date = date(§('l, F j, Y'), $stamp);
 					if (function_exists('localeDate')) {
 						$date = localeDate($date);
 					}
-					return Language::get('on {{'.$date.'}}');
+					return §('on {{'.$date.'}}');
 				}
 			} else {
 				if ($stamp >= $ueberMorgen && $stamp < $ueberUeberMorgen) {
-					return Language::get('the day after tomorrow at').' '.date('H:i', $stamp);
+					return §('the day after tomorrow at').' '.date('H:i', $stamp);
 				} elseif ($stamp >= $tomorrow && $stamp < $ueberMorgen) {
-					return Language::get('tomorrow at').' '.date('H:i', $stamp);
+					return §('tomorrow at').' '.date('H:i', $stamp);
 				} elseif ($stamp >= $today && $stamp < $tomorrow) {
-					return Language::get('today at').' '.date('H:i', $stamp);
+					return §('today at').' '.date('H:i', $stamp);
 				} elseif ($stamp >= $yesterday && $stamp < $today) {
-					return Language::get('yesterday at').' '.date('H:i', $stamp);
+					return §('yesterday at').' '.date('H:i', $stamp);
 				} elseif ($stamp >= $vorGestern && $stamp < $yesterday) {
-					return Language::get('two days ago at').' '.date('H:i', $stamp);
+					return §('two days ago at').' '.date('H:i', $stamp);
 				} else {
-					$date = date(Language::get('l, F j, Y'), $stamp);
+					$date = date(§('l, F j, Y'), $stamp);
 					if (function_exists('localeDate')) {
 						$date = localeDate($date);
 					}
 					if ($dateonly == 2) {
-						return Language::get('{{'.date(Language::get('m/d/Y'), $stamp).'}}, {{'.date('H:i', $stamp).'}}');
+						return §('{{'.date(§('m/d/Y'), $stamp).'}}, {{'.date('H:i', $stamp).'}}');
 					} elseif ($dateonly == 3) {
-						return Language::get('{{'.$date.'}}, {{'.date('H:i', $stamp).'}}');
+						return §('{{'.$date.'}}, {{'.date('H:i', $stamp).'}}');
 					} else {
-						return Language::get('on {{'.$date.'}} at {{'.date('H:i', $stamp).'}}');
+						return §('on {{'.$date.'}} at {{'.date('H:i', $stamp).'}}');
 					}
 				}
 			}
@@ -140,7 +140,7 @@
 						break;
 					}
 				}
-				return $this->addr->root.implode('', $chunks);
+				return $this->a->root.implode('', $chunks);
 			}
 		}
 
@@ -152,27 +152,30 @@
 
 		function detectProblems($content)
 		{
-			$content = preg_replace('=href\="([^\"]*)"=Ue', '\'href="\'.$this->correctRootPaths(\'\\1\').\'"\'', $content);
-			$content = preg_replace('=src\="([^\"]*)"=Ue', '\'src="\'.$this->correctRootPaths(\'\\1\').\'"\'', $content);
+			return $content;
+			$content = preg_replace_callback('=href\="([^\"]*)"=U', create_function('$m', 'return \'href="\'.$this->correctRootPaths($m[1]).\'"\';'), $content);
+			$content = preg_replace_callback('=src\="([^\"]*)"=U', create_function('$m', 'return \'src="\'.$this->correctRootPaths($m[1]).\'"\';'), $content);
 			return $content;
 		}
 
 		function detectSpecialSyntax($content)
 		{
-			$content = preg_replace('=<div class\="widget\">(.*)</div>=ieU', '$this->replaceWidget(\'\\1\')', $content);
-			$content = preg_replace('=<div class\="video\">(.*)</div>=ieU', '$this->replaceVideo(\'\\1\')', $content);
-			$content = preg_replace('=<div class\="gallery\">(.*)</div>=ieU', '$this->replaceGallery(\'\\1\')', $content);
+			$GLOBALS['tools'] =& $this;
+			$content = preg_replace_callback('=<div class\="widget\">(.*)</div>=iU', create_function('$m', 'return $GLOBALS[\'tools\']->replaceWidget($m[1]);'), $content);
+			//$content = preg_replace_callback('=<div class\="widget\">(.*)</div>=iU', create_function('$m', 'return $this->replaceWidget($m[1]);'), $content);
+			//$content = preg_replace_callback('=<div class\="video\">(.*)</div>=iU', create_function('$m', 'return $this->replaceVideo($m[1]);'), $content);
+			//$content = preg_replace_callback('=<div class\="gallery\">(.*)</div>=iU', create_function('$m', 'return $this->replaceGallery($m[1]);'), $content);
 			$content = str_replace('rel="lightbox[pageContent]"', 'rel="lightboxPageContent"', $content);
 			
 			$content = $this->detectProblems($content);
 			
-			$content = preg_replace('=\[\[([^|[]*)\|([^]]*)\]\]=Ue', '\'<a href="\'.self::detectLink(\'\\1\').\'">\\2</a>\'', $content);
-			$content = preg_replace('=\[\[(.*)\]\]=Ue', '\'<a href="\'.self::detectLink(\'\\1\').\'">\\1</a>\'', $content);
+			//$content = preg_replace('=\[\[([^|[]*)\|([^]]*)\]\]=Ue', '\'<a href="\'.self::detectLink(\'\\1\').\'">\\2</a>\'', $content);
+			//$content = preg_replace('=\[\[(.*)\]\]=Ue', '\'<a href="\'.self::detectLink(\'\\1\').\'">\\1</a>\'', $content);
 
-			$content = preg_replace('=<a([^\>]*)>=ieU', '\'<a\'.$this->detectLinkTarget(\'\\1\').\'>\'', $content);
+			//$content = preg_replace('=<a([^\>]*)>=ieU', '\'<a\'.$this->detectLinkTarget(\'\\1\').\'>\'', $content);
 			
-			$content = $this->detectStoragePaths($content);
-			$content = preg_replace('=href\="plx-file://(.*)"=ieU', '\'href="\'.$this->plexusFile(\'\\1\').\'"\'', $content);
+			//$content = $this->detectStoragePaths($content);
+			//$content = preg_replace('=href\="plx-file://(.*)"=ieU', '\'href="\'.$this->plexusFile(\'\\1\').\'"\'', $content);
 
 			return $content;
 		}
@@ -186,16 +189,18 @@
 			$content = $this->detectProblems($content);
 			
 			$content = preg_replace('=\[\[([^|[]*)\|([^]]*)\]\]=U', '\\2', $content);
-			$content = preg_replace('=\[\[(.*)\]\]=Ue', '\\1', $content);
+			$content = preg_replace('=\[\[(.*)\]\]=U', '\\1', $content);
 
 			$content = $this->detectStoragePaths($content);
-			$content = preg_replace('=href\="plx-file://(.*)"=ieU', '\'href="\'.$this->plexusFile(\'\\1\').\'"\'', $content);
+			$GOLBALS['tools'] = &$this;
+			$content = preg_replace_callback('=href\="plx-file://(.*)"=iU', create_function('$m', ' return \'href="\'.$GOLBALS[\'tools\']->plexusFile(\'$m[1]\').\'"\';'), $content);
 
 			return $content;
 		}
 
 		function detectStoragePaths($text)
 		{
+			return $text;
 			$text = preg_replace('=src\="plx-storage://(.*)"=ieU', '\'src="\'.$this->overwriteCacheParams(\'\\1\').\'"\'', $text);
 			$text = preg_replace('=href\="plx-storage://(.*)"=ieU', '\'href="\'.$this->overwriteCacheParams(\'\\1\', 1).\'"\'', $text);
 			return $text;
@@ -203,7 +208,7 @@
 
 		function plexusFile($file)
 		{
-			return $this->addr->getRoot('plx-file/'.$file);
+			return $this->a->getRoot('plx-file/'.$file);
 		}
 
 		function overwriteCacheParams($path, $mode = 0)
@@ -215,24 +220,24 @@
 			} else {
 				$query = '?w='.$this->getOption('content.width');
 			}
-			return $this->addr->getRoot('plx-cache/').$path.$query;
+			return $this->a->getRoot('plx-cache/').$path.$query;
 		}
 
 		function detectLink($link)
 		{
 			if (substr($link, 0, 1) == '/') {
-				return $this->addr->getRoot(substr($link, 1));
+				return $this->a->getRoot(substr($link, 1));
 			} elseif (strpos($link, '://') !== FALSE) {
 				return $link;
 			} else {
-				return $this->addr->current($this->addr->transform($link));
+				return $this->a->current($this->a->transform($link));
 			}
 		}
 
 		function detectLinkTarget($a)
 		{
 			$a = stripcslashes($a);
-			$home = substr($this->addr->getHome(), 0, -1);
+			$home = substr($this->a->getHome(), 0, -1);
 			$count = strlen($home);
 
 			if (preg_match('=href\="([^\"]*)"=iU', $a, $r)) {
@@ -286,10 +291,10 @@
 				if ($video->type == 'VIDEO') {
 					return '<div class="video">'.Video::detectAndFit($video->code).'</div>';
 				} else {
-					return Language::get('Data #{{'.$id.'}} is not a video.');
+					return §('Data #{{'.$id.'}} is not a video.');
 				}
 			}
-			return $this->lang->get('Video content needs to be the id of a video data type.');
+			return §('Video content needs to be the id of a video data type.');
 		}
 
 		function replaceGallery($id)
@@ -299,10 +304,10 @@
 				if ($gallery->type == 'GALLERY') {
 					return '<div class="gallery thumbs">'.$gallery->listThumbs().'</div>';
 				} else {
-					return Language::get('Data #{{'.$id.'}} is not a gallery.');
+					return §('Data #{{'.$id.'}} is not a gallery.');
 				}
 			}
-			return $this->lang->get('Video content needs to be the id of a video data type.');
+			return §('Video content needs to be the id of a video data type.');
 		}
 
 		function detectTags($tags, $raw = FALSE)
@@ -311,42 +316,42 @@
 				$path = $raw;
 				$raw = FALSE;
 			} else {
-				$path = $this->addr->assigned('system.tags', '', 1);
+				$path = $this->a->assigned('system.tags', '', 1);
 			}
 			$tags = preg_split('=,=', $tags, -1, PREG_SPLIT_NO_EMPTY);
 			$tagCount = count($tags);
-			$collect = '';
+			$collect = array();
 			$i = 0;
 			foreach ($tags as $tag) {
 				$i++;
+				$separator = false;
 				$tag = trim($tag);
 				if ($i < $tagCount) {
-					$this->tpl->cut('result.php', 'tagSeparator');
+					$separator = true;
 				}
-				$collect .= $this->tpl->repeat('result.php', 'tag', array('tag' => (object) array(
+				$collect[] = (object) array(
 					'name' => $tag,
-					'link' => $path.'/'.str_replace(' ', '+', $tag)
-				)));
-				$this->tpl->set('result.php', 'tagSeparator');
+					'link' => $path.'/'.str_replace(' ', '+', $tag),
+					'separator' => $separator
+				);
 			}
-
 			if ($raw) {
 				$tags = $collect;
 			}
 			if (!empty($collect)) {
-				$tags = $this->tpl->cut('result.php', 'tags');
+				$tags = $this->t->get('tags.php', array(
+					'tags' => $collect
+				));
 			}
-			$this->tpl->set('result.php', 'tag');
-			$this->tpl->set('result.php', 'tags');
 			if (!empty($tags)) {
 				return $tags;
 			}
 		}
 
-		function suggestTags($count = 20)
+		static public function suggestTags($count = 20)
 		{
 			$tags = array();
-			$results = $this->d->get('SELECT p.value FROM #_index i, #_properties p WHERE p.name="tags" && p.parent=i.id && i.status>0 && i.published<'.time(), array(
+			$results = Database::instance()->get('SELECT p.value FROM #_index i, #_properties p WHERE p.name="tags" && p.parent=i.id && i.status>0 && i.published<'.time(), array(
 				'force_array' => true
 			));
 			if ($results) {
@@ -405,11 +410,11 @@
 
 				$collect = '';
 				if ($current > 1) {
-					$link = str_replace('//', '/', $this->addr->current(array(-1, $current-1)));
+					$link = str_replace('//', '/', $this->a->current(array(-1, $current-1)));
 					if ($current-1 == 1) {
-						$link = $this->addr->current(-1);
+						$link = $this->a->current(-1);
 					}
-					$collect .= '<a href="'.$link.'">'.$this->lang->get('« Newer').'</a> ';
+					$collect .= '<a href="'.$link.'">'.§('« Newer').'</a> ';
 				}
 
 				for ($i=1; $i<=$pages; $i++) {
@@ -417,15 +422,15 @@
 						if ($i == $start && $preBreak == TRUE) {
 							$collect .= ' .. ';
 						}
-						$link = str_replace('//', '/', $this->addr->current(array(-1, $i)));
+						$link = str_replace('//', '/', $this->a->current(array(-1, $i)));
 						if ($i == 1) {
-							$link = str_replace('//', '/', $this->addr->current(-1));
+							$link = str_replace('//', '/', $this->a->current(-1));
 						}
 						if ($current == 1) {
-							$link = str_replace('//', '/', $this->addr->current($i, 1));
+							$link = str_replace('//', '/', $this->a->current($i, 1));
 						}
 						if ($i == 1 && $current == 1) {
-							$link = str_replace('//', '/', $this->addr->current());
+							$link = str_replace('//', '/', $this->a->current());
 						}
 
 						if ($i == $current) {
@@ -441,11 +446,11 @@
 				}
 
 				if ($current < $pages) {
-					$link = str_replace('//', '/', $this->addr->current(array(-1, $current+1)));
+					$link = str_replace('//', '/', $this->a->current(array(-1, $current+1)));
 					if ($current == 1) {
-						$link = str_replace('//', '/', $this->addr->current($current+1, 1));
+						$link = str_replace('//', '/', $this->a->current($current+1, 1));
 					}
-					$collect .= '<a href="'.$link.'">'.$this->lang->get('Older »').'</a> ';
+					$collect .= '<a href="'.$link.'">'.§('Older »').'</a> ';
 				}
 
 				return '<div class="plxPagination '.$id.'">'.$collect.'</div>';

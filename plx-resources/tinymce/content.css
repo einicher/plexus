@@ -39,6 +39,7 @@ code { color: #00B; }
     padding: 1em;
     text-align: center;
     margin: 0 0 1em 0;
+	cursor: pointer;
 }
 
 .plxEditorVideoSymbol {
@@ -71,6 +72,7 @@ code { color: #00B; }
 	height: 22px;
 	margin-right: 5px;
 	float: left;
+	cursor: pointer;
 }
 
 .plxEditorRemove, .plxEditorRemovePrompt {
@@ -81,6 +83,7 @@ code { color: #00B; }
 	height: 22px;
 	margin-right: 5px;
 	float: right;
+	cursor: pointer;
 }
 
 .alignLeft { text-align: left; }

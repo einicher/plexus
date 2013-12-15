@@ -8,11 +8,11 @@
 			$this->resource('swfupload');
 
 			$this->add('string', 'title', FALSE, array(
-				'label' => $this->lang->get('Title'),
+				'label' => §('Title'),
 				'transformToAddress' => 1
 			));
 			$this->add('wysiwyg', 'description', FALSE, array(
-				'label' => $this->lang->get('Description'),
+				'label' => §('Description'),
 				'rows' => 5
 			));
 			$this->add('custom', 'images', FALSE, array(
@@ -21,15 +21,15 @@
 				'type' => 'string'
 			));
 			$this->add('string', 'tags', FALSE, array(
-				'label' => $this->lang->get('Tags'),
-				'caption' => $this->lang->get('Separate with commas')
+				'label' => §('Tags'),
+				'caption' => §('Separate with commas')
 			));
 			$this->add('datetime', 'published', TRUE, array(
-				'label' => $this->lang->get('Published'),
-				'caption' => $this->lang->get('May be in the future.')
+				'label' => §('Published'),
+				'caption' => §('May be in the future.')
 			));
 			$this->add('status', 'status', TRUE, array(
-				'label' => $this->lang->get('Status')
+				'label' => §('Status')
 			));
 		
 		}
@@ -50,13 +50,14 @@
 		{
 			$i = 0;
 			$l = 0;
+			$thumbs = array();
 			foreach ($this->images as $img) {
 				$i++;
 				$l++;
 				$img = $this->getData('IMAGE', $img);
 				$img->enlarge = $this->imageScaleLink($img->src, $this->getOption('content.fullsize'));
 				$img->class = 'thumb'.$i;
-				$this->tpl->repeat('view-gallery.php', 'img', array('img' => $img));
+				$thumbs[] = $img;
 				if ($i == 5) {
 					$i = 0;
 				}
@@ -64,7 +65,7 @@
 					break;
 				}
 			}
-			return $this->tpl->cut('view-gallery.php', 'thumbs');
+			return $thumbs;
 		}
 
 		function getDescription()
@@ -74,10 +75,10 @@
 
 		function getContent()
 		{
-			$this->listThumbs();
-			$c = $this->tpl->get('view-gallery.php', array('gallery' => $this));
-        	$this->tpl->set('view-image.php');
-			return $c;
+			return $this->t->get('view-gallery.php', array(
+				'gallery' => $this,
+				'thumbs' => $this->listThumbs()
+			));
 		}
 
 		function listResultThumbs($limit = -1)
@@ -85,7 +86,7 @@
 			$i = 0;
 			$collect = '';
 			foreach ($this->images as $thumb) {
-				$thumb = $this->type('IMAGE', $thumb);
+				$thumb = $this->getData('IMAGE', $thumb);
 				$width = $this->getOption('content.width');
 				$width -= 5*$limit;
 				$width = ceil($width/$limit);
@@ -106,11 +107,12 @@
 				if (!empty($this->images)) {
 					$i = 0;
 					$this->excerpt = $this->listResultThumbs(5);
+					$this->excerptLength = -1;
 				}
 			} else {
 				if (!empty($this->images)) {
 					foreach ($this->images as $thumb) {
-						$thumb = $this->type('IMAGE', $thumb);
+						$thumb = $this->getData('IMAGE', $thumb);
 						if (!empty($thumb->id)) {
 							break;
 						}
@@ -123,7 +125,7 @@
 				$this->excerpt = $this->tools->cutByWords(strip_tags($this->tools->detectSpecialSyntax($this->description)), $this->excerptLength);
 			}
 			$this->footer = 1;
-			return Template::get2(array('result-single.php', 'system'), array('result' => $this));
+			return $this->t->get('result-single.php', array('result' => $this));
 		}
 
 		function multiUploadThumb($imgID, &$actor, $prefix = '')
@@ -146,7 +148,7 @@
 			ob_start();
 ?>
 <div id="customMultiUpload" class="formField">
-	<legend for="images"><?=$this->lang->get('Gallery Images')?></legend>
+	<legend for="images"><?=§('Gallery Images')?></legend>
 	<div class="galleryImages">
 		<ul id="galleryImagesSortable" style="width: 505px; list-style-type: none; margin: 0; padding: 0;">
 <?php
@@ -168,8 +170,8 @@
 
 	<div id="galleryImagesAdd" class="plxUiTabs">
 		<ul>
-			<li><a href="#galleryImagesUpload"><?=$this->lang->get('Upload Images')?></a></li>
-			<li><a href="#galleryImagesExisting"><?=$this->lang->get('Add Existing Images')?></a></li>
+			<li><a href="#galleryImagesUpload"><?=§('Upload Images')?></a></li>
+			<li><a href="#galleryImagesExisting"><?=§('Add Existing Images')?></a></li>
 		</ul>
 		<div id="galleryImagesUpload" class="multiUpload" style="padding: 10px;">
 			<style class="text/css">
@@ -194,12 +196,12 @@
 				a.progressCancel:hover { background-position: 0px 0px; }
 			</style>
 			<div class="fieldset flash" id="fsUploadProgress">
-				<span class="legend"><?=$this->lang->get('Multi Upload Query')?></span>
+				<span class="legend"><?=§('Multi Upload Query')?></span>
 			</div>
 			<div id="divStatus">0 Files Uploaded</div>
 			<div style="margin: 0.5em 0 0 0;">
 				<span id="spanButtonPlaceHolder"></span>
-				<button id="btnCancel" type="button" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px; vertical-align: top;"><?=$this->lang->get('Cancel All Uploads')?></button>
+				<button id="btnCancel" type="button" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px; vertical-align: top;"><?=§('Cancel All Uploads')?></button>
 			</div>
 		</div>
 <?php
@@ -236,10 +238,10 @@
 			
 					// Button settings
 					button_image_url: '',
-					<?=$this->lang->get('button_width: 140')?>,
+					<?=§('button_width: 140')?>,
 					button_height: 29,
 					button_placeholder_id: "spanButtonPlaceHolder",
-					button_text: '<span class="theFont"><?=$this->lang->get('Select images')?></span>',
+					button_text: '<span class="theFont"><?=§('Select images')?></span>',
 					button_text_style: ".theFont { font-weight: bold; font-family: Verdana, sans-serif, sans-serif; font-size: 14px; }",
 					button_text_left_padding: 12,
 					button_text_top_padding: 3,
@@ -270,7 +272,7 @@
 		$image = $this->type($fetch->type, $fetch);
 		$image->thumb = $this->imageScaleLink($image->src, '100', '100');
 ?>
-		<img src="<?=$image->thumb?>" alt="<?=$this->lang->get('Click to add this image to this gallery')?>" onclick="jQuery('#galleryImagesSortable').append('<?=str_replace("\n", '', htmlspecialchars($this->multiUploadThumb($fetch->id, $this, '')))?>');" />
+		<img src="<?=$image->thumb?>" alt="<?=§('Click to add this image to this gallery')?>" onclick="jQuery('#galleryImagesSortable').append('<?=str_replace("\n", '', htmlspecialchars($this->multiUploadThumb($fetch->id, $this, '')))?>');" />
 <?php
 	}
 ?>

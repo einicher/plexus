@@ -21,45 +21,45 @@
 		function construct()
 		{
 			$this->add('string', 'title', FALSE, array(
-				'label' => $this->lang->get('Title'),
+				'label' => §('Title'),
 				'transformToAddress' => 1
 			));
 			$this->add('wysiwyg', 'content', FALSE, array(
-				'label' => $this->lang->get('Content'),
+				'label' => §('Content'),
 				'multimedia' => TRUE
 			));
 			$this->add('string', 'tags', FALSE, array(
-				'label' => $this->lang->get('Tags'),
-				'caption' => $this->lang->get('Separate with commas'),
+				'label' => §('Tags'),
+				'caption' => §('Separate with commas'),
 				'suggest' => 'Tools::suggestTags()'
 			));
 			$this->add('datetime', 'published', TRUE, array(
-				'label' => $this->lang->get('Published'),
-				'caption' => $this->lang->get('May be in the future.')
+				'label' => §('Published'),
+				'caption' => §('May be in the future.')
 			));
 			$this->add('status', 'status', TRUE, array(
-				'label' => $this->lang->get('Status')
+				'label' => §('Status')
 			));
 		}
 
 		function getTitle()
 		{
-			return $this->observer->notify('page.getTitle', $this->title);
+			return $this->o->notify('page.getTitle', $this->title);
 		}
 
 		function getContent()
 		{
-			return $this->observer->notify('page.getContent', Template::get2('view-page.php', array('page' => $this)));
+			return $this->o->notify('page.getContent', $this->t->get('view-page.php', array('page' => $this)));
 		}
 
 		function getTags()
 		{
-			return $this->observer->notify('page.getTags', $this->tags);
+			return $this->o->notify('page.getTags', $this->tags);
 		}
 
 		function result()
 		{
-			$c = $this->tools->detectSpecialSyntax($this->content);
+			$c = $this->tools->stripSpecialSyntax($this->content); //caution, if special syntax is found here widgets find themselfs => loop
 			$i = $this->tools->detectImage($c);
 			if (!empty($i)) {
 				$this->hasThumb = TRUE;
@@ -67,7 +67,7 @@
 			}
 			$this->excerpt = $this->tools->cutByWords(strip_tags($c), $this->excerptLength);
 			$this->footer = 1;
-			return Template::get2('result-single.php', array('result' => $this));
+			return $this->t->get('result-single.php', array('result' => $this));
 		}
 	}
 ?>

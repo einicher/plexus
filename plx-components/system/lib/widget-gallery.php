@@ -40,7 +40,7 @@
 			), $this->data);
 		}
 
-		function view()
+		function view($type = '')
 		{
 			$gallery = $this->type($this->data->gallery);
 			if (!$gallery) {

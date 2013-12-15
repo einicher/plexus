@@ -29,7 +29,7 @@
 
 			krsort($m['right']);
 
-			return $this->t->get('system', 'panel.php', array(
+			return $this->t->get('panel.php', array(
 				'menu' => $m
 			));
 		}

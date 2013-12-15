@@ -12,7 +12,7 @@
 					'name' => 'title',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Title')
+						'label' => §('Title')
 					) 
 				),
 				array(
@@ -20,8 +20,8 @@
 					'name' => 'limit',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Limit'),
-						'caption' => $this->lang->get('With >30 you can limit to tags bigger than something, = and < work too.'),
+						'label' => §('Limit'),
+						'caption' => §('With >30 you can limit to tags bigger than something, = and < work too.'),
 					) 
 				),
 				array(
@@ -29,10 +29,10 @@
 					'name' => 'sort',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Sort by'),
+						'label' => §('Sort by'),
 						'values' => array(
-							1 => $this->lang->get('Counter'),
-							2 => $this->lang->get('Alphabet')
+							1 => §('Counter'),
+							2 => §('Alphabet')
 						)
 					) 
 				),
@@ -41,10 +41,10 @@
 					'name' => 'showCounts',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Show counts'),
+						'label' => §('Show counts'),
 						'values' => array(
-							1 => $this->lang->get('Yes'),
-							2 => $this->lang->get('No')
+							1 => §('Yes'),
+							2 => §('No')
 						)
 					) 
 				),
@@ -53,10 +53,10 @@
 					'name' => 'display',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Display as'),
+						'label' => §('Display as'),
 						'values' => array(
-							1 => $this->lang->get('Tag Cloud'),
-							2 => $this->lang->get('List')
+							1 => §('Tag Cloud'),
+							2 => §('List')
 						)
 					) 
 				),
@@ -65,8 +65,8 @@
 					'name' => 'disabled',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Disable Tags'),
-						'caption' => $this->lang->get('Separate with commas'),
+						'label' => §('Disable Tags'),
+						'caption' => §('Separate with commas'),
 					) 
 				)
 			);
@@ -87,7 +87,7 @@
 
 		function view($force = FALSE)
 		{
-			if ($this->addr->getLevel(1) == $this->addr->assigned('system.tags') && empty($this->addr->levels[2])) {
+			if ($this->a->getLevel(1) == $this->a->assigned('system.tags') && empty($this->a->levels[2])) {
 				if ($force) {
 					$this->data->limit = -1;
 				} else {
@@ -144,16 +144,16 @@
 
 				$tags[] = (object) array(
 					'name' => $tag,
-					'href' => $this->addr->assigned('system.tags').'/'.$tag,
+					'href' => $this->a->assigned('system.tags').'/'.$tag,
 					'class' => 'tag'.$fontSize,
 					'count' => $count
 				);
 			}
 
 			if ($this->data->display == 1) {
-				return Template::get2('widget-tag-cloud.php', array('tags' => $tags, 'showCounts' => $this->data->showCounts == 2 ? 0 : 1));
+				return $this->t->get('widget-tag-cloud.php', array('tags' => $tags, 'showCounts' => $this->data->showCounts == 2 ? 0 : 1));
 			} else {
-				return Template::get2('widget-tag-cloud-list.php', array('tags' => $tags, 'showCounts' => $this->data->showCounts == 2 ? 0 : 1));
+				return $this->t->get('widget-tag-cloud-list.php', array('tags' => $tags, 'showCounts' => $this->data->showCounts == 2 ? 0 : 1));
 			}
 		}
 

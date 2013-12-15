@@ -5,7 +5,7 @@
 		static $user;
 		static $rights = array();
 
-		static function getInstance()
+		static public function &instance()
 		{
 			if (empty(self::$instance)) {
 				self::$instance = new self;
@@ -15,12 +15,12 @@
 
 		function showLogin()
 		{
-			return new Page($this->lang->get('Login'), $this->getLoginDialog());
+			return new Page(§('Login'), $this->getLoginDialog());
 		}
 
 		function getLoginDialog()
 		{
-			return $this->tpl->get('login.php');
+			return $this->t->get('login.php');
 		}
 
 		function login($login, $password = '', $remember = '', $redirect = TRUE, $encrypted = FALSE)
@@ -28,19 +28,19 @@
 			$error = FALSE;
 			
 			if (is_numeric($login)) {
-				$check = $this->db->fetch('SELECT id FROM '.$this->db->table('index').' WHERE id="'.$this->db->escape($login).'" AND type="USER"');
+				$check = $this->d->get('SELECT id FROM `#_index` WHERE id="'.$this->d->escape($login).'" AND type="USER"');
 			} elseif(is_object($login)) {
 				$user = $login;
 				$check = TRUE;
 				$encrypted = TRUE;
 				$password = $user->password;
 			} else {
-				$check = $this->db->fetch('
-					SELECT parent id FROM '.$this->db->table('properties').' WHERE parent IN (
-						SELECT id FROM '.$this->db->table('index').' WHERE type="USER"
+				$check = $this->d->get('
+					SELECT parent id FROM `#_properties` WHERE parent IN (
+						SELECT id FROM `#_index` WHERE type="USER"
 					) AND (
-						(name="email" AND value="'.$this->db->escape($login).'")
-						OR (name="name" AND value="'.$this->db->escape($login).'")
+						(name="email" AND value="'.$this->d->escape($login).'")
+						OR (name="name" AND value="'.$this->d->escape($login).'")
 					)
 				');
 			}
@@ -81,7 +81,7 @@
 					Access::$user = $user;
 
 					if ($redirect) {
-						header('Location:'.$this->addr->current(1));
+						header('Location:'.$this->a->current(1));
 						exit;
 					} else {
 						return TRUE;
@@ -92,7 +92,7 @@
 			}
 
 			if ($error) {
-				$this->error($this->lang->get('Access denied. Wrong password or Name/ID/Email.'));
+				$this->error(§('Access denied. Wrong password or Name/ID/Email.'));
 			}
 			return FALSE;
 		}
@@ -104,7 +104,7 @@
 			setcookie('user[pw]', '', time()-86401, '/');
 			unset($_COOKIE['user']);
 			if ($redirect) {
-				header('Location: '.$this->addr->current(-1));
+				header('Location: '.$this->a->current(-1));
 			}
 		}
 
@@ -193,29 +193,29 @@
 			ob_start();
 ?>
 <div class="plxRightsDialog">
-	<strong><?=$this->lang->get('Rights')?></strong><br />
+	<strong><?php echo §('Rights')?></strong><br />
 	<div class="plxRightsDialogContainer">
 	<? foreach (self::$rights as $component => $rights) : ?>
 		<dl class="plxRightsDialogComponent">
-			<dt><?=$component?></dt>
+			<dt><?php echo $component?></dt>
 			<dd>
 				<? foreach ($rights as $right => $label) :
 					if (is_array($label)) :
 						echo $label[0]->$label[1]($right, $field);
 					else :
 				?>
-				<input type="checkbox" id="rights-<?=$right?>" name="rights[]" value="<?=$right?>" <?= @in_array($right, $field->value) ? ' checked="checked"' : '' ?>/>
-				<label for="rights-<?=$right?>"><?=$this->lang->get($label)?></label><br />
+				<input type="checkbox" id="rights-<?php echo $right?>" name="rights[]" value="<?php echo $right?>" <?php echo  @in_array($right, $field->value) ? ' checked="checked"' : '' ?>/>
+				<label for="rights-<?php echo $right?>"><?php echo §($label)?></label><br />
 				<? endif; endforeach; ?>
 			</dd>
 		</dl>
 		<? if ($component == 'system') : ?>
 			<dl class="plxRightsDialogComponent">
-				<dt><?=$this->lang->get('Data type access')?></dt>
+				<dt><?php echo §('Data type access')?></dt>
 				<dd>
 					<? foreach (Core::$types as $name => $type) : $right = 'system.data.'.strtolower($name); ?>
-					<input type="checkbox" id="rights-<?=$right?>" name="rights[]" value="<?=$right?>" <?= @in_array($right, $field->value) ? ' checked="checked"' : '' ?>/>
-					<label for="rights-<?=$right?>"><?=$this->lang->get($type['label'])?></label><br />
+					<input type="checkbox" id="rights-<?php echo $right?>" name="rights[]" value="<?php echo $right?>" <?php echo  @in_array($right, $field->value) ? ' checked="checked"' : '' ?>/>
+					<label for="rights-<?php echo $right?>"><?php echo §($type['label'])?></label><br />
 					<? endforeach; ?>
 				</dd>
 			</dl>
@@ -234,12 +234,12 @@
 			ob_start();
 ?>
 <div class="plxGroupsDialog">
-	<strong><?=$this->lang->get('Groups')?></strong> (<?=$this->lang->get('Group rights will be inherited to this user')?>)
+	<strong><?php echo §('Groups')?></strong> (<?php echo §('Group rights will be inherited to this user')?>)
 	<div class="plxRightsDialogContainer">
-			<input type="checkbox" id="group--1" name="groups[]" value="-1" <?= in_array(-1, $field->value) ? 'checked="checked"' : '' ?>/> <label for="group--1"><?=$this->lang->get('Overloards')?> <span class="description">(<?=$this->lang->get('All time full access, no matter what')?>)</span></label><br />
-<? while ($fetch = $this->db->fetch('SELECT * FROM '.$this->db->table('index').' WHERE type="GROUP"', 1)) :
+			<input type="checkbox" id="group--1" name="groups[]" value="-1" <?php echo  in_array(-1, $field->value) ? 'checked="checked"' : '' ?>/> <label for="group--1"><?php echo §('Overloards')?> <span class="description">(<?php echo §('All time full access, no matter what')?>)</span></label><br />
+<? while ($fetch = $this->d->get('SELECT * FROM `#_index` WHERE type="GROUP"', true)) :
 		$group = $this->type($fetch); ?>
-			<input type="checkbox" id="group-<?=$group->id?>" name="groups[]" value="<?=$group->id?>" <?= in_array($group->id, $field->value) ? 'checked="checked"' : '' ?>/> <label for="group-<?=$group->id?>"><?=$group->name?><? if (!empty($group->description)) : ?> (<span class="description" title="<?=strip_tags($group->description)?>"><?=$this->tools->cutByWords(strip_tags($group->description), 7)?></span>)<? endif; ?></label><br />
+			<input type="checkbox" id="group-<?php echo $group->id?>" name="groups[]" value="<?php echo $group->id?>" <?php echo  in_array($group->id, $field->value) ? 'checked="checked"' : '' ?>/> <label for="group-<?php echo $group->id?>"><?php echo $group->name?><? if (!empty($group->description)) : ?> (<span class="description" title="<?php echo strip_tags($group->description)?>"><?php echo $this->tools->cutByWords(strip_tags($group->description), 7)?></span>)<? endif; ?></label><br />
 <? endwhile; ?>
 			<div class="clear"></div>
 	</div>

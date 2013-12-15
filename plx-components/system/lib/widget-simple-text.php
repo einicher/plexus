@@ -14,7 +14,7 @@
 					'name' => 'title',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Title')
+						'label' => §('Title')
 					) 
 				),
 				array(
@@ -22,7 +22,7 @@
 					'name' => 'text',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Text'),
+						'label' => §('Text'),
 						'rows' => 12,
 						'mode' => 'simple'
 					) 
@@ -35,7 +35,7 @@
 			return $this->data->title;
 		}
 
-		function view()
+		function view($type = '')
 		{
 			return $this->tools->detectSpecialSyntax($this->data->text);
 		}

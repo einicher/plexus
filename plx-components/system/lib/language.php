@@ -8,7 +8,7 @@
 		static $lang;
 		static $global = array();
 
-		static function getInstance()
+		static public function &instance()
 		{
 			if (empty(self::$instance)) {
 				self::$instance = new self;
@@ -18,7 +18,7 @@
 
 		function __construct()
 		{
-			$this->tpl->includeFromThemeRoot('lang.php');
+			$this->t->locateFile('lang.php');
 		}
 
 		function get($text)
@@ -102,8 +102,8 @@
 		function replaceVariables($text, $replace)
 		{
 			if (preg_match_all('={{(.*)}}=isU', $text, $results)) {
-				$i=0;
-				$text = preg_replace('={{}}=ieU', '\'{{\'.$i++.\'}}\'', $replace);
+				$GLOBALS['i'] = 0;
+				$text = preg_replace_callback('={{}}=iU', create_function('', 'return \'{{\'.$GLOBALS[\'i\']++.\'}}\';'), $replace);
 				foreach ($results[1] as $key => $value) {
 					$text = str_replace('{{'.$key.'}}', $value, $text);
 				}

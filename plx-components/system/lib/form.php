@@ -29,7 +29,7 @@
 						'name' => 'exclude',
 						'required' => FALSE,
 						'options' => array(
-							'label' => $this->lang->get('Disable Widget on this page')
+							'label' => §('Disable Widget on this page')
 						)
 					);
 					$fields[] = array(
@@ -37,7 +37,7 @@
 						'name' => 'order',
 						'required' => TRUE,
 						'options' => array(
-							'label' => $this->lang->get('Order')
+							'label' => §('Order')
 						)
 					);
 				}
@@ -47,8 +47,8 @@
 					'name' => 'parent',
 					'required' => TRUE,
 					'options' => array(
-						'label' => $this->lang->get('Parent'),
-						'caption' => $this->lang->get('Change this to the id of another object to move it hierarchical below.'),
+						'label' => §('Parent'),
+						'caption' => §('Change this to the id of another object to move it hierarchical below.'),
 						'advanced' => TRUE
 					)
 				);
@@ -57,8 +57,8 @@
 					'name' => 'type',
 					'required' => TRUE,
 					'options' => array(
-						'label' => $this->lang->get('Type'),
-						'caption' => $this->lang->get('Changing this may cause loss of data.'),
+						'label' => §('Type'),
+						'caption' => §('Changing this may cause loss of data.'),
 						'advanced' => TRUE
 					)
 				);
@@ -67,7 +67,7 @@
 					'name' => 'address',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Address'),
+						'label' => §('Address'),
 						'advanced' => TRUE
 					)
 				);
@@ -76,7 +76,7 @@
 					'name' => 'language',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Language'),
+						'label' => §('Language'),
 						'advanced' => TRUE
 					)
 				);
@@ -85,7 +85,7 @@
 					'name' => 'translation',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Translation of'),
+						'label' => §('Translation of'),
 						'advanced' => TRUE
 					)
 				);
@@ -94,7 +94,7 @@
 					'name' => 'trackbacks',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Trackbacks'),
+						'label' => §('Trackbacks'),
 						'advanced' => true,
 						'call' => 'trackbacks',
 						'actor' => &$this 
@@ -138,7 +138,7 @@
 			}
 
 			if (empty($this->action)) {
-				$action = $this->addr->current();
+				$action = $this->a->current();
 			} else {
 				$action = $this->action;
 			}
@@ -149,14 +149,14 @@
 			}
 			unset($this->fields['advancedOff']);
 
-			$saveButtonLabel = $this->lang->get('Save');
+			$saveButtonLabel = §('Save');
 			if (!empty($this->fields['saveButtonLabel'])) {
 				$saveButtonLabel = $this->fields['saveButtonLabel'];
 			}
 			unset($this->fields['saveButtonLabel']);
 
 
-			$this->fields = $this->observer->notify('system.form.addField', $this->fields);
+			$this->fields = $this->o->notify('system.form.addField', $this->fields);
 //echo µ($this->values);
 			foreach ($this->fields as $field) {
 				if (isset($field['required']) && $field['required'] === -1 || (!empty($field['hide']))) {
@@ -213,21 +213,21 @@
 					break;
 
 					case 'date':
-						$field->format = $this->lang->get('Y-m-d');
+						$field->format = §('Y-m-d');
 						$field->datetype = 'date';
 						$field->datetype = 'string';
-						$this->tpl->cut('form.php', 'datepicker', array('field' => $field));
+						$this->t->cut('form.php', 'datepicker', array('field' => $field));
 					break;
 
 					case 'time':
-						$field->format = $this->lang->get('H:i');
+						$field->format = §('H:i');
 						$field->type = 'date';
 						$field->datetype = 'time';
 						$field->datetype = 'string';
 					break;
 
 					case 'datetime':
-						$field->format = $this->lang->get('Y-m-d H:i');
+						$field->format = §('Y-m-d H:i');
 						$field->type = 'date';
 						$field->datetype = 'datetime';
 						$field->datetype = 'string';
@@ -237,12 +237,13 @@
 						$attributes['enctype'] = 'multipart/form-data';
 						$ext = explode('.', $field->value);
 						$ext = array_pop($ext);
+						$field->isImage = false;
 						if (in_array($ext, array('jpg', 'jpeg', 'pjpeg', 'png', 'gif'))) {
 							$field->originalSrc = $this->getStorage($field->options->target).'/'.$field->value;
 							$field->enlargedSrc = $this->imageScaleLink($field->originalSrc, $this->getOption('content.fullsize'));
 							$field->src = $this->imageScaleLink($field->originalSrc, $this->getOption('content.width'));
-							$this->tpl->cut('form.php', 'imageFile', array('image' => $field));
 							$field->isImage = true;
+							$field->image = $field;
 						}
 						$field->id = $this->values->id;
 					break;
@@ -262,7 +263,7 @@
 								'value' => $option,
 								'label' => $value
 							);
-							$this->tpl->repeat('form.php', 'selectOption', array(
+							$this->t->repeat('form.php', 'selectOption', array(
 								'option' => $option,
 								'field' => $field
 							));
@@ -274,19 +275,19 @@
 					case 'widget':
 						if ($field->type == 'status') {
 							$field->options->values = array(
-								'0' => $this->lang->get('Draft'),
-								'1' => $this->lang->get('Published'),
-								'2' => $this->lang->get('Published hidden')
+								'0' => §('Draft'),
+								'1' => §('Published'),
+								'2' => §('Published hidden')
 							);
 							$field->type = 'radio';
 						}
 						if ($field->type == 'widget') {
 							$field->options->values = array(
-								'-55' => $this->lang->get('Show widget on every page'),
-								'-66' => $this->lang->get('Only show widget on this page'),
-								'-77' => $this->lang->get('Show widget on this page, and all its subpages')
+								'-55' => §('Show widget on every page'),
+								'-66' => §('Only show widget on this page'),
+								'-77' => §('Show widget on this page, and all its subpages')
 							);
-							$fieds->name = 'status';
+							$field->name = 'status';
 							$field->type = 'radio';
 						}
 
@@ -298,10 +299,7 @@
 								'label' => $value,
 								'count' => $count
 							);
-							$this->tpl->repeat('form.php', 'radioOption', array(
-								'option' => $option,
-								'field' => $field
-							));
+							$field->options->options[] = $option;
 						}
 					break;
 
@@ -310,7 +308,6 @@
 
 					case 'custom':
 						if (isset($field->options->actor) && isset($field->options->call)) {
-							//echo µ($field);
 							$custom = $field->options->actor->{$field->options->call}($action, $attributes, $field, $this->fields);
 
 							if (!empty($field->options->checks)) {
@@ -326,13 +323,8 @@
 					break;
 				}
 
-				$caption = '';
-				if (isset($field->options->caption)) {
-					$caption = Template::cut('form.php', 'caption', array('caption' => $field->options->caption));
-				}
-
 				if (isset($field->options->suggest)) {
-					$sug = '<div class="suggestions"><strong>'.$this->lang->get('Suggestions').':</strong> ';
+					$sug = '<div class="suggestions"><strong>'.§('Suggestions').':</strong> ';
 					if (is_string($field->options->suggest)) {
 						eval('$field->options->suggest = '.$field->options->suggest.';');
 					}
@@ -375,27 +367,32 @@
 </div>
 <?php
 					$sug .= ob_get_clean();
-					Template::set('form.php', 'caption', $sug.$caption);
 				}
+
 				if (isset($field->options->label)) {
 					if ($field->required) {
 						$field->options->label .= '*';
 					}
-					Template::cut('form.php', $field->type.'Label', array('field' => $field));
 				}
 
-				if (!empty($field->options->checks)) {
-					$checks .= Template::cut('form.php', $field->type, array('field' => $field));
-				} elseif (!empty($field->options->advanced)) {
-					$advanced .= Template::cut('form.php', $field->type, array('field' => $field));
-				} else {
-					$form .= Template::cut('form.php', $field->type, array('field' => $field));
+				if ($field->type != 'custom') {
+					if (!empty($field->options->checks)) {
+						$checks .= Template::instance()->get('form-'.$field->type.'.php', array(
+							'field' => $field,
+							'caption' => @$field->options->caption
+						));
+					} elseif (!empty($field->options->advanced)) {
+						$advanced .= Template::instance()->get('form-'.$field->type.'.php', array(
+							'field' => $field,
+							'caption' => @$field->options->caption
+						));
+					} else {
+						$form .= Template::instance()->get('form-'.$field->type.'.php', array(
+							'field' => $field,
+							'caption' => @$field->options->caption
+						));
+					}
 				}
-				Template::set('form.php', 'label');
-				Template::set('form.php', 'caption');
-				Template::set('form.php', 'selectOption');
-				Template::set('form.php', 'radioOption');
-				Template::set('form.php', 'wysiwygMultimedia');
 			}
 
 			if (!empty($attributes)) {
@@ -410,21 +407,30 @@
 				$attributes = $collect;
 			}
 
+			$showRemoveButton = false;
 			if (!empty($this->values->id) && $this->access->granted('system.delete')) {
-				Template::cut('form.php', 'remove');
+				$showRemoveButton = true;
 			}
+			$showFormAdvancedControls = false;
 			if (!empty($advanced) && !$advancedOff && $this->access->granted('system.edit.advanced')) {
-				Template::cut('form.php', 'formAdvanced', array('advanced' => $advanced));
+				$showFormAdvancedControls = false;
 			}
+			$showChecks = false;
 			if (!empty($checks) && !$checksOff) {
 				Template::cut('form.php', 'formChecks', array('checks' => $checks));
+				$showChecks = true;
 			}
 
-			return Template::cut('form.php', 'form', array(
+			return Template::instance()->get('form.php', array(
 				'form' => $form,
 				'attributes' => $attributes,
 				'action' => $action,
-				'saveButtonLabel' => $saveButtonLabel
+				'saveButtonLabel' => $saveButtonLabel,
+				'showRemoveButton' => $showRemoveButton,
+				'showFormAdvancedControls' => $showFormAdvancedControls,
+				'advanced' => $advanced,
+				'showChecks' => $showChecks,
+				'checks' => $checks
 			));
 		}
 
@@ -432,9 +438,9 @@
 		{
 			$numbers = array('Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelfe', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen');
 			if ($l) {
-				return strtolower($this->lang->get($numbers[$n]));
+				return strtolower(§($numbers[$n]));
 			} else {
-				return $this->lang->get($numbers[$n]);
+				return §($numbers[$n]);
 			}
 		}
 

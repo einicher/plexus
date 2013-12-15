@@ -14,7 +14,7 @@
 		function get()
 		{
 			$this->content = $this->runSetup();
-			return $this->tpl->get('setup.php', array('setup' => $this));
+			return $this->t->get('setup.php', array('setup' => $this));
 		}
 
 		function runSetup()
@@ -49,7 +49,6 @@
 			if (file_exists(Core::getStorage('config.php'))) {
 				$checks .= is_writable(Core::getStorage('config.php')) ? '<li class="green">'.$this->lang->get('Configuration file is writable.').'</li>' : '<li class="red">'.$this->lang->get('Configuration file '.PLX_STORAGE.'config.php ist not writable').'</li>';
 			}
-			$checks .= ini_get('short_open_tag') == 1 ? '<li class="green">'.$this->lang->get('Short open tags (\'&lt;? ?&gt;\') enabled').'</li>' : '<li class="red">'.$this->lang->get('Short open tags are disabled, you need to set php.ini option “short_open_tag = On”.').'</li>';
 			$checks .= @file_get_contents($this->addr->getHome('plxCheckForRewrittenUrls')) == 'TRUE' ? '<li class="green">'.$this->lang->get('Url rewriting is possible.').'</li>' : '<li class="red">'.$this->lang->get('Rwritten URLs are not possible! Maybe mod_rewrite is not enabled?').'</li>';
 			#$checks .=  ? '<li class="green">'.$this->lang->get('').'</div>' : '<li class="red">'.$this->lang->get('').'</div>';
 			return $checks.'</ul>';
@@ -83,14 +82,14 @@
 
 		function checkSite()
 		{
-			return FALSE;
+			return false;
 		}
 
 		function setupDatabase()
 		{
 			$this->title = $this->lang->get('Database Connection');
 			$database = @$this->conf->database;
-			$database->plxSetupDatabase = TRUE;
+			@$database->plxSetupDatabase = true;
 			if (!empty($_POST['plexusForm']) && isset($_POST['plxSetupDatabase'])) {
 				foreach ($_POST as $name => $value) {
 					$database->$name = $value;

@@ -7,7 +7,7 @@
 		function construct()
 		{
 			header('HTTP/1.0 404 Not Found');
-			$this->title = $this->lang->get('Error 404');
+			$this->title = §('Error 404');
 		}
 		
 		function getTitle()
@@ -17,7 +17,14 @@
 		
 		function getContent()
 		{
-			return $this->tpl->get('error404.php');
+			return $this->t->get('error404.php', array(
+				'search' => $this->t->get('search.php', array(
+					'search' => (object) array(
+						'pattern' => '',
+						'action' => $this->a->getRoot($this->a->assigned('system.search'))
+					)
+				))
+			));
 		}
 	}
 ?>

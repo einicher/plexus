@@ -39,7 +39,7 @@
 					return $widget->editWidget();
 				}
 			} else {
-				return $this->lang->get('You do not have the necessary rights to add a new widget.');
+				return §('You do not have the necessary rights to add a new widget.');
 			}
 		}
 
@@ -73,12 +73,12 @@
 				}
 
 				if (!empty($id)) {
-					$this->tpl->cut('form.php', 'remove');
+					$widget->data->id = $id;
 				}
 
 				return $widget->editWidget();
 			} else {
-				return $this->lang->get('You do not have the necessary rights to edit widgets.');
+				return §('You do not have the necessary rights to edit widgets.');
 			}
 		}
 
@@ -96,9 +96,9 @@
 					}
 					$widget->editor = '';
 					$widget->class = $class;
-					$widget->href = $this->addr->getRoot('PlexusAddWidget/'.$this->name.'/'.$this->page.'/'.$class);
+					$widget->href = $this->a->getRoot('PlexusAddWidget/'.$this->name.'/'.$this->page.'/'.$class);
 					if (!empty($this->options)) {
-						$widget->href .= '?options='.urlencode(json_encode($this->options)).'&ajax='.urlencode($this->addr->getRoot());
+						$widget->href .= '?options='.urlencode(json_encode($this->options)).'&ajax='.urlencode($this->a->getRoot());
 					}
 					if ($embedded) {
 						$widget->href .= '?embed='.$editor;
@@ -106,9 +106,9 @@
 					}
 					$widgets[] = $widget;
 				}
-				return Template::get2('dock-widget-chooser.php', array('widgets' => $widgets));
+				return $this->t->get('dock-widget-chooser.php', array('widgets' => $widgets));
 			} else {
-				return $this->lang->get('You do not have the necessary rights to add or edit widgets.');
+				return §('You do not have the necessary rights to add or edit widgets.');
 			}
 		}
 
@@ -125,12 +125,12 @@
 
 			$addWidget = '';
 			if ($this->addNew) {
-				$this->addWidget = $this->addr->getRoot('PlexusAddWidget/'.$this->name.'/'.$this->page);
+				$this->addWidget = $this->a->getRoot('PlexusAddWidget/'.$this->name.'/'.$this->page);
 				if (!empty($this->options)) {
-					$this->addWidget .= '?options='.urlencode(json_encode($this->options)).'&ajax='.urlencode($this->addr->getRoot());
+					$this->addWidget .= '?options='.urlencode(json_encode($this->options)).'&ajax='.urlencode($this->a->getRoot());
 				}
 				if ($this->access->granted('system.edit.docks')) {
-					$addWidget = Template::get2('dock-add-widget.php', array(
+					$addWidget = $this->t->get('dock-add-widget.php', array(
 						'dock' => $this,
 						'forceEnabledEdit' => $forceEnabledEdit
 					));
@@ -138,8 +138,8 @@
 			}
 			$widgets = array();
 			$orders = array();
-			$sql = 'SELECT * FROM '.$this->db->table('options').' WHERE name="widget" AND association="'.$this->name.'"';
-			while ($fetch = $this->db->fetch($sql, 1)) {
+			$q = $this->d->query('SELECT * FROM `#_options` WHERE name="widget" AND association="'.$this->name.'"');
+			while ($fetch = $q->fetch_object()) {
 				//dirty workaround for damaged widget db records
 				if (strpos($fetch->value, '\\\\"') !== FALSE) {
 					$fetch->value = str_replace('\\\\"', '\\"', $fetch->value);
@@ -151,7 +151,7 @@
 				}
 				if (
 					($widget->status == -66 && !empty($this->page) && !in_array($this->page, $widget->includes))
-				 || ($widget->status == -77 && !empty($this->page) && !$this->addr->isSubPageOf($widget->includes, $this->page))
+				 || ($widget->status == -77 && !empty($this->page) && !$this->a->isSubPageOf($widget->includes, $this->page))
 				 || (($widget->status == -77 || $widget->status == -66) && empty($this->page))
 				 || (/*!$this->access->granted() && */isset($widget->excludes) && in_array($this->page, $widget->excludes))
 				) {
@@ -168,11 +168,11 @@
 					continue;
 				}
 				$widget->id = $fetch->id;
-				$widget->href = $this->addr->getRoot('PlexusEditWidget/'.$widget->id.'/'.$this->page);
+				$widget->href = $this->a->getRoot('PlexusEditWidget/'.$widget->id.'/'.$this->page);
 				if (!empty($this->options)) {
-					$widget->href .= '?options='.urlencode(json_encode($this->options)).'&ajax='.urlencode($this->addr->getRoot());
+					$widget->href .= '?options='.urlencode(json_encode($this->options)).'&ajax='.urlencode($this->a->getRoot());
 				} else {
-					$widget->href .= '?ajax='.urlencode($this->addr->getRoot());
+					$widget->href .= '?ajax='.urlencode($this->a->getRoot());
 				}
 				if ($this->access->granted('system.edit')) {
 					$widget->editWidget = 1;
@@ -192,7 +192,7 @@
 				$collect[] = $widgets[$id];
 			}
 
-			$dock = Template::get2('dock.php', array(
+			$dock = $this->t->get('dock.php', array(
 				'dock' => $this,
 				'widgets' => $collect,
 				'addWidget' => $addWidget,

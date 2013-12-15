@@ -40,8 +40,8 @@
 
 			$this->construct();
 
-			$this->observer->notify('system.model.construct', $this);
-			$this->observer->notify('system.model.construct.'.strtolower($this->type), $this);
+			$this->o->notify('system.model.construct', $this);
+			$this->o->notify('system.model.construct.'.strtolower($this->type), $this);
 
 			if (empty($mixed)) {
 				$this->published = time();
@@ -169,7 +169,7 @@
 			if (!empty($this->id)) {
 				preg_match_all('/<img[^\>]*src="([^"]*)"/iU', $this->view(), $results);
 				if (!empty($results[1][0])) {
-					return '<meta property="og:image" content="'.$this->addr->getHome(str_replace('../', '', $results[1][0])).'" />';
+					return '<meta property="og:image" content="'.$this->a->getHome(str_replace('../', '', $results[1][0])).'" />';
 				}
 			}
 		}
@@ -196,7 +196,8 @@
 				} else {
 					$count = 100;
 					if (!empty(self::$bluePrints[$this->type])) {
-						$count = array_pop(array_keys(self::$bluePrints[$this->type]))+100;
+						$keys = array_keys(self::$bluePrints[$this->type]);
+						$count = array_pop($keys)+100;
 					}
 				}
 
@@ -299,7 +300,7 @@
 		function view()
 		{
 			if (empty($this->_cache->content)) {
-				$this->_cache->content = $this->observer->notify('system.crud.view', $this->tools->detectSpecialSyntax($this->getContent()));
+				@$this->_cache->content = $this->o->notify('system.crud.view', $this->tools->detectSpecialSyntax($this->getContent()));
 			}
 			return $this->_cache->content;
 		}
@@ -365,20 +366,20 @@
 				}
 			}
 
-			$this->observer->notify(strtolower($this->type).'.beforeSaving', $this);
-			$this->observer->notify('data.beforeSaving', $this);
+			$this->o->notify(strtolower($this->type).'.beforeSaving', $this);
+			$this->o->notify('data.beforeSaving', $this);
 
 			$errors = array();
 
 			foreach (self::$bluePrints[$this->type] as $field) {
-				if ($field['required'] > 0 && empty($this->$field['name']) && @$this->$field['name'] !== 0) { // darf nicht leer sein, aber Null
+				if ($field['required'] > 0 && empty($this->$field['name']) && @$this->$field['name'] !== 0 && $field['type'] != 'file') { // darf nicht leer sein, aber Null
 					$fields[] = @$field['options']['label'];
 					$errors[] = $field;
 				} elseif ($field['type'] == 'captcha') {
 					if (strtolower($this->$field['name']) == strtolower(strrev($_SESSION['captcha'][$field['name']]->string))) {
 						$_SESSION['captcha'][$field['name']]->hold = TRUE;
 					} else {
-						$field['error'] = $this->lang->get('Your botcheck string is wrong.');
+						$field['error'] = §('Your botcheck string is wrong.');
 						$errors[] = $field;
 						$this->$field['name'] = '';
 					}
@@ -399,10 +400,10 @@
 					$this->onSaveReady($data);
 					$this->control->clearCache();
 					unset($_SESSION['captcha']);
-					$this->observer->notify(strtolower($this->type).'.onSaveReady', $this);
-					$this->observer->notify('data.onSaveReady', $this);
+					$this->o->notify(strtolower($this->type).'.onSaveReady', $this);
+					$this->o->notify('data.onSaveReady', $this);
 					if ($this->doRedirect && $id !== FALSE) {
-						header('Location: '.$this->addr->httpGetVars($this->addr->getRootLink($id)));
+						header('Location: '.$this->a->httpGetVars($this->a->getRootLink($id)));
 						exit;
 					} else {
 						return $id;
@@ -422,7 +423,7 @@
 				}
 				if (!empty($f)) {
 					$f = substr($f, 2);
-					$messages .= $this->lang->get('The following required fields were left empty: {{'.$f.'}}').'<br />';
+					$messages .= §('The following required fields were left empty: {{'.$f.'}}').'<br />';
 				}
 				$this->error(substr($messages, 0, -6));
 				return $errors;
@@ -465,22 +466,22 @@
 
 		function getEditLink()
 		{
-			return $this->addr->assigned('system.edit');
+			return $this->a->assigned('system.edit');
 		}
 
 		function getCancelLink()
 		{
-			return $this->addr->current(1);
+			return $this->a->current(1);
 		}
 
 		function getTranslateLink()
 		{
-			return $this->addr->assigned('system.translate');
+			return $this->a->assigned('system.translate');
 		}
 
 		function getCopyLink()
 		{
-			return $this->addr->assigned('system.copy');
+			return $this->a->assigned('system.copy');
 		}
 
 		function getBlueprint()
@@ -501,9 +502,9 @@
 		function getLink($absolute = FALSE)
 		{
 			if ($absolute) {
-				return $this->addr->getHomeLink($this->id);
+				return $this->a->getHomeLink($this->id);
 			} else {
-				return $this->addr->getRootLink($this->id);
+				return $this->a->getRootLink($this->id);
 			}
 		}
 
@@ -541,7 +542,7 @@
 
 		function getTrackbackUrl()
 		{
-			return $this->addr->assigned('system.trackback');
+			return $this->a->assigned('system.trackback');
 		}
 
 		function getTrackbacksCount()

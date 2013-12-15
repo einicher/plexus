@@ -48,7 +48,7 @@
 		function response($merge = array())
 		{
 			return $this->jsonFormat((object) array_merge(array(
-				'plexus' => $this->addr->getHome(),
+				'plexus' => $this->a->getHome(),
 				'version' => $this->system->version,
 				'time' => microtime(1)
 			), $merge));
@@ -306,16 +306,16 @@
 ?>
 				<ul class="editorChooseType">
 <? if ($this->access->granted('system.new') || $this->access->granted('system.data.image')) : ?>
-					<li class="image"><a href="<?=$this->addr->assigned('system.new')?>/<?=§('Image')?>?ajax=<?=urlencode($this->addr->getRoot())?>&lite2"><span class="icon"></span><?=$this->lang->get('Image')?></a></li>
+					<li class="image"><a href="<?=$this->a->assigned('system.new')?>/<?=§('Image')?>?ajax=<?=urlencode($this->a->getRoot())?>&lite2"><span class="icon"></span><?=§('Image')?></a></li>
 <? endif; ?>
 <? if ($this->access->granted('system.new') || $this->access->granted('system.data.gallery')) : ?>
-					<li class="gallery"><a href="<?=$this->addr->assigned('system.new')?>/<?=§('Gallery')?>?ajax=<?=urlencode($this->addr->getRoot())?>&lite2"><span class="icon"></span><?=$this->lang->get('Gallery')?></a></li>
+					<li class="gallery"><a href="<?=$this->a->assigned('system.new')?>/<?=§('Gallery')?>?ajax=<?=urlencode($this->a->getRoot())?>&lite2"><span class="icon"></span><?=§('Gallery')?></a></li>
 <? endif; ?>
 <? if ($this->access->granted('system.new') || $this->access->granted('system.data.video')) : ?>
-					<li class="video"><a href="<?=$this->addr->assigned('system.new')?>/<?=§('Video')?>?ajax=<?=urlencode($this->addr->getRoot())?>&lite2"><span class="icon"></span><?=$this->lang->get('Video')?></a></li>
+					<li class="video"><a href="<?=$this->a->assigned('system.new')?>/<?=§('Video')?>?ajax=<?=urlencode($this->a->getRoot())?>&lite2"><span class="icon"></span><?=§('Video')?></a></li>
 <? endif; ?>
 <? if ($this->access->granted('system.new') || $this->access->granted('system.data.file')) : ?>
-					<li class="file"><a href="<?=$this->addr->assigned('system.new')?>/<?=§('File')?>?ajax=<?=urlencode($this->addr->getRoot())?>&lite2"><span class="icon"></span><?=$this->lang->get('File')?></a></li>
+					<li class="file"><a href="<?=$this->a->assigned('system.new')?>/<?=§('File')?>?ajax=<?=urlencode($this->a->getRoot())?>&lite2"><span class="icon"></span><?=§('File')?></a></li>
 <? endif; ?>
 				</ul>
 				<script type="text/javascript">

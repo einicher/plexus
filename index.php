@@ -1,5 +1,10 @@
 <?php
+
 	define('PLX_START', microtime(TRUE));
+
+	error_reporting(E_ALL);
+	ini_set('display_errors', true);
+
 	$path = str_replace(str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']), '', $_SERVER['REQUEST_URI']);
 	if (substr($path, 0, 1) == '/') {
 		$path = substr($path, 1);
@@ -120,13 +125,13 @@
 		$cache = ob_get_clean();
 		if (isset($pageCache)
 			&& (isset(Control::$content->type) && Control::$content->type != 'ERROR404')
-			&& !$control->addr->assignedIsActive('system.login')
-			&& !$control->addr->assignedIsActive('system.logout')
-			&& !$control->addr->assignedIsActive('system.edit')
-			&& !$control->addr->assignedIsActive('system.create')
-			&& !$control->addr->assignedIsActive('system.create.type')
-			&& !$control->addr->assignedIsActive('system.new')
-			&& !$control->addr->assignedIsActive('system.new.type')
+			&& !$control->a->assignedIsActive('system.login')
+			&& !$control->a->assignedIsActive('system.logout')
+			&& !$control->a->assignedIsActive('system.edit')
+			&& !$control->a->assignedIsActive('system.create')
+			&& !$control->a->assignedIsActive('system.create.type')
+			&& !$control->a->assignedIsActive('system.new')
+			&& !$control->a->assignedIsActive('system.new.type')
 			&& !isset($_GET['crawl'])
 			&& Control::$cache == true
 		) {

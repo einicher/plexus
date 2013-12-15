@@ -7,8 +7,8 @@
 		<a href="<?=$post->getTrackbackUrl()?>"><?=§('Trackbacks')?> <? if ($post->getTrackbacksCount() > 0) : ?>(<?=$post->getTrackbacksCount()?>)<? endif; ?></a>
 	</div>
 <? endif; ?>
-	<?= $this->observer->notify('system.data.info') ?>
-	<?= $this->observer->notify('system.post.info') ?>
+	<?= $this->o->notify('system.data.info') ?>
+	<?= $this->o->notify('system.post.info') ?>
 	<div class="clear"></div>
 </div>
 <div class="chronological">

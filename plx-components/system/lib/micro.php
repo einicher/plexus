@@ -6,48 +6,46 @@
 		function construct()
 		{
 			$this->add('text', 'post', TRUE, array(
-				'label' => $this->lang->get('Text'),
+				'label' => §('Text'),
 				'limit' => 140,
 				'rows' => 3
 			));
 			$this->add('datetime', 'published', TRUE, array(
-				'label' => $this->lang->get('Published'),
-				'caption' => $this->lang->get('May be in the future.')
+				'label' => §('Published'),
+				'caption' => §('May be in the future.')
 			));
 			$this->add('status', 'status', TRUE, array(
-				'label' => $this->lang->get('Status')
+				'label' => §('Status')
 			));
 			$this->status = 1;
 		}
 
-        function onSaveReady()
+        function onSaveReady($data)
         {
-            $this->db->query('UPDATE '.$this->db->table('index').' SET address="'.base_convert($this->id+3600, 10, 36).'" WHERE id='.$this->id);
+            $this->d->query('UPDATE `#_index` SET address="'.base_convert($this->id+3600, 10, 36).'" WHERE id='.$this->id);
         }
 
 		function getTitle()
 		{
-			return $this->lang->get('Micropost on {{'.date('l', $this->published).'}}, {{'.date('Y-m-d', $this->published).'}} at {{'.date('H:i', $this->published).'}}');
+			return §('Micropost on {{'.date('l', $this->published).'}}, {{'.date('Y-m-d', $this->published).'}} at {{'.date('H:i', $this->published).'}}');
 		}
 
-		function getDescription()
+		function getDescription($words = 37)
 		{
 			return htmlspecialchars($this->post);
 		}
 
         function getContent()
         {
-        	$c = $this->tpl->get('view-micro.php', array('micro' => $this));
-        	$this->tpl->set('view-micro.php');
-			return $c;
+        	return $this->t->get('view-micro.php', array('micro' => $this));
         }
 
         function result()
         {
         	$this->excerpt = $this->post;
         	$this->title = $this->getTitle();
-        	$this->footer = TRUE;
-			return $this->tpl->get2('result-single.php', array('result' => $this));
+        	$this->footer = true;
+			return $this->t->get('result-single.php', array('result' => $this));
         }
         
         function getPost()

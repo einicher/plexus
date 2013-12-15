@@ -7,31 +7,31 @@
 		function construct()
 		{
 			$this->add('string', 'title', FALSE, array(
-				'label' => $this->lang->get('Title'),
+				'label' => §('Title'),
 				'transformToAddress' => 1
 			));
 
 			$this->add('text', 'description', FALSE, array(
-				'label' => $this->lang->get('Description')
+				'label' => §('Description')
 			));
 
 			$this->add('file', 'file', FALSE, array(
-				'label' => $this->lang->get('File'),
+				'label' => §('File'),
 				'target' => $this->target
 			));
 			$this->add('string', 'tags', FALSE, array(
-				'label' => $this->lang->get('Tags'),
-				'caption' => $this->lang->get('Separate with commas')
+				'label' => §('Tags'),
+				'caption' => §('Separate with commas')
 			));
 			$this->add('datetime', 'published', TRUE, array(
-				'label' => $this->lang->get('Published'),
-				'caption' => $this->lang->get('May be in the future.')
+				'label' => §('Published'),
+				'caption' => §('May be in the future.')
 			));
 			$this->add('status', 'status', TRUE, array(
-				'label' => $this->lang->get('Status')
+				'label' => §('Status')
 			));
 
-			$this->observer->connect('plexusDatabase.cols.image', 'plexusDatabaseCols', $this);
+			$this->o->connect('plexusDatabase.cols.image', 'plexusDatabaseCols', $this);
 		}
 
 		function init()
@@ -68,12 +68,12 @@
 			return $this->observer->notify('image.getTitle', $this->title);
 		}
 		
-		function getDescription()
+		function getDescription($words = 37)
 		{
 			return $this->description;
 		}
 		
-		function save($data = '')
+		function save($data = '', $autoAddress = 'deprecated', $redirect = 'deprecated')
 		{
 			$id = parent::save($data);
 			if (isset($_GET['lite'])) {
@@ -85,7 +85,7 @@
 				exit;
 			}
 			if (isset($_GET['lite2'])) { // introduced in 0.5
-				$image = $this->type('IMAGE', $id);
+				$image = $this->getData('IMAGE', $id);
 				$image->fullsize = $this->imageScaleLink($image->src, $this->getOption('content.fullsize'));
 				$image->resized = $this->imageScaleLink($image->src, $this->getOption('content.width'));
 ?>
@@ -107,11 +107,11 @@
 			return $c;
 		}
 
-		function result($data = '')
+		function result($options = '')
 		{
 			if (empty($this->description)) {
-				if (isset($data->width)) {
-					$width = $data->width;
+				if (isset($options->imageWidth)) {
+					$width = $options->imageWidth;
 				} else {
 					$width = $this->getOption('content.width');
 				}
@@ -129,7 +129,7 @@
 			if (isset($image)) {
 				$result['image'] = $image;
 			}
-			return Template::get2('result-single.php', $result);
+			return $this->t->get('result-single.php', $result);
 		}
 
 		function plexusDatabaseCols($cols)

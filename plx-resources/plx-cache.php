@@ -30,7 +30,8 @@
 			if (!file_exists($this->cache)) {
 				mkdir($this->cache);
 			}
-			$ext = array_pop(explode('.', $this->path));
+			$ext = explode('.', $this->path);
+			$ext = array_pop($ext);
 			$this->cachename = md5($this->path.$this->width.$this->height).'.'.$ext;
 		}
 

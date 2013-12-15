@@ -23,7 +23,7 @@
 				$data = json_decode($data);
 			}
 			$this->construct();
-			$this->status = $data->status = empty($data->status) ? -55 : $data->status;
+			$this->status = @$data->status = empty($data->status) ? -55 : $data->status;
 			$this->order = $data->order = empty($data->order) ? 0 : $data->order;
 			$this->dock = $dock;
 			$this->page = $page;

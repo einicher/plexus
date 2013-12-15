@@ -21,17 +21,17 @@
 			<h1><?=§('Cache')?></h1>
 			<p><?=§('In cache parts of a webpage are temporarily saved to increase the loading time and to reduce the number of accesses on the database.')?></p>
 			<p><?=§('If changes you made to the website are not visible to the public, you might need to clear the cache so the outdated data will be deleted from the cache.')?></p>
-			<p><?=§('{{'.$this->getPageCacheCount().'}} page cache files')?> <a href="<?=$this->addr->assigned('system.preferences.cache.clear')?>?exclude=images" class="button"><?=§('Clear page cache')?></a></p>
-			<p><?=§('{{'.$this->getImageCacheCount().'}} image cache files')?> <a href="<?=$this->addr->assigned('system.preferences.cache.clear')?>?exclude=pages" class="button"><?=§('Clear image cache')?></a></p>
-			<p><a href="<?=$this->addr->getHome()?>?crawl=recursive" target="_blank"><?=§('Autocrawl (experimental)')?></a><br />
+			<p><?=§('{{'.$this->getPageCacheCount().'}} page cache files')?> <a href="<?=$this->a->assigned('system.preferences.cache.clear')?>?exclude=images" class="button"><?=§('Clear page cache')?></a></p>
+			<p><?=§('{{'.$this->getImageCacheCount().'}} image cache files')?> <a href="<?=$this->a->assigned('system.preferences.cache.clear')?>?exclude=pages" class="button"><?=§('Clear image cache')?></a></p>
+			<p><a href="<?=$this->a->getHome()?>?crawl=recursive" target="_blank"><?=§('Autocrawl (experimental)')?></a><br />
 			<?=§('Calling this link will start a self crawl of your website, simulating a search crawler like those from Google. It will create cache files of all your pages and images recursivly, meaning following all links on your site to create a complete cache of your site.')?>
 			</p>
-			<p><a class="button" href="<?=$this->addr->assigned('system.preferences.cache.clear')?>"><?=§('Clear cache')?></a></p>
+			<p><a class="button" href="<?=$this->a->assigned('system.preferences.cache.clear')?>"><?=§('Clear cache')?></a></p>
 <?php
 			return ob_get_clean();
 		}
 
-		function clearPageCache()
+		static public function clearPageCache()
 		{
 			$success = array();
 			$fail = array();

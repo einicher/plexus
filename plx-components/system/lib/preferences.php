@@ -39,7 +39,7 @@
 
 		function view()
 		{
-			return $this->t->get('system', 'backend.php', array(
+			return $this->t->get('backend.php', array(
 				'main' => $this->main,
 				'menu' => $this->getMenu(),
 				'backendID' => 'preferences'
@@ -75,21 +75,24 @@
 				if (!isset($_POST['site_pingGoogle'])) {
 					Core::delOption('site.pingGoogle');
 				}
+				if (!isset($_POST['site.trackbacks'])) {
+					Core::delOption('site.trackbacks');
+				}
 			}
 
 			$form = new Form(array('type' => 'preferences',
-				array('type' => 'string', 'name' => 'site_name', 'required' => TRUE, 'options' => array('label' => $this->lang->get('Site name'), 'caption' => $this->lang->get('This website\'s main title.'))),
-				array('type' => 'string', 'name' => 'site_owner', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Site Owner'), 'caption' => $this->lang->get('Appearing in the footer beside the copyright notice.'))),
-				array('type' => 'string', 'name' => 'site_ownerLink', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Site Owner Homepage'), 'caption' => $this->lang->get('Will link the owner name beside the footer copyright notice.'))),
-				array('type' => 'string', 'name' => 'site_mail', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Site email'), 'caption' => $this->lang->get('The email address appearing as sender at system mailings.'))),
-				array('type' => 'string', 'name' => 'site_language', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Main language'), 'caption' => $this->lang->get('The sites main language.'))),
-				array('type' => 'string', 'name' => 'site_theme', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Theme'), 'caption' => $this->lang->get('The way this site looks.'))),
-				array('type' => 'checkbox', 'name' => 'site_pingGoogle', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Ping Google'), 'caption' => $this->lang->get('Ping Google when a content is published.'))),
-				array('type' => 'checkbox', 'name' => 'site_trackbacks', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Enable Trackbacks'), 'caption' => $this->lang->get('Will display a trackback link in the info field beneath all data types.'))),
-				array('type' => 'text', 'name' => 'site_code', 'required' => FALSE, 'options' => array('label' => $this->lang->get('Header Codes'), 'caption' => $this->lang->get('Insert code to be inserted in the head of every page (f.e. Google Analytics)'))),
-				array('type' => 'string', 'name' => 'content_width', 'required' => TRUE, 'options' => array('label' => $this->lang->get('Content width'), 'caption' => $this->lang->get('Width of main content.'))),
-				array('type' => 'string', 'name' => 'content_fullsize', 'required' => TRUE, 'options' => array('label' => $this->lang->get('Content fullsize'), 'caption' => $this->lang->get('Width of fullsize content.'))),
-				array('type' => 'string', 'name' => 'gallery_thumbSize', 'required' => TRUE, 'options' => array('label' => $this->lang->get('Gallery thumb size'), 'caption' => $this->lang->get('Width of gallery thumbs.')))
+				array('type' => 'string', 'name' => 'site_name', 'required' => TRUE, 'options' => array('label' => §('Site name'), 'caption' => §('This website\'s main title.'))),
+				array('type' => 'string', 'name' => 'site_owner', 'required' => FALSE, 'options' => array('label' => §('Site Owner'), 'caption' => §('Appearing in the footer beside the copyright notice.'))),
+				array('type' => 'string', 'name' => 'site_ownerLink', 'required' => FALSE, 'options' => array('label' => §('Site Owner Homepage'), 'caption' => §('Will link the owner name beside the footer copyright notice.'))),
+				array('type' => 'string', 'name' => 'site_mail', 'required' => FALSE, 'options' => array('label' => §('Site email'), 'caption' => §('The email address appearing as sender at system mailings.'))),
+				array('type' => 'string', 'name' => 'site_language', 'required' => FALSE, 'options' => array('label' => §('Main language'), 'caption' => §('The sites main language.'))),
+				array('type' => 'string', 'name' => 'site_theme', 'required' => FALSE, 'options' => array('label' => §('Theme'), 'caption' => §('The way this site looks.'))),
+				array('type' => 'checkbox', 'name' => 'site_pingGoogle', 'required' => FALSE, 'options' => array('label' => §('Ping Google'), 'caption' => §('Ping Google when a content is published.'))),
+				array('type' => 'checkbox', 'name' => 'site_trackbacks', 'required' => FALSE, 'options' => array('label' => §('Enable Trackbacks'), 'caption' => §('Will display a trackback link in the info field beneath all data types.'))),
+				array('type' => 'text', 'name' => 'site_code', 'required' => FALSE, 'options' => array('label' => §('Header Codes'), 'caption' => §('Insert code to be inserted in the head of every page (f.e. Google Analytics)'))),
+				array('type' => 'string', 'name' => 'content_width', 'required' => TRUE, 'options' => array('label' => §('Content width'), 'caption' => §('Width of main content.'))),
+				array('type' => 'string', 'name' => 'content_fullsize', 'required' => TRUE, 'options' => array('label' => §('Content fullsize'), 'caption' => §('Width of fullsize content.'))),
+				array('type' => 'string', 'name' => 'gallery_thumbSize', 'required' => TRUE, 'options' => array('label' => §('Thumb size'), 'caption' => §('Width of gallery thumbs.')))
 			), array(
 				'site_name' => Core::getOption('site.name'),
 				'site_owner' => Core::getOption('site.owner'),
@@ -121,7 +124,7 @@
 					if (empty($_POST['prefix'][$key]) || empty($_POST['lang'][$key])) {
 						unset($_POST['prefix'][$key], $_POST['lang'][$key]);
 					} else {
-						$_POST['prefix'][$key] = $this->addr->transform($_POST['prefix'][$key]);
+						$_POST['prefix'][$key] = $this->a->transform($_POST['prefix'][$key]);
 					}
 				}
 				$this->setOption('system.languages', json_encode(array(
@@ -134,15 +137,15 @@
 			ob_start();
 ?>
 	<div class="generalSettings">
-		<h1><?=$this->lang->get('Languages')?></h1>
+		<h1><?=§('Languages')?></h1>
 <? if (isset($success)) : ?>
-		<div class="infos"><?=$this->lang->get('Data saved successfully.')?></div>
+		<div class="infos"><?=§('Data saved successfully.')?></div>
 		<script type="text/javascript" >
 			jQuery('#plxAdminContainer .infos').delay(5000).fadeOut();
 		</script>
 <? endif; ?>
-		<p><?=$this->lang->get('Here you can set custom root paths like {{<strong>'.$this->addr->getHome('de').'</strong>}} for your multiple languages.')?></p>
-		<form method="post" class="plexusPreferencesForm plexusForm" action="<?=$this->addr->current()?>">
+		<p><?=§('Here you can set custom root paths like {{<strong>'.$this->a->getHome('de').'</strong>}} for your multiple languages.')?></p>
+		<form method="post" class="plexusPreferencesForm plexusForm" action="<?=$this->a->current()?>">
 			<ul id="languageEditorBody" style="list-style-type: none; margin: 0; padding: 0;">
 <?php
 	if (!empty($langs)) {
@@ -151,10 +154,10 @@
 ?>
 				<li>
 					<span class="handle" style="background: #070; cursor: move;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-					<label for=""><?=$this->lang->get('Language name')?></label>
+					<label for=""><?=§('Language name')?></label>
 					<input type="text" name="lang[]" value="<?=$langs->lang[$key]?>" />
 					&nbsp;&nbsp;&nbsp;&nbsp;
-					<label><?=$this->addr->getHome()?></label>
+					<label><?=$this->a->getHome()?></label>
 					<input type="text" name="prefix[]" value="<?=$prefix?>" style="width: 50px;" />
 				</li>
 <?php
@@ -164,26 +167,26 @@
 ?>
 				<li>
 					<span class="handle" style="background: #070; cursor: move;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-					<label for=""><?=$this->lang->get('Language name')?></label>
+					<label for=""><?=§('Language name')?></label>
 					<input type="text" name="lang[]" value="" />
 					&nbsp;&nbsp;&nbsp;&nbsp;
-					<label><?=$this->addr->getHome()?></label>
+					<label><?=$this->a->getHome()?></label>
 					<input type="text" name="prefix[]" value="" style="width: 50px;" />
 				</li>
 			</ul>
 			<div id="languageEditorDefault" style="display: none;">
 				<li>
 					<span class="handle" style="background: #070; cursor: move;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-					<label for=""><?=$this->lang->get('Language name')?></label>
+					<label for=""><?=§('Language name')?></label>
 					<input type="text" name="lang[]" value="" />
 					&nbsp;&nbsp;&nbsp;&nbsp;
-					<label><?=$this->addr->getHome()?></label>
+					<label><?=$this->a->getHome()?></label>
 					<input type="text" name="prefix[]" value="" style="width: 50px;" />
 				</li>
 			</div>
 			<br />
 			<button type="submit" style="float: right;"><?=§('Save')?></button>
-			<button id="languageEditorButton" type="button"><?=$this->lang->get('+ Add Language')?></button>
+			<button id="languageEditorButton" type="button"><?=§('+ Add Language')?></button>
 			<input type="hidden" name="plexusLanguageSettings" value="1" />
 		</form>
 		<script type="text/javascript">
@@ -206,7 +209,7 @@
 		{
 		}
 
-		function getDescription()
+		function getDescription($words = '')
 		{
 		}
 
@@ -214,17 +217,17 @@
 		{
 			if (!empty($_POST['block'])) {
 				$this->blockIP($_POST['block']);
-				header('Location: '.$this->addr->current());
+				header('Location: '.$this->a->current());
 				exit;
 			}
 			if (!empty($_GET['unblock'])) {
 				$this->unblockIP($_GET['unblock']);
-				header('Location: '.$this->addr->current('', false, '', 0, array('unblock')));
+				header('Location: '.$this->a->current('', false, '', 0, array('unblock')));
 				exit;
 			}
 			if (!empty($_GET['block'])) {
 				$this->blockIP($_GET['block']);
-				header('Location: '.$this->addr->current('', false, '', 0, array('block')));
+				header('Location: '.$this->a->current('', false, '', 0, array('block')));
 				exit;
 			}
 
@@ -329,20 +332,20 @@
 		function getMenu()
 		{
 			$menu = array(
-				array('general', §('General Settings'), $this->addr->assigned('system.preferences', 2), true),
-				array('cache', §('Cache'), $this->addr->assigned('system.preferences.cache', 2)),
-				array('components', §('Components'), $this->addr->assigned('system.preferences.components', 2)),
-				array('languages', §('Languages'), $this->addr->assigned('system.preferences.languages', 2)),
-				array('trackbacks', §('Trackbacks'), $this->addr->assigned('system.preferences.trackbacks', 2), false, Trackback::instance()->getPendingTrackbacks()),
-				array('blocked-ips', §('Blocked IPs'), $this->addr->assigned('system.preferences.blockedIps', 2))
+				array('general', §('General Settings'), $this->a->assigned('system.preferences', 2), true),
+				array('cache', §('Cache'), $this->a->assigned('system.preferences.cache', 2)),
+				array('components', §('Components'), $this->a->assigned('system.preferences.components', 2)),
+				array('languages', §('Languages'), $this->a->assigned('system.preferences.languages', 2)),
+				array('trackbacks', §('Trackbacks'), $this->a->assigned('system.preferences.trackbacks', 2), false, Trackback::instance()->getPendingTrackbacks()),
+				array('blocked-ips', §('Blocked IPs'), $this->a->assigned('system.preferences.blockedIps', 2))
 			);
 			foreach (Core::$preferences as $p) {
-				$name = $this->addr->transform(strtolower($p->name));
-				$menu[] = array($name, $p->name, $this->addr->assigned('system.preferences.'.$name));
+				$name = $this->a->transform(strtolower($p->name));
+				$menu[] = array($name, $p->name, $this->a->assigned('system.preferences.'.$name));
 			}
 			foreach (Site::$components as $component) {
 				$name = strtolower($component->address);
-				$menu[] = array($name, $component->label, $this->addr->assigned('system.preferences.'.$name, 2));
+				$menu[] = array($name, $component->label, $this->a->assigned('system.preferences.'.$name, 2));
 			}
 			return $menu;
 		}

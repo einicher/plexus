@@ -11,30 +11,30 @@
 		function construct()
 		{
 			$this->add('string', 'name', TRUE, array(
-				'label' => $this->lang->get('Name'),
+				'label' => §('Name'),
 				'transformToAddress' => 1
 			));
 			$this->add('string', 'email', TRUE, array(
-				'label' => $this->lang->get('Email')
+				'label' => §('Email')
 			));
 			$this->add('string', 'password', TRUE, array(
-				'label' => $this->lang->get('Password'),
+				'label' => §('Password'),
 				'beforeSaving' => array('encryptPassword', $this)
 			));
 			$this->add('wysiwyg', 'bio', FALSE, array(
-				'label' => $this->lang->get('Bio'),
+				'label' => §('Bio'),
 				'multimedia' => TRUE
 			));
 			$this->add('custom', 'groups', FALSE, array(
-				'actor' => Access::getInstance(),
+				'actor' => Access::instance(),
 				'call' => 'groupsDialog'
 			));
 			$this->add('custom', 'rights', FALSE, array(
-				'actor' => Access::getInstance(),
+				'actor' => Access::instance(),
 				'call' => 'rightsDialog'
 			));
 			$this->add('datetime', 'lastonline', FALSE, -1);
-			$this->observer->notify('user.construct', $this);
+			$this->o->notify('user.construct', $this);
 		}
 
 		function init()
@@ -62,11 +62,11 @@
 		{
 			if (!empty($this->id)) {
 				$this->change('password', 'password', FALSE, array(
-					'label' => $this->lang->get('New password')
+					'label' => §('New password')
 				));
 				$this->password = '';
 				$this->add('password', 'password2', FALSE, array(
-					'label' => $this->lang->get('Confirm new password'),
+					'label' => §('Confirm new password'),
 					'after' => 'password'
 				));
 			}
@@ -94,7 +94,7 @@
 					$this->password = $this->passwordHash;
 					$this->remove('password2');
 				} elseif (empty($this->password) || empty($this->password2) || $this->password != $this->password2) {
-					$this->error($this->lang->get('New Password and confirmation password did not match.'));
+					$this->error(§('New Password and confirmation password did not match.'));
 					$this->password = '';
 					$this->password2 = '';
 					return FALSE;
@@ -110,7 +110,7 @@
 					'id' => '!='.$this->id
 				));
 				if (!empty($check)) {
-					$this->error($this->lang->get('A user with the email “{{'.$this->email.'}}” already exists. {{<a href="'.$this->addr->registered('system.users.password').'">'.$this->lang->get('You can request an new password here.').'</a>}}'));
+					$this->error(§('A user with the email “{{'.$this->email.'}}” already exists. {{<a href="'.$this->addr->registered('system.users.password').'">'.§('You can request an new password here.').'</a>}}'));
 					return FALSE;
 				}
 			}
@@ -132,7 +132,7 @@
 
 		function getTitle()
 		{
-			return $this->observer->notify('user.getTitle', $this->name);
+			return $this->o->notify('user.getTitle', $this->name);
 		}
 
 		function getContent()
@@ -141,7 +141,7 @@
 			$w = new SiteFeedWidget;
 			$w->sql = 'SELECT * FROM '.$this->db->table('index').' WHERE status=1 AND author='.$this->id.' ORDER BY published DESC';
 			$this->feed = $w->view();
-			return $this->tpl->get('user.php', array('user' => $this));
+			return $this->t->get('user.php', array('user' => $this));
 		}
 
 		function getTags()
@@ -167,13 +167,9 @@
 
 		function result()
 		{
-			$this->excerpt = $this->tools->cutByWords(strip_tags($this->tools->detectSpecialSyntax($this->bio)));
-			$this->tpl->cut('result.php', 'excerpt', array('result' => $this));
 			$this->title = $this->name;
-			$result = $this->tpl->cut('result.php', 'result', array('result' => $this));
-			$this->tpl->set('result.php', 'excerpt');
-			$this->tpl->set('result.php', 'result');
-			return $result;
+			$this->excerpt = $this->tools->cutByWords(strip_tags($this->tools->detectSpecialSyntax($this->bio)));
+			return $this->t->get('result-single.php', array('result' => $this));
 		}
 	
 		function getName()

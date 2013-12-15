@@ -17,7 +17,7 @@
 		public $paginationUsed = false;
 		public $paginationPage = 0;
 
-		static function getInstance()
+		static public function &instance()
 		{
 			if (empty(self::$instance)) {
 				return new self;
@@ -29,16 +29,13 @@
 		{
 			$this->debug('Control::construct START');
 
-			if ($this->addr->path == 'plxCheckForRewrittenUrls') {
+			if ($this->a->path == 'plxCheckForRewrittenUrls') {
 				exit('TRUE');
 			}
 
 			if (empty(self::$instance)) {
-				/*if (!empty($_GET['sid'])) {
-					session_id($_GET['sid']);
-				} --> moved to main index.php for cache reasons
-				session_start();*/
-
+				date_default_timezone_set($this->getConf('system', 'timezone'));
+				
 				if (!empty($_SESSION['infos'])) {
 					Core::$infos = $_SESSION['infos'];
 					unset($_SESSION['infos']);
@@ -49,86 +46,86 @@
 				}
 
 				// REGISTER SYSTEM DATA TYPES
-				$this->registerType('USER', 'User', PLX_SYSTEM.'lib/user.php', $this->lang->get('User'));
-				$this->registerType('GROUP', 'Group', PLX_SYSTEM.'lib/group.php', $this->lang->get('Group'));
-				$this->registerType('PAGE', 'Page', PLX_SYSTEM.'lib/page.php', $this->lang->get('Page'));
-				$this->registerType('POST', 'Post', PLX_SYSTEM.'lib/post.php', $this->lang->get('Post'));
-				$this->registerType('MICRO', 'Micro', PLX_SYSTEM.'lib/micro.php', $this->lang->get('Micropost'));
-				$this->registerType('LINK', 'Link', PLX_SYSTEM.'lib/link.php', $this->lang->get('Link'));
-				$this->registerType('IMAGE', 'Image', PLX_SYSTEM.'lib/image.php', $this->lang->get('Image'));
-				$this->registerType('GALLERY', 'Gallery', PLX_SYSTEM.'lib/gallery.php', $this->lang->get('Gallery'));
-				$this->registerType('VIDEO', 'Video', PLX_SYSTEM.'lib/video.php', $this->lang->get('Video'));
-				$this->registerType('FILE', 'File', PLX_SYSTEM.'lib/file.php', $this->lang->get('File'));
+				$this->registerType('USER', 'User', PLX_SYSTEM.'lib/user.php', §('User'));
+				$this->registerType('GROUP', 'Group', PLX_SYSTEM.'lib/group.php', §('Group'));
+				$this->registerType('PAGE', 'Page', PLX_SYSTEM.'lib/page.php', §('Page'));
+				$this->registerType('POST', 'Post', PLX_SYSTEM.'lib/post.php', §('Post'));
+				$this->registerType('MICRO', 'Micro', PLX_SYSTEM.'lib/micro.php', §('Micropost'));
+				$this->registerType('LINK', 'Link', PLX_SYSTEM.'lib/link.php', §('Link'));
+				$this->registerType('IMAGE', 'Image', PLX_SYSTEM.'lib/image.php', §('Image'));
+				$this->registerType('GALLERY', 'Gallery', PLX_SYSTEM.'lib/gallery.php', §('Gallery'));
+				$this->registerType('VIDEO', 'Video', PLX_SYSTEM.'lib/video.php', §('Video'));
+				$this->registerType('FILE', 'File', PLX_SYSTEM.'lib/file.php', §('File'));
 
 				// CONTENT CONTROLS
-				$this->addr->assign('system.new', $this->lang->get('new'), array('ContentControls::instance()', 'plxNew'));
-				$this->addr->assign('system.new.type', '*', array('ContentControls::instance()', 'plxNew'), 'system.new');
-				$this->addr->assign('system.create', $this->lang->get('create'), array('ContentControls::instance()', 'plxCreate'), array(-1, 'preceded_empty'));
-				$this->addr->assign('system.create.type', $this->lang->get('create'), array('ContentControls::instance()', 'plxCreate'), array(-2, 'preceded_empty'));
-				$this->addr->assign('system.edit', $this->lang->get('edit'), array('ContentControls::instance()', 'plxEdit'), -1);
-				$this->addr->assign('system.translate', $this->lang->get('translate'), array('ContentControls::instance()', 'plxTranslate'), -1);
-				$this->addr->assign('system.translate.language', '*', array('ContentControls::instance()', 'plxTranslate'), -2);
-				$this->addr->assign('system.copy', $this->lang->get('copy'), array('ContentControls::instance()', 'plxCopy'), -1);
+				$this->a->assign('system.new', §('new'), array('ContentControls::instance()', 'plxNew'));
+				$this->a->assign('system.new.type', '*', array('ContentControls::instance()', 'plxNew'), 'system.new');
+				$this->a->assign('system.create', §('create'), array('ContentControls::instance()', 'plxCreate'), array(-1, 'preceded_empty'));
+				$this->a->assign('system.create.type', §('create'), array('ContentControls::instance()', 'plxCreate'), array(-2, 'preceded_empty'));
+				$this->a->assign('system.edit', §('edit'), array('ContentControls::instance()', 'plxEdit'), -1);
+				$this->a->assign('system.translate', §('translate'), array('ContentControls::instance()', 'plxTranslate'), -1);
+				$this->a->assign('system.translate.language', '*', array('ContentControls::instance()', 'plxTranslate'), -2);
+				$this->a->assign('system.copy', §('copy'), array('ContentControls::instance()', 'plxCopy'), -1);
 
 				// SYSTEM CONTROL
-				$this->addr->assign('system.login', $this->lang->get('login'), array('System::instance()', 'login'), -1);
-				$this->addr->assign('system.logout', $this->lang->get('logout'), array('System::instance()', 'logout'), -1);
-				$this->addr->assign('system.users', $this->lang->get('users'), array('System::instance()', 'plxUsers'));
-				$this->addr->assign('system.users.password', $this->lang->get('lost-password'), array('System::instance()', 'plxUsersPassword'));
-				$this->addr->assign('system.groups', $this->lang->get('groups'), array('System::instance()', 'plxGroups'));
+				$this->a->assign('system.login', §('login'), array('System::instance()', 'login'), -1);
+				$this->a->assign('system.logout', §('logout'), array('System::instance()', 'logout'), -1);
+				$this->a->assign('system.users', §('users'), array('System::instance()', 'plxUsers'));
+				$this->a->assign('system.users.password', §('lost-password'), array('System::instance()', 'plxUsersPassword'));
+				$this->a->assign('system.groups', §('groups'), array('System::instance()', 'plxGroups'));
 
-				$this->addr->assign('system.tags', $this->lang->get('tags'), array('System::instance()', 'tags'));
-				$this->addr->assign('system.tags.detail', '*', array('System::instance()', 'tags'), 'system.tags');
-				$this->addr->assign('system.search', $this->lang->get('search'), array('System::instance()', 'search'));
-				$this->addr->assign('system.search.pattern', '*', array('System::instance()', 'search'), 'system.search');
-				$this->addr->assign('system.trackback', 'trackback', array('Trackback::instance()', 'control'), -1);
+				$this->a->assign('system.tags', §('tags'), array('System::instance()', 'tags'));
+				$this->a->assign('system.tags.detail', '*', array('System::instance()', 'tags'), 'system.tags');
+				$this->a->assign('system.search', §('search'), array('System::instance()', 'search'));
+				$this->a->assign('system.search.pattern', '*', array('System::instance()', 'search'), 'system.search');
+				$this->a->assign('system.trackback', 'trackback', array('Trackback::instance()', 'control'), -1);
 
-				$this->addr->assign('system.permalink', 'permalink', array('System::instance()', 'permalink'), '', true);
-				$this->addr->assign('system.cache', 'plx-cache', array('System::instance()', 'plxCache'), '', true);
-				$this->addr->assign('system.style', 'style.css', array('System::instance()', 'getCss'), array('', 'preceded_empty'), true);
-				$this->addr->assign('system.feed', 'atom.xml', array('System::instance()', 'getAtom'), '', true);
-				$this->addr->assign('system.sitemap', 'sitemap.xml', array('System::instance()', 'getSitemap'), '', true);
-				$this->addr->assign('system.favicon', 'favicon.ico', array('System::instance()', 'getFavicon'), '', true);
+				$this->a->assign('system.permalink', 'permalink', array('System::instance()', 'permalink'), '', true);
+				$this->a->assign('system.cache', 'plx-cache', array('System::instance()', 'plxCache'), '', true);
+				$this->a->assign('system.style', 'style.css', array('System::instance()', 'getCss'), array('', 'preceded_empty'), true);
+				$this->a->assign('system.feed', 'atom.xml', array('System::instance()', 'getAtom'), '', true);
+				$this->a->assign('system.sitemap', 'sitemap.xml', array('System::instance()', 'getSitemap'), '', true);
+				$this->a->assign('system.favicon', 'favicon.ico', array('System::instance()', 'getFavicon'), '', true);
 
-				$this->addr->assign('system.ajax', 'plxAjax', array(&$this, 'getAjax'), '', true);
-				$this->addr->assign('system.export', 'plx-export', array(&$this, 'plxExport'), '', true);
-				$this->addr->assign('system.api', 'plx-api', array('Api::instance()', 'control'), '', false, true);
+				$this->a->assign('system.ajax', 'plxAjax', array(&$this, 'getAjax'), '', true);
+				$this->a->assign('system.export', 'plx-export', array(&$this, 'plxExport'), '', true);
+				$this->a->assign('system.api', 'plx-api', array('Api::instance()', 'control'), '', false, true);
 
-				$this->addr->assign('system.addWidget', 'PlexusAddWidget', array(&$this, 'plxAddWidget'), '', true);
-				$this->addr->assign('system.editWidget', 'PlexusEditWidget', array(&$this, 'plxEditWidget'), '', true);
-				$this->addr->assign('system.standaloneWidget', 'PlexusStandaloneWidget', array(&$this, 'plxStandaloneWidget'), '', true);
+				$this->a->assign('system.addWidget', 'PlexusAddWidget', array(&$this, 'plxAddWidget'), '', true);
+				$this->a->assign('system.editWidget', 'PlexusEditWidget', array(&$this, 'plxEditWidget'), '', true);
+				$this->a->assign('system.standaloneWidget', 'PlexusStandaloneWidget', array(&$this, 'plxStandaloneWidget'), '', true);
 
-				$this->addr->assign('plexus.pack', 'plx-pack', array('Components::instance()', 'plxPack'));
+				$this->a->assign('plexus.pack', 'plx-pack', array('Components::instance()', 'plxPack'));
 
-				$this->addr->assign('system.database', 'plx-database', array('PlexusDatabase::instance()', 'control'));
-				$this->addr->assign('system.database.edit', 'edit', array('PlexusDatabase::instance()', 'control'), 'system.database');
-				$this->addr->assign('system.database.edit.type', '*', array('PlexusDatabase::instance()', 'control'), 'system.database.edit');
-				$this->addr->assign('system.database.delete', 'delete', array('PlexusDatabase::instance()', 'control'), 'system.database');
-				$this->addr->assign('system.database.delete.ids', '*', array('PlexusDatabase::instance()', 'control'), 'system.database.delete');
-				$this->addr->assign('system.database.type', '*', array('PlexusDatabase::instance()', 'control'), 'system.database');
+				$this->a->assign('system.database', 'plx-database', array('PlexusDatabase::instance()', 'control'));
+				$this->a->assign('system.database.edit', 'edit', array('PlexusDatabase::instance()', 'control'), 'system.database');
+				$this->a->assign('system.database.edit.type', '*', array('PlexusDatabase::instance()', 'control'), 'system.database.edit');
+				$this->a->assign('system.database.delete', 'delete', array('PlexusDatabase::instance()', 'control'), 'system.database');
+				$this->a->assign('system.database.delete.ids', '*', array('PlexusDatabase::instance()', 'control'), 'system.database.delete');
+				$this->a->assign('system.database.type', '*', array('PlexusDatabase::instance()', 'control'), 'system.database');
 
-				$this->addr->assign('system.preferences', 'plx-preferences', array('Preferences::instance()', 'control'), '', false, true);
-				$this->addr->assign('system.preferences.languages', 'languages', array('Preferences::instance()', 'control'), 'system.preferences');
+				$this->a->assign('system.preferences', 'plx-preferences', array('Preferences::instance()', 'control'));
+				$this->a->assign('system.preferences.languages', 'languages', array('Preferences::instance()', 'control'), 'system.preferences');
 
-				$this->addr->assign('system.preferences.components', 'components', array('Preferences::instance()', 'control'), 'system.preferences');
-				$this->addr->assign('system.preferences.components.install', 'install', array('Preferences::instance()', 'control'), 'system.preferences.components');
-				$this->addr->assign('system.preferences.components.activate', 'activate', array('Preferences::instance()', 'control'), 'system.preferences.components');
-				$this->addr->assign('system.preferences.components.deactivate', 'deactivate', array('Preferences::instance()', 'control'), 'system.preferences.components');
-				$this->addr->assign('system.preferences.components.remove', 'remove', array('Preferences::instance()', 'control'), 'system.preferences.components');
+				$this->a->assign('system.preferences.components', 'components', array('Preferences::instance()', 'control'), 'system.preferences');
+				$this->a->assign('system.preferences.components.install', 'install', array('Preferences::instance()', 'control'), 'system.preferences.components');
+				$this->a->assign('system.preferences.components.activate', 'activate', array('Components::instance()', 'index'), 'system.preferences.components', true, true);
+				$this->a->assign('system.preferences.components.deactivate', 'deactivate', array('Components::instance()', 'index'), 'system.preferences.components', true, true);
+				$this->a->assign('system.preferences.components.remove', 'remove', array('Components::instance()', 'index'), 'system.preferences.components');
 
-				$this->addr->assign('system.preferences.cache', 'cache', array('Preferences::instance()', 'control'), 'system.preferences');
-				$this->addr->assign('system.preferences.cache.clear', 'clear', array('Preferences::instance()', 'control'), 'system.preferences.cache');
-				$this->addr->assign('system.preferences.trackbacks', 'trackbacks', array('Preferences::instance()', 'control'), 'system.preferences');
-				$this->addr->assign('system.preferences.blockedIps', 'blocked-ips', array('Preferences::instance()', 'control'), 'system.preferences');
+				$this->a->assign('system.preferences.cache', 'cache', array('Preferences::instance()', 'control'), 'system.preferences');
+				$this->a->assign('system.preferences.cache.clear', 'clear', array('Preferences::instance()', 'control'), 'system.preferences.cache');
+				$this->a->assign('system.preferences.trackbacks', 'trackbacks', array('Preferences::instance()', 'control'), 'system.preferences');
+				$this->a->assign('system.preferences.blockedIps', 'blocked-ips', array('Preferences::instance()', 'control'), 'system.preferences');
 
 				// MAKE SOME DATA TYPES OCCUPY ADDRESSES
-				$this->addr->occupy('USER', 'system.users');
-				$this->addr->occupy('GROUP', 'system.groups');
+				$this->a->occupy('USER', 'system.users');
+				$this->a->occupy('GROUP', 'system.groups');
 
 				// REDIRECT GET SEARCH PATTERN TO REWRITTEN SEARCH URL
-				if (isset($_GET['pattern']) && $this->addr->assignedIsActive('system.search')) {
+				if (isset($_GET['pattern']) && $this->a->assignedIsActive('system.search')) {
 					header('HTTP/1.1 301 Moved Permanently');
-					header('Location:'.$this->addr->assigned('system.search.pattern', $_GET['pattern']));
+					header('Location:'.$this->a->assigned('system.search.pattern', $_GET['pattern']));
 					exit;
 				}
 
@@ -141,14 +138,14 @@
 				$this->registerAjaxCall('plxFormDeleteFile', $this);
 
 				// REGISTER WIDGETS
-				$this->registerWidget($this->lang->get('Simple Text'), 'SimpleTextWidget', 'lib/widget-simple-text.php');
-				$this->registerWidget($this->lang->get('XHTML Markup'), 'XHTMLMarkupWidget', 'lib/widget-xhtml-markup.php');
-				$this->registerWidget($this->lang->get('Simple Banner'), 'SimpleBannerWidget', 'lib/widget-simple-banner.php');
-				$this->registerWidget($this->lang->get('Display Gallery'), 'GalleryWidget', 'lib/widget-gallery.php');
-				$this->registerWidget($this->lang->get('Menu'), 'MenuWidget', 'lib/widget-menu.php');
-				$this->registerWidget($this->lang->get('Tag Cloud/Tag List'), 'TagCloudWidget', 'lib/widget-tag-cloud.php');
-				$this->registerWidget($this->lang->get('Site Feed'), 'SiteFeedWidget', 'lib/widget-site-feed.php');
-				$this->registerWidget($this->lang->get('Search'), 'SearchWidget', 'lib/widget-search.php');
+				$this->registerWidget(§('Simple Text'), 'SimpleTextWidget', 'lib/widget-simple-text.php');
+				$this->registerWidget(§('XHTML Markup'), 'XHTMLMarkupWidget', 'lib/widget-xhtml-markup.php');
+				$this->registerWidget(§('Simple Banner'), 'SimpleBannerWidget', 'lib/widget-simple-banner.php');
+				$this->registerWidget(§('Display Gallery'), 'GalleryWidget', 'lib/widget-gallery.php');
+				$this->registerWidget(§('Menu'), 'MenuWidget', 'lib/widget-menu.php');
+				$this->registerWidget(§('Tag Cloud/Tag List'), 'TagCloudWidget', 'lib/widget-tag-cloud.php');
+				$this->registerWidget(§('Site Feed'), 'SiteFeedWidget', 'lib/widget-site-feed.php');
+				$this->registerWidget(§('Search'), 'SearchWidget', 'lib/widget-search.php');
 
 				// REGISTER RIGHTS FOR ACCESS CONTROL
 				$this->access->registerRight('system.showPanel', 'Get system panel displayed');
@@ -163,9 +160,9 @@
 				$this->access->registerRight('system.edit.docks', 'create/edit/delete widgets in docks');
 
 				// CONNECT OBSERVERS
-				$this->observer->connect('site.getHeader', 'loadJavascriptDefaults', $this); // setzt var root
-				$this->observer->connect('data.onSaveReady', 'publishToTheWorld', $this);
-				$this->observer->connect('data.onSaveReady', 'Trackback::instance()->manageTrackbacks');
+				$this->o->connect('site.getHeader', 'loadJavascriptDefaults', $this); // setzt var root
+				$this->o->connect('data.onSaveReady', 'publishToTheWorld', $this);
+				$this->o->connect('data.onSaveReady', 'Trackback::instance()->manageTrackbacks');
 
 				// TRIGGER SETUP IF NECESSAIRY
 				$setup = new Setup;
@@ -179,11 +176,11 @@
 
 				// CHECK FOR LOGIN
 				if (!empty($_POST['plexusLogin'])) {
-					if ($this->addr->getLevel(-1) == $this->addr->getAddress('system.login')) {
+					if ($this->a->getLevel(-1) == $this->a->getAddress('system.login')) {
 						$this->access->login($_POST['login'], $_POST['password'], @$_POST['remember']);
 					} else {
 						if ($this->access->login($_POST['login'], $_POST['password'], @$_POST['remember'], FALSE)) {
-							header('Location:'.$this->addr->current());
+							header('Location:'.$this->a->current());
 							exit;
 						}
 					}
@@ -203,7 +200,7 @@
 				$this->initComponents();
 
 				// LET THE DESIGN THEME OVERWRITE OUR SETTINGS NOW
-				$this->tpl->includeFromThemeRoot('control.php');
+				//$this->t->includeFromThemeRoot('control.php');
 				$hostControlFile = $this->getStorage('control.php');
 				if (file_exists($hostControlFile)) {
 					include_once $hostControlFile;
@@ -213,7 +210,7 @@
 			}
 
 			if (!empty(self::$instance) && empty($_SERVER['REMOTE_ADDR']) || Preferences::instance()->isBlockedIP($_SERVER['REMOTE_ADDR'])) {
-				exit($this->lang->get('Sorry sweety, but your ip address “{{'.$_SERVER['REMOTE_ADDR'].'}}” is blocked on this website.'));
+				exit(§('Sorry sweety, but your ip address “{{'.$_SERVER['REMOTE_ADDR'].'}}” is blocked on this website.'));
 			}
 
 			$this->debug('Control::construct READY');
@@ -282,7 +279,7 @@
 						$l = explode('-', $l[0]);
 						$l = $l[0];
 						if (isset(self::$languages[$l])) {
-							header('Location:'.$this->addr->getHome($l));
+							header('Location:'.$this->a->getHome($l));
 							exit;
 						}
 					}
@@ -300,30 +297,36 @@
 						$current = $next;
 						unset($next);
 					} else {
-						$current = $this->addr->isAssigned($level, $lvs, $cache);
+						$current = $this->a->isAssigned($level, $lvs, $cache);
 					}
+
 					if (defined('PLX_CONTROL_EXIT')) {
 						if (is_array($current)) {
 							$current = $this->processCallback($current['call'], $level, $levels, $cache);
 						}
 						return $current;
 					}
+
+					if (!empty($current['takeOverMainLoop'])) {
+						break;
+					}
+
 					if (is_object($current) && !empty($current->id)) {
 						self::$current[] = $cache[] = $current;
 						$parent = $current->id;
 						continue;
 					}
+
 					if (is_array($current)) {
 						$cache[] = $current;
 					}
 
 					if (empty($current)) {
 						$sql = 'SELECT * FROM #_index WHERE (parent=?'.$additional.') && address=? && (status>0'.$draft.') '.$publish.' '.$language;
-						//echo µ($sql);
 						$current = $this->d->getPrepared($sql, 'is', $parent, urldecode($address));
 						$additional = '';
 						if (empty($current)) {
-							$next = $this->addr->isAssigned($level+1, $lvs, $cache);
+							$next = $this->a->isAssigned($level+1, $lvs, $cache);
 							if ($next && isset($next['preceded_empty'])) {
 								$nexted = true;
 								continue;
@@ -336,7 +339,7 @@
 							}
 						} else {
 							if (isset(Address::$occupied[$current->type]) && (
-								!isset($levels[$level-1]) || $this->addr->getAddress(Address::$occupied[$current->type]) != $levels[$level-1]
+								!isset($levels[$level-1]) || $this->a->getAddress(Address::$occupied[$current->type]) != $levels[$level-1]
 							)) {
 								unset($current);
 								break;
@@ -346,25 +349,25 @@
 								break;
 							}
 							self::$current[] = $cache[] = $current;
-							$this->observer->notify('system.loop', $current);
+							$this->o->notify('system.loop', $current);
 							$parent = $current->id;
 						}
-						if (empty($current) && is_numeric($address) && $level == (count($levels)-1)) {
-							$current = end($cache);
-							$this->paginationActive = true;
-							$this->paginationPage = $address;
-						}
-						if (empty($current)) {
-							break;
-						}
-					} else {
-						if (!empty($current['takeOverMainLoop'])) {
-							break;
-						}
 					}
-					if (empty($address) && empty($this->addr->multihost)) {
+					if (empty($current) && is_numeric($address) && $level == (count($levels)-1)) {
+						$current = end($cache);
+						$this->paginationActive = true;
+						$this->paginationPage = $address;
+					}
+					if (empty($current)) {
+						break;
+					}
+					if (empty($address) && empty($this->a->multihost)) {
 						$additional = ' OR parent=0';
 					}
+				}
+
+				if (empty($address) && empty($this->a->multihost)) {
+					$additional = ' OR parent=0';
 				}
 			}
 
@@ -400,17 +403,17 @@
 
 		public function view()
 		{
-			self::$content = $this->run($this->addr->levels);
+			self::$content = $this->run($this->a->levels);
 			if (defined('PLX_CONTROL_EXIT')) {
 				return self::$content;
 			}
-			$this->tpl->connect('content', self::$content);
+			$this->t->connect('content', self::$content);
 			$site = new Site(self::$content);
-			$this->tpl->connect('site', $site);
+			$this->t->connect('site', $site);
 			if (isset($_GET['ajax'])) {
 				$return = $site->getContent();
 			} elseif (isset($_GET['popup'])) {
-				$return = $this->tpl->get('popup.php');
+				$return = $this->t->get('popup.php');
 			} elseif (self::$standalone) {
 				$return = self::$content->view();
 			} else {
@@ -418,11 +421,11 @@
 				if (file_exists($customView)) {
 					$return  = $this->t->get('system', 'view-'.self::$content->id.'.php');
 				} else {
-					$return  = $this->tpl->get('index.php');
+					$return  = $this->t->get('index.php');
 				}
 			}
 
-			return $this->observer->notify('system.final.output', $return);
+			return $this->o->notify('system.final.output', $return);
 		}
 
 		function initComponents()
@@ -476,25 +479,25 @@
 			echo $siteHeader;
 ?>
 		<script type="text/javascript">
-			plxRoot = '<?=$this->addr->getRoot()?>';
-			plxHome = '<?=$this->addr->getHome()?>';
+			plxRoot = '<?=$this->a->getRoot()?>';
+			plxHome = '<?=$this->a->getHome()?>';
 			plxId = <?= empty($content->id) ? 0 : $content->id ?>;
 			root = plxRoot; //deprecated as of 0.4.1, use plxRoot instead!
 		</script>
-		<script type="text/javascript" src="<?=$this->addr->getRoot(PLX_SYSTEM.'theme/plexus.js')?>"></script>
+		<script type="text/javascript" src="<?=$this->a->getRoot(PLX_SYSTEM.'theme/plexus.js')?>"></script>
 <?php
 			return ob_get_clean();
 		}
 
-		function setup($host)
+		static public function setup($host)
 		{
 			return new Setup($host);
 		}
 
 		function getAjax($level, $levels, $cache)
 		{
-			$call = $this->addr->getLevel(2, $levels);
-			$addr =& Address::getInstance();
+			$call = $this->a->getLevel(2, $levels);
+			$addr =& Address::instance();
 			if (empty($_GET['ajax'])) {
 				$addr->root = '';
 			} else {
@@ -508,7 +511,7 @@
 		function getDock($levels) // Ajax
 		{
 			$dock = new Dock(@$levels[3], @$levels[4]);
-			array_pop($this->addr->levels); // sonst wird zahl als pagination gewertet
+			array_pop($this->a->levels); // sonst wird zahl als pagination gewertet
 			if (isset($_GET['options'])) {
 				$dock->options = json_decode(stripslashes(urldecode($_GET['options'])));
 				if (!empty($dock->options)) {
@@ -525,8 +528,8 @@
 		{
 			$c = $this->type($levels[3]);
 			$s = new Site($c);
-			$this->tpl->connect('content', $c);
-			$this->tpl->connect('site', $s);
+			$this->t->connect('content', $c);
+			$this->t->connect('site', $s);
 			return $s->panel();
 		}
 
@@ -534,9 +537,7 @@
 		{
 			header('content-type: text/plain; charset=utf-8');
 			$json = Link::analyse($_GET['url']);
-			//echo µ($json);
 			$json = json_encode($json);
-			//echo µ($json);
 			return $json;
 		}
 
@@ -570,7 +571,7 @@
 				//Ping Google
 				$google = $this->getOption('site.pingGoogle');
 				if (!empty($google)) {
-					file_get_contents('http://blogsearch.google.com/ping?name='.urlencode($this->getOption('site.name')).'&url='.urlencode($this->addr->getHome()).'&changesURL='.urlencode($this->addr->getHome('atom.xml')));
+					file_get_contents('http://blogsearch.google.com/ping?name='.urlencode($this->getOption('site.name')).'&url='.urlencode($this->a->getHome()).'&changesURL='.urlencode($this->a->getHome('atom.xml')));
 				}
 			}
 		}
@@ -648,7 +649,6 @@
 						$data = $this->type($object, TRUE);
 if (empty($data)) {
 echo 'FAILED TO CREATE: '.µ($object->type.' with oldID '.$object->oldID);
-#echo 'FAILED TO CREATE: '.µ($object);
 	continue;
 }
 
@@ -656,11 +656,10 @@ echo 'FAILED TO CREATE: '.µ($object->type.' with oldID '.$object->oldID);
 						$newID = $data->save();
 if (is_array($newID)) {
 echo 'FAILED TO CREATE: '.µ($newID);
-#echo µ($data);
 	continue;
 }
 						$oldIDs[$object->oldID] = $newID;
-						#echo $this->lang->get('CREATED '.strtolower($object->type).' (#'.$newID.') author: '.$object->author.'->'.$data->author).'<br />'."\n";
+						#echo §('CREATED '.strtolower($object->type).' (#'.$newID.') author: '.$object->author.'->'.$data->author).'<br />'."\n";
 						$key++;
 					}
 					fclose($fs);
@@ -683,7 +682,7 @@ continue;
 							if ($new->parent > 0) {
 								if (isset($oldIDs[$new->parent])) {
 									$parent = ', parent='.$oldIDs[$new->parent];
-									#echo $this->lang->get('UPDATED parent of '.$newID.': '.$new->parent.' -> '.$oldIDs[$new->parent].'<br />')."\n";
+									#echo §('UPDATED parent of '.$newID.': '.$new->parent.' -> '.$oldIDs[$new->parent].'<br />')."\n";
 								} else {
 									@$lostParents[$newID] = $object->parent;
 								}
@@ -698,13 +697,12 @@ continue;
 							} else {
 								mysql_query('UPDATE '.Database::table('numeric').' SET value='.$oldIDs[$ea->value].' WHERE parent='.$ea->parent);
 							}
-							#echo $this->lang->get('UPDATED editorialAuthor of '.$newID.': '.$object->editorialAuthor.' -> '.$oldIDs[$object->editorialAuthor].'<br />')."\n";
+							#echo §('UPDATED editorialAuthor of '.$newID.': '.$object->editorialAuthor.' -> '.$oldIDs[$object->editorialAuthor].'<br />')."\n";
 						}
 					}
 echo 'lostParents:'.µ($lostParents);
 				} else {
-echo µ($_FILES['import']);
-					echo $this->lang->get('Something went wrong during upload. In most cases the file\'s size ({{'.round($_FILES['import']['size']/1024/1024).'M}}) you tried to upload exceeded the allowed file size ({{'.ini_get('post_max_size').'}}) for file uploads of your webspace.');
+					echo §('Something went wrong during upload. In most cases the file\'s size ({{'.round($_FILES['import']['size']/1024/1024).'M}}) you tried to upload exceeded the allowed file size ({{'.ini_get('post_max_size').'}}) for file uploads of your webspace.');
 				}
 				echo '</div>';
 exit;
@@ -713,20 +711,20 @@ exit;
 			ob_start();
 ?>
 <div id="plxAdminContainer">
-	<h1><?=$this->lang->get('Import')?></h1>
-	<p><form class="plexusPreferencesForm" method="post" enctype="multipart/form-data" action="<?=$this->addr->current()?>">
+	<h1><?=§('Import')?></h1>
+	<p><form class="plexusPreferencesForm" method="post" enctype="multipart/form-data" action="<?=$this->a->current()?>">
 		<input type="file" name="import" id="import" />
-		<button type="submit"><?=$this->lang->get('Upload Plexus JSON File')?></button>
+		<button type="submit"><?=§('Upload Plexus JSON File')?></button>
 	</form></p>
-	<h1><?=$this->lang->get('Export')?></h1>
-	<p><form class="plexusPreferencesForm" method="post" enctype="multipart/form-data" action="<?=$this->addr->current()?>">
-	<?=$this->lang->get('Get complete Plexus JSON data export')?>
+	<h1><?=§('Export')?></h1>
+	<p><form class="plexusPreferencesForm" method="post" enctype="multipart/form-data" action="<?=$this->a->current()?>">
+	<?=§('Get complete Plexus JSON data export')?>
 	<input type="hidden" name="export" value="all" />
-	<button type="submit"><?=$this->lang->get('Export')?></button>
+	<button type="submit"><?=§('Export')?></button>
 	</form></p>
-	<p><form class="plexusPreferencesForm" method="post" enctype="multipart/form-data" action="<?=$this->addr->current()?>">
+	<p><form class="plexusPreferencesForm" method="post" enctype="multipart/form-data" action="<?=$this->a->current()?>">
 		Get Plexus JSON export of user #<input size="2" type="text" id="export" name="export" />
-		<button type="submit"><?=$this->lang->get('Export')?></button>
+		<button type="submit"><?=§('Export')?></button>
 	</form></p>
 </div>
 <?php
@@ -735,13 +733,13 @@ exit;
 
 		function plxAddWidget($level, $levels, $cache)
 		{
-			$this->addr->root = '';
+			$this->a->root = '';
 			if (!empty($_GET['ajax'])) {
-				$this->addr->root = $_GET['ajax'];
+				$this->a->root = $_GET['ajax'];
 			}
-			$name = $this->addr->getLevel(2, $levels);
-			$page = $this->addr->getLevel(3, $levels);
-			$widget = $this->addr->getLevel(4, $levels);
+			$name = $this->a->getLevel(2, $levels);
+			$page = $this->a->getLevel(3, $levels);
+			$widget = $this->a->getLevel(4, $levels);
 
 			$dock = new Dock($name);
 			if (isset($_GET['options'])) {
@@ -777,15 +775,15 @@ exit;
 		function plxEditWidget($level, $levels, $cache)
 		{
 			ob_start();
-			$this->addr->root = '';
-			$id = $this->addr->getLevel(2, $levels);
+			$this->a->root = '';
+			$id = $this->a->getLevel(2, $levels);
 			$fetch = Core::getOption($id);
 			$widget = json_decode($fetch->value);
 			$dock = new Dock($fetch->association);
 			if (isset($_GET['options'])) {
 				$dock->options = json_decode(stripslashes(urldecode($_GET['options'])));
 			}
-			$dock->page = $this->addr->getLevel(3, $levels);
+			$dock->page = $this->a->getLevel(3, $levels);
 			$edit = $dock->editWidget($widget, $id);
 			if (is_array($edit)) {
 				$output = ob_get_clean();
@@ -813,16 +811,16 @@ exit;
 		function plxStandaloneWidget($level, $levels, $cache)
 		{
 			ob_start();
-			$this->addr->root = '';
-			$name = $this->addr->getLevel(2, $levels);
-			$page = $this->addr->getLevel(3, $levels);
+			$this->a->root = '';
+			$name = $this->a->getLevel(2, $levels);
+			$page = $this->a->getLevel(3, $levels);
 			$fake = new stdClass;
 			$fake->id = $page;
 			Control::$current[] = $fake;
-			$widget = $this->addr->getLevel(4, $levels);
+			$widget = $this->a->getLevel(4, $levels);
 			$fetch = $this->getOption('widget', $name);
 			if (empty($fetch)) {
-				$data->widget = $widget;
+				@$data->widget = $widget;
 			} else {
 				$data = json_decode($fetch->value);
 			}
@@ -856,7 +854,7 @@ exit;
 		function load($level, $levels, $cache)
 		{
 			$content = $this->run($_GET['path']);
-			$this->tpl->connect('content', $content);
+			$this->t->connect('content', $content);
 			$site = new Site($content);
 			return $site->getContent();
 		}
@@ -893,7 +891,7 @@ exit;
 					exit;
 				}
 			} else {
-				return $this->lang->get('You do not have access to perform this action (are you logged in?) or did not deliver correct ids.');
+				return §('You do not have access to perform this action (are you logged in?) or did not deliver correct ids.');
 			}
 		}
 
@@ -930,7 +928,7 @@ exit;
 			$start = microtime(1);
 			$urls = array();
 			echo "<pre>Start crawling at $start\n";
-			$this->crawlLinks($content, $urls, $start, $this->addr->getHome());
+			$this->crawlLinks($content, $urls, $start, $this->a->getHome());
 			echo "Ready crawling after ".(microtime(1)-$start)."</pre>";
 		}
 
@@ -939,7 +937,7 @@ exit;
 			if (preg_match_all('/href="([^"]*)"/', $content, $results)) {
 				foreach ($results[1] as $result) {
 					if (strpos($result, '://') === false) {
-						$url = parse_url($this->addr->getHome(str_replace('./', '', str_replace('../', '', $result))));
+						$url = parse_url($this->a->getHome(str_replace('./', '', str_replace('../', '', $result))));
 						if ($url['path'] != '/'
 							&& substr($url['path'], -3) != '.js'
 							&& substr($url['path'], -4) != '.css'
@@ -958,7 +956,7 @@ exit;
 								} else {
 									echo (microtime(1)-$start).' <a href="'.$url.'" target="_blank">'.$url.'</a> found in <a href="'.$parent.'">'.$parent.'</a>'."\n";
 									if ($_GET['crawl'] == 'recursive') {
-										$this->crawlLinks($c, &$urls, &$start, $url);
+										$this->crawlLinks($c, $urls, $start, $url);
 									}
 								}
 							}

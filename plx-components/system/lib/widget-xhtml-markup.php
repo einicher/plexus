@@ -33,7 +33,7 @@
 			return $this->data->title;
 		}
 
-		function view()
+		function view($type = '')
 		{
 			return $this->data->markup;
 		}

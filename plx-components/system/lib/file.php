@@ -54,7 +54,7 @@
 			}
 
 			$this->footer = 1;
-			return Template::get2('result-single.php', array('result' => $this));
+			return $this->t->get('result-single.php', array('result' => $this));
 		}
 
 		function save($data = '')

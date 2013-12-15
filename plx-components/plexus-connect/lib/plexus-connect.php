@@ -22,12 +22,12 @@
 				echo PlexusApi::instance()->connectionReceive((object) $_POST);
 				exit;
 			}
-			$this->addr->assign('system.plexus', 'plx-plexus', array(&$this, 'control'));
-			$this->addr->assign('system.plexus.requests', 'requests', array(&$this, 'control'), 'system.plexus');
-			$this->addr->assign('system.plexus.connections', 'connections', array(&$this, 'control'), 'system.plexus');
-			$this->observer->connect('system.panel', 'addPanelMenuItem', &$this);
+			$this->a->assign('system.plexus', 'plx-plexus', array(&$this, 'control'));
+			$this->a->assign('system.plexus.requests', 'requests', array(&$this, 'control'), 'system.plexus');
+			$this->a->assign('system.plexus.connections', 'connections', array(&$this, 'control'), 'system.plexus');
+			$this->o->connect('system.panel', 'addPanelMenuItem', $this);
 			$this->extendPlexusAPI('connect', PLX_COMPONENTS.'plexus-connect/lib/api.php', array('PlexusAPI::instance()', 'control'));
-			$this->observer->connect('data.onSaveReady', 'onSaveReady', $this);
+			$this->o->connect('data.onSaveReady', 'onSaveReady', $this);
 		}
 
 		function control($level, $levels, $cache)
@@ -57,7 +57,7 @@
 		function addPanelMenuItem($panel)
 		{
 			$panel->addItem('left', 'plexus', 'Plexus', array(
-				'link' => $this->addr->assigned('system.plexus'),
+				'link' => $this->a->assigned('system.plexus'),
 				'indicator' => self::instance()->getIndicators()
 			));
 			return $panel;

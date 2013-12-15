@@ -15,23 +15,23 @@
 			$class = strtolower($this->content->getType());
 			if ($this->content->disableSidebar) $class .= ' sidebarDisabled';
 			$class .= ' '.$this->content->classes;
-			$class = $this->observer->notify('system.bodyClass', $class, $this);
+			$class = $this->o->notify('system.bodyClass', $class, $this);
 			return $class;
 		}
 
 		function getHome($append = '')
 		{
-			return $this->addr->getHome($append);
+			return $this->a->getHome($append);
 		}
 
 		function getRoot($append = '')
 		{
-			return $this->addr->getRoot($append);
+			return $this->a->getRoot($append);
 		}
 
 		function getThemeRoot($file)
 		{
-			return $this->addr->getRoot($this->tpl->locateFile($file));
+			return $this->a->getRoot($this->t->locateFile($file));
 		}
 
 		function getName()
@@ -43,15 +43,15 @@
 		{
 			if (ContentControls::$editMode) {
 				if ($this->content->getTitle()) {
-					return $this->observer->notify('siteTitle', strip_tags($this->content->getTitle(TRUE)).$separator.strip_tags($this->getName()), $separator);
+					return $this->o->notify('siteTitle', strip_tags($this->content->getTitle(TRUE)).$separator.strip_tags($this->getName()), $separator);
 				} else {
-					return $this->observer->notify('siteTitle', $this->lang->get('Create').$separator.strip_tags($this->getName()), $separator);
+					return $this->o->notify('siteTitle', §('Create').$separator.strip_tags($this->getName()), $separator);
 				}
 			} else {
 				if ($this->content->getTitle()) {
-					return $this->observer->notify('siteTitle', strip_tags($this->content->getTitle(TRUE)).$separator.strip_tags($this->getName()), $separator);
+					return $this->o->notify('siteTitle', strip_tags($this->content->getTitle(TRUE)).$separator.strip_tags($this->getName()), $separator);
 				} else {
-					return $this->observer->notify('siteTitle', strip_tags($this->getName()), $separator);
+					return $this->o->notify('siteTitle', strip_tags($this->getName()), $separator);
 				}
 			}
 		}
@@ -68,12 +68,12 @@
 
 		function getHeader($siteHeader = '')
 		{
-			return $this->observer->notify('site.getHeader', $siteHeader, $this->content);
+			return $this->o->notify('site.getHeader', $siteHeader, $this->content);
 		}
 
 		function getDefaultHead($args = array())
 		{
-			return $this->tpl->get('head.php', array('args' => $args));
+			return $this->t->get('head.php', array('args' => $args));
 		}
 
 		function getDock($name = 'default', $options = '')
@@ -82,7 +82,7 @@
 				return;
 			}
 
-			$dock = $this->observer->notify('system.occupySidebar.beforeLoad', FALSE, $name, $options, $this->content);
+			$dock = $this->o->notify('system.occupySidebar.beforeLoad', FALSE, $name, $options, $this->content);
 			if (empty($dock)) {
 				$dock = new Dock($name, $this->content->id);
 				if (is_array($options)) {
@@ -96,7 +96,7 @@
 					}
 				}
 				$dock = $dock->view();
-				$dock = $this->observer->notify('system.occupySidebar.afterLoad', $dock, $name, $options, $this->content);
+				$dock = $this->o->notify('system.occupySidebar.afterLoad', $dock, $name, $options, $this->content);
 			}
 			return $dock;
 		}
@@ -116,10 +116,10 @@
 		{
 			if (!ContentControls::$editMode
 			 && $this->content->showEditPanel
-			 && $this->addr->getLevel(-1) != $this->addr->getAddress('system.translate')
-			 && $this->addr->getLevel(-2) != $this->addr->getAddress('system.translate')
-			 && $this->addr->getLevel(-1) != $this->addr->getAddress('system.copy')
-			 && $this->addr->getLevel(-2) != $this->addr->getAddress('system.copy')
+			 && $this->a->getLevel(-1) != $this->a->getAddress('system.translate')
+			 && $this->a->getLevel(-2) != $this->a->getAddress('system.translate')
+			 && $this->a->getLevel(-1) != $this->a->getAddress('system.copy')
+			 && $this->a->getLevel(-2) != $this->a->getAddress('system.copy')
 			 && ($this->access->granted('system.edit')
 			 	|| ($this->access->granted('system.editOwnData') && $this->content->author == Access::$user->id)
 			 	|| ($this->access->granted('system.editOwnData') && $this->content->id == Access::$user->id)
@@ -140,10 +140,10 @@
 			 	|| ($this->access->granted('system.editOwnData') && $this->content->id == Access::$user->id)
 			 )
 			 && (ContentControls::$editMode
-			 	|| $this->addr->getLevel(-1) == $this->addr->getAddress('system.translate')
-			 	|| $this->addr->getLevel(-2) == $this->addr->getAddress('system.translate')
-			 	|| $this->addr->getLevel(-1) == $this->addr->getAddress('system.copy')
-			 	|| $this->addr->getLevel(-2) == $this->addr->getAddress('system.copy')
+			 	|| $this->a->getLevel(-1) == $this->a->getAddress('system.translate')
+			 	|| $this->a->getLevel(-2) == $this->a->getAddress('system.translate')
+			 	|| $this->a->getLevel(-1) == $this->a->getAddress('system.copy')
+			 	|| $this->a->getLevel(-2) == $this->a->getAddress('system.copy')
 			 )
 			) {
 				return true;
@@ -153,36 +153,36 @@
 		function getContentView()
 		{
 			if ($this->content->status == 0 && !empty($this->content->id)) {
-				$this->info($this->lang->get('Status of this {{'.$this->content->type.'}} is set to Draft, only you can see it.'));
+				$this->info(§('Status of this {{'.$this->content->type.'}} is set to Draft, only you can see it.'));
 			}
 			if ($this->content->published > time() && !empty($this->content->id)) {
-				$this->info($this->lang->get('Publish date of this {{'.$this->content->type.'}} is in the future ({{<strong>'.$this->tools->detectTime($this->content->published).'</strong>}}), it will not appear to the public until then.'));
+				$this->info(§('Publish date of this {{'.$this->content->type.'}} is in the future ({{<strong>'.$this->tools->detectTime($this->content->published).'</strong>}}), it will not appear to the public until then.'));
 			}
 
 			$custom = Template::locateFile('custom-'.$this->content->id.'.php');
 			if (file_exists($custom)) {
-				$content = $this->tools->detectSpecialSyntax($this->tpl->get($custom));
+				$content = $this->tools->detectSpecialSyntax($this->t->get($custom));
 			} else {
-				$content = $this->observer->notify('system.content.display', $this->content->view(), $this->content);
+				$content = $this->o->notify('system.content.display', $this->content->view(), $this->content);
 			}
 
-			return Template::get2('content.php', array('main' => $content));
+			return $this->t->get('content.php', array('main' => $content));
 		}
 
 		function getContentEdit()
 		{
-			$this->observer->notify('site.beforeContentEdit', &$this);
+			$this->o->notify('site.beforeContentEdit', $this);
 			
 			if (isset($_GET['ajax'])) {
 				$this->content->doRedirect = FALSE;
 			}
 
 			if (!empty($_POST['plexusForm'])) {
-				if ($this->addr->getLevel(-2) == $this->addr->assigned('system.new')) {
+				if ($this->a->getLevel(-2) == $this->a->assigned('system.new')) {
 					$this->content->autoFormatAddress = TRUE;
 				}
 				$data = (object) $_POST;
-				$data = $this->observer->notify('site.data.beforeSave', $data, &$this->content);
+				$data = $this->o->notify('site.data.beforeSave', $data, $this->content);
 				$save = $this->content->save($data);
 				if (is_numeric($save) && $save !== FALSE && isset($_GET['ajax'])) {
 					echo $save;
@@ -190,12 +190,12 @@
 				}
 			}
 
-			return Template::get2('content.php', array('main' => $this->content->form()));
+			return $this->t->get('content.php', array('main' => $this->content->form()));
 		}
 
 		function getContent()
 		{
-			$this->observer->notify('site.beforeGetContent', &$this);
+			$this->o->notify('site.beforeGetContent', $this);
 			
 			if (ContentControls::$editMode && $this->content->type != 'ERROR404' && $this->content->type != 'ERROR403') {
 				$this->content->showTitle = FALSE;
@@ -204,7 +204,7 @@
 				$content = $this->getContentView();
 			}
 
-			return $this->observer->notify('site.getContent', $content);
+			return $this->o->notify('site.getContent', $content);
 		}
 
 		function getFooter()
@@ -217,7 +217,7 @@
 		<script type="text/javascript" src="<?=$this->getRoot(PLX_SYSTEM.'theme/footer.js')?>"></script>
 <?php
 			$script = ob_get_clean();
-			return $this->observer->notify('site.footer', $this->panel().$script);
+			return $this->o->notify('site.footer', $this->panel().$script);
 		}
 
 		function panel()
@@ -229,31 +229,31 @@
 			$panel = new Panel;
 
 			$panel->addItem('left', 'home', §('Home'), array(
-				'link' => $this->addr->getHome()
+				'link' => $this->a->getHome()
 			));
 
 			$panel->addItem('left', 'new', §('New'), array(
-				'link' => $this->addr->assigned('system.new')
+				'link' => $this->a->assigned('system.new')
 			));
 			$types = array();
 			foreach (Core::$types as $name => $type) {
 				$panel->addItem('new', $name, $type['label'], array(
-					'link' => $this->addr->assigned('system.new').'/'.$this->addr->transform($type['label'])
+					'link' => $this->a->assigned('system.new').'/'.$this->a->transform($type['label'])
 				));
 			}
 
 			$panel->addItem('left', 'preferences', §('Preferences'), array(
-				'link' => $this->addr->assigned('system.preferences')
+				'link' => $this->a->assigned('system.preferences')
 			));
 
 			$panel->addItem('right', 'database', §('Database'), array(
-				'link' => $this->addr->assigned('system.database')
+				'link' => $this->a->assigned('system.database')
 			));
 			$panel->addItem('right', 'logout', §('Logout'), array(
-				'link' => $this->addr->assigned('system.logout')
+				'link' => $this->a->assigned('system.logout')
 			));
 
-			$panel = $this->observer->notify('system.panel', $panel);
+			$panel = $this->o->notify('system.panel', $panel);
 
 			return $panel->view();
 		}
@@ -280,7 +280,7 @@
 
 		function isHome()
 		{
-			if (count($this->addr->levels) == 1 || (count($this->addr->levels) == 2 && $this->control->paginationActive) || (count(Control::$languages) > 1 && count($this->addr->levels) == 2)) {
+			if (count($this->a->levels) == 1 || (count($this->a->levels) == 2 && $this->control->paginationActive) || (count(Control::$languages) > 1 && count($this->a->levels) == 2)) {
 				return TRUE;
 			}
 			return FALSE;
