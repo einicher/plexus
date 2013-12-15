@@ -141,16 +141,16 @@
 			self::checkForUpToDateTables();
 
 			if (empty($data->id)) {
-				$d->getPrepared('INSERT INTO #_index SET parent=?,type=?,address=?,status=?,author=?,published=?,language=?', 'issiiis', $data->parent, $data->type, $data->address, $data->status, $data->author, $data->published, $data->language);
+				$d->getPrepared('INSERT INTO `#_index` SET parent=?,type=?,address=?,status=?,author=?,published=?,language=?', 'issiiis', $data->parent, $data->type, $data->address, $data->status, $data->author, $data->published, $data->language);
 				$data->id = $d->insert_id;
 			} else {
-				$d->getPrepared('UPDATE #_index SET parent=?,type=?,address=?,status=?,author=?,published=?,language=? WHERE id=?', 'issiiisi', $data->parent, $data->type, $data->address, $data->status, $data->author, $data->published, $data->language, $data->id);
+				$d->getPrepared('UPDATE `#_index` SET parent=?,type=?,address=?,status=?,author=?,published=?,language=? WHERE id=?', 'issiiisi', $data->parent, $data->type, $data->address, $data->status, $data->author, $data->published, $data->language, $data->id);
 			}
 
 			if (empty($data->address) && !$force) {
 				$data->address = base_convert($data->id+72000, 10, 36);
 				$data->address = self::unifyAddress($data->parent, $data->address);
-				$d->getPrepared('UPDATE #_index SET address=? WHERE id=?', 'si', $data->address, $data->id);
+				$d->getPrepared('UPDATE `#_index` SET address=? WHERE id=?', 'si', $data->address, $data->id);
 			}
 
 			if ($address != $data->address) {
