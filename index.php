@@ -28,7 +28,7 @@
 	session_start(PLX_ADDR_PATH);
 
 	// PAGE CACHE
-	if (empty($_POST) && !isset($_SESSION['user']) && !isset($_COOKIE['user']) && !isset($_GET['crawl'])) {
+	if (empty($_POST) && !isset($_SESSION['user']) && !isset($_COOKIE['user']) && !isset($_GET['crawl']) && PLX_ADDR_PATH != 'plxCheckForRewrittenUrls') {
 		$url = parse_url('http://'.$_SERVER['SERVER_NAME'].'/'.PLX_ADDR_PATH);
 		$storage = PLX_STORAGE;
 		if (file_exists(PLX_MULTI)) {

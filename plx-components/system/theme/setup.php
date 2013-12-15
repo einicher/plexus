@@ -5,16 +5,19 @@
 		<title><?=$setup->title?> • <?=$this->system->name?> <?=$this->system->version?> Setup</title>
 		<link type="text/css" rel="stylesheet" href="<?=PLX_SYSTEM.'theme/system.css'?>" />
 		<style type="text/css">
-			body { background: #F2F2F2; font-family:sans-serif; }
+			body { background: #F2F2F2; font-family: sans-serif; font-size: 14px; }
 			#container { border: 1px solid #DDD; width: 980px; margin: 50px auto; border-radius: 5px; }
 			header.main { background: #000; color: #FFF; border-radius: 5px 5px 0 0; padding: 20px 30px; }
 			header.main h1 img { float: left; }
-			#main { padding: 30px; background: #FFF; }
+			#main { padding: 30px; background: #FFF; line-height: 150%; }
 			footer.main { background: #000; color: #FFF; border-radius: 0 0 5px 5px; color: #999; }
 			footer.main a { color: #999; }
 			input { border: 1px solid #CCC; font-size: inherit; padding: 10px; }
 			article.main h1 { margin: 0 0 20px 0; font-weight: normal; }
 			button { margin: 15px 0 0 0; color: #000; background: #F2F2F2; border: 1px solid #CCC; }
+			ul { list-style-type: square; margin: 0; padding: 0 0 0 1em; }
+			.green { color: #070; }
+			.red { color: #D00; }
 		</style>
 	</head>
 	<body>
