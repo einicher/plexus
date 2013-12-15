@@ -41,16 +41,16 @@
 
 		function checkDependencies()
 		{
-			$this->title = $this->lang->get('Dependency Checks');
-			$checks = '<p>'.$this->lang->get('Please correct all problems (the red ones are problems) and {{<a href="javascript:location.reload()">refresh</a>}}.').'</p><ul>';
-			$checks .= version_compare(PHP_VERSION, '5.0.0', '>=') ? '<li class="green">'.$this->lang->get('Your PHP version is '.PHP_VERSION.'.').'</li>' : '<li class="red">'.$this->lang->get('At least PHP version 5 needed, version '.PHP_VERSION.' found.').'</li>';
+			$this->title = §('Dependency Checks');
+			$checks = '<p>'.§('Please correct all problems (the red ones are problems) and {{<a href="javascript:location.reload()">refresh</a>}}.').'</p><ul>';
+			$checks .= version_compare(PHP_VERSION, '5.0.0', '>=') ? '<li class="green">'.§('Your PHP version is '.PHP_VERSION.'.').'</li>' : '<li class="red">'.§('At least PHP version 5 needed, version '.PHP_VERSION.' found.').'</li>';
 			@chmod(PLX_STORAGE, 0777);
-			$checks .= is_writable(PLX_STORAGE) ? '<li class="green">'.$this->lang->get('Storage directory is writable.').'</li>' : '<li class="red">'.$this->lang->get('Storage directory '.PLX_STORAGE.' ist not writable').'</li>';
+			$checks .= is_writable(PLX_STORAGE) ? '<li class="green">'.§('Storage directory is writable.').'</li>' : '<li class="red">'.§('Storage directory '.PLX_STORAGE.' ist not writable').'</li>';
 			if (file_exists(Core::getStorage('config.php'))) {
-				$checks .= is_writable(Core::getStorage('config.php')) ? '<li class="green">'.$this->lang->get('Configuration file is writable.').'</li>' : '<li class="red">'.$this->lang->get('Configuration file '.PLX_STORAGE.'config.php ist not writable').'</li>';
+				$checks .= is_writable(Core::getStorage('config.php')) ? '<li class="green">'.§('Configuration file is writable.').'</li>' : '<li class="red">'.§('Configuration file '.PLX_STORAGE.'config.php ist not writable').'</li>';
 			}
-			$checks .= @file_get_contents($this->addr->getHome('plxCheckForRewrittenUrls')) == 'TRUE' ? '<li class="green">'.$this->lang->get('Url rewriting is possible.').'</li>' : '<li class="red">'.$this->lang->get('Rwritten URLs are not possible! Maybe mod_rewrite is not enabled?').'</li>';
-			#$checks .=  ? '<li class="green">'.$this->lang->get('').'</div>' : '<li class="red">'.$this->lang->get('').'</div>';
+			$checks .= @file_get_contents($this->a->getHome('plxCheckForRewrittenUrls')) == 'TRUE' ? '<li class="green">'.§('Url rewriting is possible.').'</li>' : '<li class="red">'.§('Rwritten URLs are not possible! Maybe mod_rewrite is not enabled?').'</li>';
+			#$checks .=  ? '<li class="green">'.§('').'</div>' : '<li class="red">'.§('').'</div>';
 			return $checks.'</ul>';
 		}
 
@@ -87,7 +87,7 @@
 
 		function setupDatabase()
 		{
-			$this->title = $this->lang->get('Database Connection');
+			$this->title = §('Database Connection');
 			$database = @$this->conf->database;
 			@$database->plxSetupDatabase = true;
 			if (!empty($_POST['plexusForm']) && isset($_POST['plxSetupDatabase'])) {
@@ -96,11 +96,11 @@
 				}
 				$con = @mysql_connect($database->host, $database->user, $database->password);
 				if (!$con) {
-					$this->error($this->lang->get('Database connection failed with your host/user/password data.'));
+					$this->error(§('Database connection failed with your host/user/password data.'));
 				} else {
 					$db = mysql_select_db($database->name, $con);
 					if (!$db) {
-						$this->error($this->lang->get('Could not select database “'.$database->name.'”.'));
+						$this->error(§('Could not select database “'.$database->name.'”.'));
 					} else {
 						if (!file_exists($this->host)) {
 							@mkdir($this->host);
@@ -125,7 +125,7 @@
 						if (!$this->checkAdmin()) {
 							return $this->setupAdmin();
 						} else {
-							header('Location:'.$this->addr->getHome());
+							header('Location:'.$this->a->getHome());
 							exit;
 						}
 					}
@@ -186,7 +186,7 @@
 
 		function setupAdmin()
 		{
-			$this->title = $this->lang->get('Administration User');
+			$this->title = §('Administration User');
 
 			$admin = (object) array(
 				'name' => 'admin',
@@ -205,9 +205,9 @@
 					}
 				}
 				if ($empty) {
-					$this->error($this->lang->get('Please fill out all fields.'));
+					$this->error(§('Please fill out all fields.'));
 				} elseif ($admin->password1 != $admin->password2) {
-					$this->error($this->lang->get('Passwords did not match.'));
+					$this->error(§('Passwords did not match.'));
 					$admin->password1 = '';
 					$admin->password2 = '';
 				} else {
@@ -222,7 +222,7 @@
 					$u->plexusImport = 1;
 					$u->author = 0;
 					$id = $u->save();
-					header('Location:'.$this->addr->getHome());
+					header('Location:'.$this->a->getHome());
 					exit;
 				}
 			}
@@ -273,7 +273,7 @@
 
 		function setupSite()
 		{
-			$this->title = $this->lang->get('Site Information');
+			$this->title = §('Site Information');
 			return new Form(
 				array(
 					array(

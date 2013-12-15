@@ -2,6 +2,9 @@
 	class Database extends mysqli
 	{
 		static $instance;
+		static $tables;
+
+		public $prefix;
 
 		static public function &instance($db = '')
 		{
@@ -9,9 +12,86 @@
 				self::$instance = new self($db->host, $db->user, $db->password, $db->name);
 				self::$instance->set_charset('utf8');
 				self::$instance->prefix = $db->prefix;
+
+				if (!self::$instance->checkForTable(self::$instance->table('index'))) {
+					self::$instance->query('
+						CREATE TABLE `#_index` (
+						  `id` int(11) NOT NULL AUTO_INCREMENT,
+						  `parent` int(11) NOT NULL,
+						  `address` varchar(255) NOT NULL,
+						  `type` varchar(255) NOT NULL,
+						  `status` int(11) NOT NULL,
+						  `author` int(11) NOT NULL,
+						  `published` int(11) NOT NULL,
+						  `language` varchar(255) NOT NULL,
+						  PRIMARY KEY (`id`),
+						  INDEX (`parent`,`address`,`status`,`published`)
+						) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+					');
+				}
+
+				if (!self::$instance->checkForTable(self::$instance->table('properties'))) {
+					self::$instance->query('
+						CREATE TABLE `#_properties` (
+							`parent` int(11) NOT NULL,
+							`name` varchar(255) NOT NULL,
+							`value` text NOT NULL,
+							FULLTEXT KEY `value` (`value`),
+							INDEX (`parent`)
+						) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+					');
+					Core::setOption('gallery.thumbSize', '96');
+				}
+
+				$check = Core::getOption('plexus.Upgrade-0.6-numeric');
+				if (self::$instance->checkForTable(self::$instance->table('numeric')) && empty($check)) {
+					self::$instance->query('INSERT INTO `#_properties` SELECT * FROM `#_numeric`');
+					Core::setOption('plexus.Upgrade-0.6-numeric', 1);
+					Core::info('Your '.self::$instance->table('numeric').' table was merged into '.self::$instance->table('properties').', its no longer required and should be deleted.');
+				}
+
+				$check = Core::getOption('plexus.Upgrade-0.6-textual');
+				if (self::$instance->checkForTable(self::$instance->table('textual')) && empty($check)) {
+					self::$instance->query('INSERT INTO '.self::$instance->table('properties').' SELECT * FROM '.self::$instance->table('textual').'');
+					self::$instance->query('ALTER TABLE '.self::$instance->table('properties').' ORDER BY `parent` ');
+					Core::setOption('plexus.Upgrade-0.6-textual', 1);
+					Core::info('Your '.self::$instance->table('textual').' table was merged into '.self::$instance->table('properties').', its no longer required and should be deleted.');
+				}
+
+				if (!self::$instance->checkForTable(self::$instance->table('options'))) {
+					self::$instance->query('
+						CREATE TABLE `#_options` (
+							`id` int(11) NOT NULL AUTO_INCREMENT,
+							`association` varchar(255) NOT NULL,
+							`name` varchar(255) NOT NULL,
+							`value` text NOT NULL,
+						  	PRIMARY KEY (`id`)
+						) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+					');
+					Core::setOption('site.name', 'Name of this Site');
+					Core::setOption('site.mail', 'info@example.com');
+					Core::setOption('site.language', 'en');
+					Core::setOption('site.theme', 'default');
+					Core::setOption('content.width', '500');
+					Core::setOption('content.fullsize', '900');
+					Core::setOption('gallery.thumbSize', '96');
+				}
 			}
 			return self::$instance;
 		}
+
+        function checkForTable($needle, $force = FALSE)
+        {
+            if (empty(self::$tables) || $force) {
+                self::$tables = array();
+                $q = self::$instance->query('SHOW TABLES');
+                while($tables = $q->fetch_array()) {
+                    self::$tables[] = $tables[0];
+                }
+            }
+
+            return in_array($needle, self::$tables);
+        }
 
 		static public function table($name)
 		{

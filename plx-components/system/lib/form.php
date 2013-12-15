@@ -245,7 +245,9 @@
 							$field->isImage = true;
 							$field->image = $field;
 						}
-						$field->id = $this->values->id;
+						if (!empty($field->value)) {
+							$field->id = $this->values->id;
+						}
 					break;
 
 					case 'select':

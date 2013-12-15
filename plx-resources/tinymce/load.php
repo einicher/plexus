@@ -1,7 +1,7 @@
 <?php
 	Observer::connect('site.getHeader', 'loadTinyMCE', $this, FALSE);
 
-	function loadTinyMCE($actor, $siteHead)
+	function loadTinyMCE($siteHead, $actor)
 	{
 		return $siteHead.'
 		<script type="text/javascript" src="'.$actor->a->getRoot(PLX_RESOURCES.'tinymce/tiny_mce.js').'"></script>

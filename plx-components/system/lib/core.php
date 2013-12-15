@@ -243,7 +243,7 @@
 			return self::$storage.$append;
 		}
 
-		function error($message, $cache = FALSE)
+		public static function error($message, $cache = FALSE)
 		{
 			self::$errors .= $message.'<br />';
 			if ($cache) {
@@ -252,7 +252,7 @@
 			return TRUE;
 		}
 
-		function info($message, $cache = FALSE)
+		public static function info($message, $cache = FALSE)
 		{
 			self::$infos .= $message.'<br />';
 			if ($cache) {
@@ -261,7 +261,7 @@
 			return TRUE;
 		}
 		
-		function registerType($type, $class, $file, $label, $options = array())
+		public static function registerType($type, $class, $file, $label, $options = array())
 		{
 			self::$types[$type] = array(
 				'class' => $class,
@@ -271,14 +271,14 @@
 			);
 		}
 
-		function getDataType($type)
+		public static function getDataType($type)
 		{
 			if (isset(self::$types[strtoupper($type)])) {
 				return (object) self::$types[strtoupper($type)];
 			}
 		}
 
-		function getData($type, $mixed = null)
+		public static function getData($type, $mixed = null)
 		{
 			if (is_numeric($type)) {
 				return PlexusDataControl::getDataById($type);
@@ -303,7 +303,7 @@
 			}
 		}
 
-		function resource($name)
+		public static function resource($name)
 		{
 			$loadFile = PLX_RESOURCES.$name.'/load.php';
 			if (empty(self::$resources[$loadFile])) {
@@ -314,7 +314,7 @@
 			}
 		}
 
-		function overwriteOption($name, $value = '')
+		public static function overwriteOption($name, $value = '')
 		{
 			if (empty($value)) {
 				unset(self::$cacheOptions[$name]);
@@ -323,7 +323,7 @@
 			}
 		}
 
-		function getOptionExact($name, $value, $association)
+		public static function getOptionExact($name, $value, $association)
 		{
 			return Database::fetch('SELECT * FROM '.Database::table('options').' WHERE name="'.Database::escape($name).'" && association="'.Database::escape($association).'" && value="'.Database::escape($value).'"');
 		}
@@ -364,7 +364,7 @@
 			}
 		}
 
-		function setOption($name, $value, $association = '', $multi = FALSE)
+		public static function setOption($name, $value, $association = '', $multi = FALSE)
 		{
 			if (is_numeric($name)) {
 				Database::instance()->query('UPDATE `#_options` SET value="'.Database::instance()->escape($value).'" WHERE id='.$name);
@@ -385,7 +385,7 @@
 			return $id;
 		}
 
-		function delOption($mixed, $value = '', $association = '')
+		public static function delOption($mixed, $value = '', $association = '')
 		{
 			if (is_numeric($mixed)) {
 				return Database::instance()->query('DELETE FROM '.Database::table('options').' WHERE id='.$mixed);

@@ -1,10 +1,9 @@
 <?php
 	Observer::connect('site.getHeader', 'loadjQuery', $this, FALSE);
 
-	function loadjQuery($actor, $siteHead)
+	function loadjQuery($siteHeader, $actor)
 	{
-		$addr = Address::instance();
-		return $siteHead.'
-		<script type="text/javascript" src="'.$addr->getRoot().PLX_RESOURCES.'jquery/jquery.min.js"></script>';
+		return $siteHeader.'
+		<script type="text/javascript" src="'.Address::instance()->getRoot().PLX_RESOURCES.'jquery/jquery.min.js"></script>';
 	}
 ?>

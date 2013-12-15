@@ -1,7 +1,7 @@
 <?php
 	Observer::connect('site.getHeader', 'loadSWFUpload', $this, FALSE);
 
-	function loadSWFUpload($actor, $siteHead)
+	function loadSWFUpload($siteHead, $actor)
 	{
 		$path = $actor->a->getRoot(PLX_RESOURCES.'swfupload/');
 		define('PLX_SWFUPLOAD_PATH', $path);
