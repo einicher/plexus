@@ -94,40 +94,37 @@
 				foreach ($_POST as $name => $value) {
 					$database->$name = $value;
 				}
-				$con = @mysql_connect($database->host, $database->user, $database->password);
-				if (!$con) {
-					$this->error(§('Database connection failed with your host/user/password data.'));
+
+				$con = @new mysqli($database->host, $database->user, $database->password, $database->name);
+
+				if ($con->connect_errno) {
+					$this->error(§('Database connection failed with your host/user/password/database data.'));
 				} else {
-					$db = mysql_select_db($database->name, $con);
-					if (!$db) {
-						$this->error(§('Could not select database “'.$database->name.'”.'));
-					} else {
-						if (!file_exists($this->host)) {
-							@mkdir($this->host);
-							@chmod($this->host, 0777);
-						}
+					if (!file_exists($this->host)) {
+						@mkdir($this->host);
+						@chmod($this->host, 0777);
+					}
 
-						$c = '<?php
-	$conf->database->host = \''.$database->host.'\';
-	$conf->database->user = \''.$database->user.'\';
-	$conf->database->password = \''.$database->password.'\';
-	$conf->database->name = \''.$database->name.'\';
-	$conf->database->prefix = \''.$database->prefix.'\';
+					$c = '<?php
+$conf->database->host = \''.$database->host.'\';
+$conf->database->user = \''.$database->user.'\';
+$conf->database->password = \''.$database->password.'\';
+$conf->database->name = \''.$database->name.'\';
+$conf->database->prefix = \''.$database->prefix.'\';
 ?>';
-						$config = $this->host.'config.php';
+					$config = $this->host.'config.php';
 
-						$fs = @fopen($config, 'w');
-						@fwrite($fs, $c);
-						@fclose($fs);
-						@chmod($config, 0777);
-						
-						$this->conf->database = $database;
-						if (!$this->checkAdmin()) {
-							return $this->setupAdmin();
-						} else {
-							header('Location:'.$this->a->getHome());
-							exit;
-						}
+					$fs = @fopen($config, 'w');
+					@fwrite($fs, $c);
+					@fclose($fs);
+					@chmod($config, 0777);
+					
+					$this->conf->database = $database;
+					if (!$this->checkAdmin()) {
+						return $this->setupAdmin();
+					} else {
+						header('Location:'.$this->a->getHome());
+						exit;
 					}
 				}
 			}
