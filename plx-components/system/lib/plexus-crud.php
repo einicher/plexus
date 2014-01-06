@@ -28,7 +28,7 @@
 
 		protected $inDatabase2Mode = false;
 
-		function __construct($mixed = '', $assign = FALSE)
+		function __construct($mixed = '', $assign = false)
 		{
 			if ($mixed == 'PLEXUS_DATABASE2_LOOP') {
 				$this->clearBlueprint();
@@ -174,13 +174,13 @@
 			}
 		}
 
-		function add($type, $name, $required = FALSE, $options = '')
+		function add($type, $name, $required = false, $options = '')
 		{
-			$add = TRUE;
+			$add = true;
 			if (isset(self::$bluePrints[$this->type])) {
 				foreach (self::$bluePrints[$this->type] as $key => $field) {
 					if ($field['name'] == $name) {
-						$add = FALSE;
+						$add = false;
 						$return = $key;
 					}
 				}
@@ -188,29 +188,28 @@
 
 			if ($add) {
 				if (isset($options['after'])) {
-					foreach (self::$bluePrints[$this->type] as $key => $field) {
-						if ($field['name'] == $options['after']) {
-							$count = $key+10;
-						}
+					$offset = array_search($options['after'], array_keys(self::$bluePrints[$this->type]));
+					if ($offset !== false) {
+						$offset += 1;
+						self::$bluePrints[$this->type] = array_slice(self::$bluePrints[$this->type], 0, $offset, true) +
+							array($name => array(
+								'type' => $type,
+								'name' => $name,
+								'required' => $required,
+								'options' => $options
+							)) +
+							array_slice(self::$bluePrints[$this->type], $offset, NULL, true);
+					} else {
+						trigger_error($options['after'].' not found in '.$this->type);
 					}
 				} else {
-					$count = 100;
-					if (!empty(self::$bluePrints[$this->type])) {
-						$keys = array_keys(self::$bluePrints[$this->type]);
-						$count = array_pop($keys)+100;
-					}
+					self::$bluePrints[$this->type][$name] = array(
+						'type' => $type,
+						'name' => $name,
+						'required' => $required,
+						'options' => $options
+					);
 				}
-
-				#$options['label'] .= ' '.$count;
-
-				self::$bluePrints[$this->type][$count] = array(
-					'type' => $type,
-					'name' => $name,
-					'required' => $required,
-					'options' => $options
-				);
-	
-				ksort(self::$bluePrints[$this->type]);
 			}
 
 			if ($this->inDatabase2Mode) {
@@ -277,7 +276,7 @@
 			}
 		}
 
-		function change($name, $type, $required = FALSE, $options = '')
+		function change($name, $type, $required = false, $options = '')
 		{
 			foreach (self::$bluePrints[$this->type] as $key => $field) {
 				if ($field['name'] == $name) {
@@ -293,7 +292,7 @@
 
 		function create()
 		{
-			$this->beforeCreate(TRUE);
+			$this->beforeCreate(true);
 			return edit();
 		}
 
@@ -307,7 +306,7 @@
 
 		function edit($action = '')
 		{
-			$this->beforeEdit(TRUE);
+			$this->beforeEdit(true);
 			$form = new Form(self::$bluePrints[$this->type], $this);
 			if (!empty($action)) {
 				$form->action = $action;
@@ -369,7 +368,7 @@
 					$errors[] = $field;
 				} elseif ($field['type'] == 'captcha') {
 					if (strtolower($this->$field['name']) == strtolower(strrev($_SESSION['captcha'][$field['name']]->string))) {
-						$_SESSION['captcha'][$field['name']]->hold = TRUE;
+						$_SESSION['captcha'][$field['name']]->hold = true;
 					} else {
 						$field['error'] = §('Your botcheck string is wrong.');
 						$errors[] = $field;
@@ -379,7 +378,7 @@
 			}
 
 			if (empty($errors)) {
-				if ($this->beforeSave($data) !== FALSE) {
+				if ($this->beforeSave($data) !== false) {
 					$this->_cache = '';
 					if (empty($this->id)) {
 						$this->justCreated = true;
@@ -394,14 +393,14 @@
 					unset($_SESSION['captcha']);
 					$this->o->notify(strtolower($this->type).'.onSaveReady', $this);
 					$this->o->notify('data.onSaveReady', $this);
-					if ($this->doRedirect && $id !== FALSE) {
+					if ($this->doRedirect && $id !== false) {
 						header('Location: '.$this->a->httpGetVars($this->a->getRootLink($id)));
 						exit;
 					} else {
 						return $id;
 					}
 				} else {
-					return FALSE;
+					return false;
 				}
 			} else {
 				$f = '';
@@ -440,8 +439,8 @@
 
 		function delete()
 		{
-			Database2::instance()->query('DELETE FROM `#_options` WHERE name="translations" && association='.$this->id);
-			Database2::instance()->query('DELETE FROM `#_options` WHERE name="translations" && value='.$this->id);
+			Database::instance()->query('DELETE FROM `#_options` WHERE name="translations" && association='.$this->id);
+			Database::instance()->query('DELETE FROM `#_options` WHERE name="translations" && value='.$this->id);
 			return PlexusDataControl::remove($this->id);
 		}
 
@@ -491,7 +490,7 @@
 			return '<p><a href="'.$this->link().'">DATA_TYPE “'.$this->type.'” has not defined a method result() :\'(.</a></p>';
 		}
 
-		function getLink($absolute = FALSE)
+		function getLink($absolute = false)
 		{
 			if ($absolute) {
 				return $this->a->getHomeLink($this->id);
@@ -501,7 +500,7 @@
 		}
 
 		// deprecated, use getLink()
-		function link($absolute = FALSE)
+		function link($absolute = false)
 		{
 			return $this->getLink($absolute);
 		}

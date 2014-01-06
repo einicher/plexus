@@ -219,6 +219,7 @@
 
 		public function run($mixed, $parent = 0)
 		{
+			$this->debug('Control::run START');
 			if (!empty(self::$overwrite)) {
 				return self::$overwrite;
 			}
@@ -287,6 +288,8 @@
 			}
 			$language = ' && language="'.Database::escape(self::$language).'"';
 
+			$this->debug('Control::run loop START');
+
 			// SYSTEM MAIN LOOP
 			$lvs = $levels;
 			if (isset($levels[2]) && empty($levels[2])) {
@@ -298,6 +301,9 @@
 						unset($next);
 					} else {
 						$current = $this->a->isAssigned($level, $lvs, $cache);
+if (isset($_GET['debug'])) {
+	echo µ($current);
+}
 					}
 
 					if (defined('PLX_CONTROL_EXIT')) {
@@ -307,7 +313,7 @@
 						return $current;
 					}
 
-					if (!empty($current['takeOverMainLoop'])) {
+					if (is_array($current) && !empty($current['takeOverMainLoop'])) {
 						break;
 					}
 
@@ -371,14 +377,23 @@
 				}
 			}
 
+			$this->debug('Control::run loop READY');
+
 			if (is_array($current)) {
-				$current = $this->processCallback($current['call'], $level, $levels, $cache);
-				if ($this->paginationActive && !$this->paginationUsed) {
-					$current = null;
+				if (empty($current['call'])) {
+					$current = '';
+				} else {
+					$current = $this->processCallback($current['call'], $level, $levels, $cache);
+					if ($this->paginationActive && !$this->paginationUsed) {
+						$current = null;
+					}
 				}
 			}
 
+			$this->debug('Control::run processCallback READY');
+
 			if (is_object($current) && empty($current->id)) {
+				$this->debug('Control::run READY pre1');
 				return $current;
 			} elseif (!empty($current)) {
 				$current = $this->getData($current);
@@ -397,6 +412,8 @@
 			} else {
 				self::$language = $current->language;
 			}
+
+			$this->debug('Control::run READY');
 
 			return $current;
 		}
@@ -853,7 +870,7 @@ exit;
 			unlink($this->getStorage($_POST['target'].'/'.$file));
 			return 'OK';
 		}
-		
+
 		function clearCache()
 		{
 			self::$cache = false;

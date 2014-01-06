@@ -188,7 +188,7 @@
 					}
 					foreach (self::$occupied as $type => $registered) {
 						if ($registered == $name && !empty($levels[$level+1])) {
-							$fetch = $this->db->fetch('SELECT * FROM '.$this->db->table('index').' WHERE parent=0 AND type="'.$type.'" AND address="'.$levels[$level+1].'"');
+							$fetch = $this->d->get('SELECT * FROM `#_index` WHERE parent=0 AND type="'.$type.'" AND address="'.$levels[$level+1].'"');
 							if (!empty($fetch)) {
 								self::$dependencies[] = array(
 									'name' => 'dataType.'.$type,
@@ -198,12 +198,18 @@
 							}
 						}
 					}
-					self::$dependencies[] = $reserved;
-					return $reserved;
+					$prev = end(self::$dependencies);
+					if (empty($reserved['dependency']) || $reserved['dependency'] == $prev['name']) {
+						self::$dependencies[] = $reserved;
+						return $reserved;
+					}
 				}
 				if (!empty(self::$dependencies)) {
 					$prev = end(self::$dependencies);
-					if (isset($levels[$level]) && ($levels[$level] == urlencode($reserved['address']) || $reserved['address'] == '*') && $prev['name'] === $reserved['dependency']) {
+					if (isset($levels[$level])
+						&& ($levels[$level] == urlencode($reserved['address']) || $reserved['address'] == '*')
+						&& $prev['name'] === $reserved['dependency']
+					) {
 						if (!empty($reserved['exit'])) {
 							define('PLX_CONTROL_EXIT', true);
 						}

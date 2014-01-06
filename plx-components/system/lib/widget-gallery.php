@@ -42,16 +42,17 @@
 
 		function view($type = '')
 		{
-			$gallery = $this->type($this->data->gallery);
-			if (!$gallery) {
+			$gallery = $this->getData($this->data->gallery);
+			if ($gallery) {
+				return $this->t->get('widget-gallery.php', array(
+					'thumbs' => $gallery->listThumbs($this->data->thumbs),
+					'title' => $this->data->title,
+					'gallery' => $gallery,
+					'widget' => $widget
+				));
+			} else {
 				return 'GALLERY_'.$this->data->gallery.'_NOT_FOUND';
 			}
-			$view = '<div class="thumbs">'.$gallery->listThumbs($this->data->thumbs).'</div>';
-			if (!empty($this->data->title)) {
-				$view = '<h1><a href="'.$gallery->link().'">'.$this->data->title.'</a></h1>'.$view;
-			}
-			$view .= '<a class="more" href="'.$gallery->link().'">'.$this->lang->get('See more').' »</a>';
-			return $view.'<div class="clear"></div>';
 		}
 	}
 ?>

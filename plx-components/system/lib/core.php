@@ -356,14 +356,14 @@
 
 		function addPreference($name, $call, &$actor = '')
 		{
-			$n = $this->addr->transform(strtolower($name));
+			$n = $this->a->transform(strtolower($name));
 			self::$preferences[$n] = (object) array(
 				'name' => $name,
 				'address' => $n,
 				'call' => $call,
 				'actor' => &$actor
 			);
-			$this->addr->assign('system.preferences.'.$n, $n, array(&$actor, $call), 'system.preferences');
+			$this->a->assign('system.preferences.'.$n, $n, array(&$actor, $call), 'system.preferences');
 		}
 
 		function registerAjaxCall($call, &$actor = '')
@@ -373,7 +373,10 @@
 
 		function debug($name)
 		{
-			Core::$debug[] = '['.$name.']	'.(microtime(1)-PLX_START);
+			Core::$debug[] = $debug = '['.$name.']	'.(microtime(1)-PLX_START);
+			if (isset($_GET['debug'])) {
+				echo '<pre>'.$debug.'</pre>';
+			}
 		}
 
 		function component($component)

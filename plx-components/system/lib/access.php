@@ -269,8 +269,8 @@
 		function getObservers()
 		{
 			$users = array();
-			$qry = mysql_query('SELECT i.* FROM '.Database::table('index').' i JOIN '.Database::table('properties').' t ON t.parent=i.id WHERE t.name="groups" AND FIND_IN_SET("-1", t.value)');
-			while ($fetch = mysql_fetch_object($qry)) {
+			$q = $this->d->query('SELECT i.* FROM `#_index` i JOIN `#_properties` p ON p.parent=i.id WHERE p.name="groups" AND FIND_IN_SET("-1", p.value)');
+			while ($fetch = $q->fetch_object()) {
 				$users[$fetch->id] = $this->getData($fetch);
 			}
 			return $users;

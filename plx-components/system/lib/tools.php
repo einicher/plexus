@@ -48,7 +48,7 @@
 		 *
 		 * @param int $stamp Unix Timestamp that should be converted
 		 */
-		function detectTime($stamp, $dateonly = 0)
+		static public function detectTime($stamp, $dateonly = 0)
 		{
 			$vorGestern = strtotime('yesterday -1 days');
 			$yesterday = strtotime('yesterday');
@@ -105,7 +105,7 @@
 		/* Get the age of timestamp or date
 		 * $birthdate is date like 19851225, if $timestamp is set to TRUE $birthdate is considered a unix timestamp
 		 */
-		function age($birthdate, $timestamp = FALSE)
+		static public function age($birthdate, $timestamp = FALSE)
 		{
 			if ($timestamp) {
 				$day = date('d', $birthdate);
@@ -121,7 +121,7 @@
 			$age2 = date("m",time())-$month;
 			$age3 = date("d",time())-$day;
 
-			if ($age2 < 0 AND $age3 < 0) { 
+			if ($age2 < 0 && $age3 < 0) { 
 				$age1--;
 			}
 			return $age1;
@@ -196,8 +196,8 @@
 
 		function detectStoragePaths($text)
 		{
-			$text = preg_replace_callback('=src\="plx-storage://(.*)"=iU', create_function('$m', 'return \'src="\'.$this->overwriteCacheParams($m[1]).\'"\';'), $text);
-			$text = preg_replace_callback('=href\="plx-storage://(.*)"=iU', create_function('$m', 'return \'href="\'.$this->overwriteCacheParams($m[1], 1).\'"\';'), $text);
+			$text = preg_replace_callback('=src\="plx-storage://(.*)"=iU', create_function('$m', ' return \'src="\'.Tools::instance()->overwriteCacheParams($m[1]).\'"\';'), $text);
+			$text = preg_replace_callback('=href\="plx-storage://(.*)"=iU', create_function('$m', ' return \'href="\'.Tools::instance()->overwriteCacheParams($m[1], 1).\'"\';'), $text);
 			return $text;
 		}
 
@@ -264,7 +264,9 @@
 					require_once self::$widgets[$widget->widget]['file'];
 					$widget = new $widget->widget('plx.embedded', -1, $widget);
 					$title = $widget->getTitle();
+					$this->debug('Tools::replaceWidget view START');
 					$view = $widget->view('embedded');
+					$this->debug('Tools::replaceWidget view READY');
 					if ($title) {
 						$view = '<h1>'.$title."</h1>".$view;
 					}
