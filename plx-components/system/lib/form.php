@@ -184,9 +184,9 @@
 
 					case 'captcha':
 						if (!empty($field->value) && isset($_SESSION['captcha'][$field->name]->hold)) {
-							$field->captcha->string = $_SESSION['captcha'][$field->name]->string; 
+							@$field->captcha->string = $_SESSION['captcha'][$field->name]->string; 
 						} else {
-							$field->captcha->string = substr(sha1(md5(time())), 5, 5);
+							@$field->captcha->string = substr(sha1(md5(time())), 5, 5);
 							$_SESSION['captcha'][$field->name] = $field->captcha;
 						}
 					break;
@@ -260,16 +260,14 @@
 								$field->options->values = $field->options->actor->{$field->options->values}();
 							}
 						}
+						$options = array();
 						foreach ($field->options->values as $option => $value) {
-							$option = (object) array(
+							$options[] = (object) array(
 								'value' => $option,
 								'label' => $value
 							);
-							$this->t->repeat('form.php', 'selectOption', array(
-								'option' => $option,
-								'field' => $field
-							));
 						}
+						$field->options->values = $options;
 					break;
 
 					case 'radio':
@@ -419,7 +417,6 @@
 			}
 			$showChecks = false;
 			if (!empty($checks) && !$checksOff) {
-				Template::cut('form.php', 'formChecks', array('checks' => $checks));
 				$showChecks = true;
 			}
 

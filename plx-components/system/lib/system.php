@@ -182,7 +182,7 @@
 				foreach (Control::$activeComponentsDirs as $c) {
 					$file = $this->t->locateFile('style.css', $c);
 					if (file_exists($file) && !in_array($c.'/style.css', $exclude)) {
-						$style .= "\n/*".$file."*/\n\n".preg_replace_callback('/url\(\'(.*)\'\)/iU', create_function('$m', 'return \'url(\\\'\'.Template::instance()->locateFile($m[1], \''.$c.'\').\'\\\')\';'), $this->t->get($file));
+						$style .= "\n/*".$file."*/\n\n".preg_replace_callback('/url\(\'(.*)\'\)/iU', create_function('$m', 'return \'url(\\\'\'.Template::instance()->locateFile($m[1], \''.$c.'\').\'\\\')\';'), $this->t->get('style.css', array(), $c));
 					}
 					$style .= "\n";
 				}

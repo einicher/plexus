@@ -39,7 +39,7 @@
 				$id = $mixed['id'];
 				$fetch = (object) $mixed;
 			} elseif (is_string($mixed)) {
-				return $this->control->run($mixed);
+				return Control::instance()->run($mixed);
 			} else {
 				trigger_error('No possible value given.', E_USER_WARNING);
 			}
@@ -268,7 +268,7 @@
 			return false;
 		}
 
-		function remove($id)
+		static public function remove($id)
 		{
 			// remove associated files
 			$data = self::getDataById($id);
@@ -283,8 +283,8 @@
 			}
 
 			// remove table data
-			Database::query('DELETE FROM '.Database::table('properties').' WHERE parent='.$id);
-			Database::query('DELETE FROM '.Database::table('index').' WHERE id='.$id);
+			Database::instance()->query('DELETE FROM '.Database::table('properties').' WHERE parent='.$id);
+			Database::instance()->query('DELETE FROM '.Database::table('index').' WHERE id='.$id);
 			return true;
 		}
 

@@ -141,6 +141,10 @@
 				$class = $args[0][0];
 				$args[0] = $args[0][1];
 			}
+			if (is_array($args[1])) {
+				extract($args[1]);
+				$args[1] = $types;
+			}
 			$sql = array_shift($args);
 			$stmt = $this->prepare($sql) OR exit($this->error.'<br />'.$sql);
 			$param[] = array_shift($args);
@@ -211,7 +215,7 @@
 
 			$stmt->close();
 
-			if (count($results) == 1) {
+			if (count($results) == 1 && empty($forceArray)) {
 				return array_pop($results);
 			} else {
 				return $results;

@@ -48,7 +48,7 @@
 		 *
 		 * @param int $stamp Unix Timestamp that should be converted
 		 */
-		function detectTime($stamp, $dateonly = 0)
+		static public function detectTime($stamp, $dateonly = 0)
 		{
 			$vorGestern = strtotime('yesterday -1 days');
 			$yesterday = strtotime('yesterday');
@@ -105,7 +105,7 @@
 		/* Get the age of timestamp or date
 		 * $birthdate is date like 19851225, if $timestamp is set to TRUE $birthdate is considered a unix timestamp
 		 */
-		function age($birthdate, $timestamp = FALSE)
+		static public function age($birthdate, $timestamp = FALSE)
 		{
 			if ($timestamp) {
 				$day = date('d', $birthdate);
@@ -121,7 +121,7 @@
 			$age2 = date("m",time())-$month;
 			$age3 = date("d",time())-$day;
 
-			if ($age2 < 0 AND $age3 < 0) { 
+			if ($age2 < 0 && $age3 < 0) { 
 				$age1--;
 			}
 			return $age1;
@@ -152,30 +152,27 @@
 
 		function detectProblems($content)
 		{
-			return $content;
-			$content = preg_replace_callback('=href\="([^\"]*)"=U', create_function('$m', 'return \'href="\'.$this->correctRootPaths($m[1]).\'"\';'), $content);
-			$content = preg_replace_callback('=src\="([^\"]*)"=U', create_function('$m', 'return \'src="\'.$this->correctRootPaths($m[1]).\'"\';'), $content);
+			$content = preg_replace_callback('=href\="([^\"]*)"=U', create_function('$m', 'return \'href="\'.Tools::instance()->correctRootPaths($m[1]).\'"\';'), $content);
+			$content = preg_replace_callback('=src\="([^\"]*)"=U', create_function('$m', 'return \'src="\'.Tools::instance()->correctRootPaths($m[1]).\'"\';'), $content);
 			return $content;
 		}
 
 		function detectSpecialSyntax($content)
 		{
-			$GLOBALS['tools'] =& $this;
-			$content = preg_replace_callback('=<div class\="widget\">(.*)</div>=iU', create_function('$m', 'return $GLOBALS[\'tools\']->replaceWidget($m[1]);'), $content);
-			//$content = preg_replace_callback('=<div class\="widget\">(.*)</div>=iU', create_function('$m', 'return $this->replaceWidget($m[1]);'), $content);
-			//$content = preg_replace_callback('=<div class\="video\">(.*)</div>=iU', create_function('$m', 'return $this->replaceVideo($m[1]);'), $content);
-			//$content = preg_replace_callback('=<div class\="gallery\">(.*)</div>=iU', create_function('$m', 'return $this->replaceGallery($m[1]);'), $content);
+			$content = preg_replace_callback('=<div class\="widget\">(.*)</div>=iU', create_function('$m', 'return Tools::instance()->replaceWidget($m[1]);'), $content);
+			$content = preg_replace_callback('=<div class\="video\">(.*)</div>=iU', create_function('$m', 'return Tools::instance()->replaceVideo($m[1]);'), $content);
+			$content = preg_replace_callback('=<div class\="gallery\">(.*)</div>=iU', create_function('$m', 'return Tools::instance()->replaceGallery($m[1]);'), $content);
 			$content = str_replace('rel="lightbox[pageContent]"', 'rel="lightboxPageContent"', $content);
 			
 			$content = $this->detectProblems($content);
 			
-			//$content = preg_replace('=\[\[([^|[]*)\|([^]]*)\]\]=Ue', '\'<a href="\'.self::detectLink(\'\\1\').\'">\\2</a>\'', $content);
-			//$content = preg_replace('=\[\[(.*)\]\]=Ue', '\'<a href="\'.self::detectLink(\'\\1\').\'">\\1</a>\'', $content);
+			$content = preg_replace_callback('=\[\[([^|[]*)\|([^]]*)\]\]=U', create_function('$m', 'return \'<a href="\'.Tools::instance()->detectLink($m[1]).\'">\'.$m[2].\'</a>\';'), $content);
+			$content = preg_replace_callback('=\[\[(.*)\]\]=U', create_function('$m', 'return \'<a href="\'.Tools::instance()->detectLink($m[1]).\'">\'.$m[1].\'</a>\';'), $content);
 
-			//$content = preg_replace('=<a([^\>]*)>=ieU', '\'<a\'.$this->detectLinkTarget(\'\\1\').\'>\'', $content);
+			$content = preg_replace_callback('=<a([^\>]*)>=iU', create_function('$m', 'return \'<a\'.Tools::instance()->detectLinkTarget($m[1]).\'>\';'), $content);
 			
-			//$content = $this->detectStoragePaths($content);
-			//$content = preg_replace('=href\="plx-file://(.*)"=ieU', '\'href="\'.$this->plexusFile(\'\\1\').\'"\'', $content);
+			$content = $this->detectStoragePaths($content);
+			$content = preg_replace_callback('=href\="plx-file://(.*)"=iU', create_function('$m', 'return \'href="\'.Tools::instance()->plexusFile($m[1]).\'"\';'), $content);
 
 			return $content;
 		}
@@ -192,17 +189,15 @@
 			$content = preg_replace('=\[\[(.*)\]\]=U', '\\1', $content);
 
 			$content = $this->detectStoragePaths($content);
-			$GOLBALS['tools'] = &$this;
-			$content = preg_replace_callback('=href\="plx-file://(.*)"=iU', create_function('$m', ' return \'href="\'.$GOLBALS[\'tools\']->plexusFile(\'$m[1]\').\'"\';'), $content);
+			$content = preg_replace_callback('=href\="plx-file://(.*)"=iU', create_function('$m', ' return \'href="\'.Tools::instance()->plexusFile(\'$m[1]\').\'"\';'), $content);
 
 			return $content;
 		}
 
 		function detectStoragePaths($text)
 		{
-			return $text;
-			$text = preg_replace('=src\="plx-storage://(.*)"=ieU', '\'src="\'.$this->overwriteCacheParams(\'\\1\').\'"\'', $text);
-			$text = preg_replace('=href\="plx-storage://(.*)"=ieU', '\'href="\'.$this->overwriteCacheParams(\'\\1\', 1).\'"\'', $text);
+			$text = preg_replace_callback('=src\="plx-storage://(.*)"=iU', create_function('$m', ' return \'src="\'.Tools::instance()->overwriteCacheParams($m[1]).\'"\';'), $text);
+			$text = preg_replace_callback('=href\="plx-storage://(.*)"=iU', create_function('$m', ' return \'href="\'.Tools::instance()->overwriteCacheParams($m[1], 1).\'"\';'), $text);
 			return $text;
 		}
 
@@ -213,8 +208,6 @@
 
 		function overwriteCacheParams($path, $mode = 0)
 		{
-#echo µ(parse_url($path));
-#echo µ($path);
 			if ($mode) {
 				$query = '?w='.$this->getOption('content.fullsize');
 			} else {
@@ -271,7 +264,9 @@
 					require_once self::$widgets[$widget->widget]['file'];
 					$widget = new $widget->widget('plx.embedded', -1, $widget);
 					$title = $widget->getTitle();
+					$this->debug('Tools::replaceWidget view START');
 					$view = $widget->view('embedded');
+					$this->debug('Tools::replaceWidget view READY');
 					if ($title) {
 						$view = '<h1>'.$title."</h1>".$view;
 					}
@@ -287,7 +282,7 @@
 		function replaceVideo($id)
 		{
 			if (is_numeric($id)) {
-				$video = $this->type($id);
+				$video = $this->getData($id);
 				if ($video->type == 'VIDEO') {
 					return '<div class="video">'.Video::detectAndFit($video->code).'</div>';
 				} else {
