@@ -323,10 +323,8 @@
 
 		/**
 		 *	@param array|object $data overwrite $this properties with those in $data
-		 *  @deprecated $autoAdress use (bool) $this->autoFormatAddress instead
-		 *  @deprecated $redirect use (bool) $this->doRedirect instead
 		 */
-		function save($data = '', $autoAddress = 'deprecated', $redirect = 'deprecated')
+		function save($data = '')
 		{
 
 			if (is_array($data)) {
@@ -349,12 +347,6 @@
 				foreach ($data as $key => $value) {
 					$this->$key = $value;
 				}
-			}
-			if ($autoAddress != 'deprecated') {
-				$this->autoFormatAddress = $autoAddress;
-			}
-			if ($redirect != 'deprecated') {
-				$this->doRedirect = $redirect;
 			}
 
 			foreach (self::$bluePrints[$this->type] as $field) {
@@ -438,7 +430,7 @@
 		{
 		}
 
-		function beforeSave()
+		function beforeSave($data)
 		{
 		}
 
@@ -526,17 +518,17 @@
 
 		function previous()
 		{
-			$fetch = mysql_fetch_object(mysql_query('SELECT * FROM '.Database::table('index').' WHERE status=1 AND published<'.$this->published.' ORDER BY published DESC LIMIT 1'));
+			$fetch = $this->d->get('SELECT * FROM `#_index` WHERE status=1 AND published<'.$this->published.' ORDER BY published DESC LIMIT 1');
 			if (!empty($fetch)) {
-				return $this->type($fetch);
+				return $this->getData($fetch);
 			}
 		}
 
 		function next()
 		{
-			$fetch = mysql_fetch_object(mysql_query('SELECT * FROM '.Database::table('index').' WHERE status=1 AND published>'.$this->published.' ORDER BY published ASC LIMIT 1'));
+			$fetch = $this->d->get('SELECT * FROM `#_index` WHERE status=1 AND published>'.$this->published.' ORDER BY published ASC LIMIT 1');
 			if (!empty($fetch)) {
-				return $this->type($fetch);
+				return $this->getData($fetch);
 			}
 		}
 

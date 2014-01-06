@@ -83,7 +83,7 @@
 			}
 		}
 
-		function beforeSave()
+		function beforeSave($data)
 		{
 			if (empty($this->id)) {
 				if (empty($this->doNotEncrypt)) {

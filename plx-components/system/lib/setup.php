@@ -23,11 +23,7 @@
 			if (strpos($dependencies, 'class="red"') === FALSE) {
 				if ($this->checkDatabase()) {
 					if ($this->checkAdmin()) {
-						if ($this->checkSite()) {
-							return TRUE;
-						} else {
-							return $this->setupSite();
-						}
+						return true;
 					} else {
 						return $this->setupAdmin();
 					}
@@ -61,16 +57,15 @@
 				&& isset($this->conf->database->user)
 				&& isset($this->conf->database->password)
 				&& isset($this->conf->database->name)
-				&& @mysql_connect(
-					   $this->conf->database->host,
-					   $this->conf->database->user,
-					   $this->conf->database->password
-				   ) !== FALSE
-				&& @mysql_select_db($this->conf->database->name) !== FALSE
 			) {
-				return TRUE;
+				$con = @new mysqli($this->conf->database->host, $this->conf->database->user, $this->conf->database->password,$this->conf->database->name);
+				if ($con->connect_errno) {
+					return false;
+				} else {
+					return true;
+				}
 			}
-			return FALSE;
+			return false;
 		}
 
 		function checkAdmin()
@@ -78,11 +73,6 @@
 			return $this->d->get('SELECT i.id FROM `#_index` i, `#_properties` p WHERE i.type="USER" && i.id=p.parent && p.name="groups" && (
 				FIND_IN_SET("-1", p.value) OR FIND_IN_SET(" -1", p.value)
 			)');
-		}
-
-		function checkSite()
-		{
-			return false;
 		}
 
 		function setupDatabase()
@@ -265,23 +255,6 @@ $conf->database->prefix = \''.$database->prefix.'\';
 					)
 				),
 				$admin
-			);
-		}
-
-		function setupSite()
-		{
-			$this->title = §('Site Information');
-			return new Form(
-				array(
-					array(
-						'type' => 'string',
-						'name' => 'name',
-						'required' => TRUE,
-						'options' => array(
-							'label' => §('Sitename')
-						)
-					)
-				)
 			);
 		}
 	}

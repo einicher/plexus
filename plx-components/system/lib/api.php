@@ -211,7 +211,7 @@
 						case 'gallery':
 							while ($g = $r->fetch_object('Gallery')) {
 								foreach ($g->images as $img) {
-									$image = $this->type('IMAGE', $img);
+									$image = $this->getData('IMAGE', $img);
 									if (!empty($image->id)) {
 										$g->thumb = $image->imageScaleLink($image->src, '150', '100', $_GET['ajax']);
 										break;

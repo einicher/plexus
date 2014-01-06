@@ -68,7 +68,7 @@
 			return $thumbs;
 		}
 
-		function getDescription()
+		function getDescription($words = 37)
 		{
 			return $this->tools->cutByWords(strip_tags($this->description));
 		}
@@ -88,11 +88,10 @@
 			foreach ($this->images as $thumb) {
 				$thumb = $this->getData('IMAGE', $thumb);
 				$width = $this->getOption('content.width');
-				$width -= 5*$limit;
-				$width = ceil($width/$limit);
+				$width = ceil(($width/5)-5);
 				if (!empty($thumb->id)) {
 					$i++;
-					$collect .= '<img class="sthumb thumb'.$i.'" src="'.$this->imageScaleLink($thumb->src, $width, $width).'" alt="" style="float: left; margin-right: 5px;">';
+					$collect .= '<img class="sthumb thumb'.$i.'" src="'.$this->imageScaleLink($thumb->src, $width, $width).'" alt="" style="float: left; margin: 0 5px 5px 0;">';
 					if ($limit > 0 && $i==$limit) {
 						break;
 					}
@@ -128,7 +127,7 @@
 			return $this->t->get('result-single.php', array('result' => $this));
 		}
 
-		function multiUploadThumb($imgID, &$actor, $prefix = '')
+		static public function multiUploadThumb($imgID, &$actor, $prefix = '')
 		{
 			ob_start();		
 			$img = new Image($imgID);
@@ -207,23 +206,25 @@
 <?php
 	if (isset($_GET['ajax'])) {
 		include_once PLX_RESOURCES.'swfupload/load.php';
-		define('PLX_SWFUPLOAD_PATH', $this->addr->getRoot(PLX_RESOURCES.'swfupload/'));
+		define('PLX_SWFUPLOAD_PATH', $this->a->getRoot(PLX_RESOURCES.'swfupload/'));
 		echo swfUploadScripts();
 	}
 ?>
 		<script type="text/javascript">
 			var extendedUploadSuccessHandler = function(data)
 			{
+				console.log(data);
 				data = eval('(' + data + ')');
+				console.log(data);
 				jQuery('#galleryImagesSortable').append(data.image);
 			}
 		
 			function generateSWFupload() {
 				var swfu = new SWFUpload({
 					flash_url : '<?=PLX_SWFUPLOAD_PATH?>swfupload.swf',
-					upload_url: '<?=$this->addr->getHome('plxAjax/multiUpload'.(empty($this->id) ? '' : '/'.$this->id).'?sid='.session_id())?>',
+					upload_url: '<?=$this->a->getHome('plxAjax/multiUpload'.(empty($this->id) ? '' : '/'.$this->id).'?sid='.session_id())?>',
 					post_params: {
-						prefix: "<?=$this->addr->getRoot()?>"
+						prefix: "<?=$this->a->getRoot()?>"
 					},
 					file_size_limit : "100 MB",
 					file_types : "*.*",
@@ -268,8 +269,9 @@
 		</script>
 		<div id="galleryImagesExisting" style="overflow:auto;max-height: 250px;">
 <?php
-	while ($fetch = $this->db->fetch('SELECT * FROM '.$this->db->table('index').' WHERE type="IMAGE" ORDER BY published DESC LIMIT 50', 1)) {
-		$image = $this->type($fetch->type, $fetch);
+	$q = $this->d->query('SELECT * FROM `#_index`WHERE type="IMAGE" ORDER BY published DESC LIMIT 50');
+	while ($fetch = $q->fetch_object()) {
+		$image = $this->getData($fetch->type, $fetch);
 		$image->thumb = $this->imageScaleLink($image->src, '100', '100');
 ?>
 		<img src="<?=$image->thumb?>" alt="<?=§('Click to add this image to this gallery')?>" onclick="jQuery('#galleryImagesSortable').append('<?=str_replace("\n", '', htmlspecialchars($this->multiUploadThumb($fetch->id, $this, '')))?>');" />

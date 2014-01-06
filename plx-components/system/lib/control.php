@@ -91,9 +91,9 @@
 				$this->a->assign('system.export', 'plx-export', array(&$this, 'plxExport'), '', true);
 				$this->a->assign('system.api', 'plx-api', array('Api::instance()', 'control'), '', false, true);
 
-				$this->a->assign('system.addWidget', 'PlexusAddWidget', array(&$this, 'plxAddWidget'), '', true);
-				$this->a->assign('system.editWidget', 'PlexusEditWidget', array(&$this, 'plxEditWidget'), '', true);
-				$this->a->assign('system.standaloneWidget', 'PlexusStandaloneWidget', array(&$this, 'plxStandaloneWidget'), '', true);
+				$this->a->assign('system.addWidget', 'PlexusAddWidget', array('WidgetControl::instance()', 'addWidget'), '', true);
+				$this->a->assign('system.editWidget', 'PlexusEditWidget', array('WidgetControl::instance()', 'editWidget'), '', true);
+				$this->a->assign('system.standaloneWidget', 'PlexusStandaloneWidget', array('WidgetControl::instance()', 'standaloneWidget'), '', true);
 
 				$this->a->assign('plexus.pack', 'plx-pack', array('Components::instance()', 'plxPack'));
 
@@ -322,7 +322,7 @@
 					}
 
 					if (empty($current)) {
-						$sql = 'SELECT * FROM #_index WHERE (parent=?'.$additional.') && address=? && (status>0'.$draft.') '.$publish.' '.$language;
+						$sql = 'SELECT * FROM `#_index` WHERE (parent=?'.$additional.') && address=? && (status>0'.$draft.') '.$publish.' '.$language;
 						$current = $this->d->getPrepared($sql, 'is', $parent, urldecode($address));
 						$additional = '';
 						if (empty($current)) {
@@ -546,14 +546,14 @@
 			$_FILES['file'] = $_FILES['Filedata'];
 			$image = new Image;
 			$image->status = 2;
-			$image->doRedirect = FALSE;
-			$image->autoFormatAddress = TRUE;
+			$image->doRedirect = false;
+			$image->autoFormatAddress = true;
 			$id = $image->save();
 
 			if (!empty($levels[3])) {
 				$gallery = new Gallery($levels[3]);
 				$gallery->images[] = $id;
-				$gallery->doRedirect = FALSE;
+				$gallery->doRedirect = false;
 				$gallery->save();
 			}
 
@@ -729,126 +729,6 @@ exit;
 </div>
 <?php
 			return ob_get_clean();
-		}
-
-		function plxAddWidget($level, $levels, $cache)
-		{
-			$this->a->root = '';
-			if (!empty($_GET['ajax'])) {
-				$this->a->root = $_GET['ajax'];
-			}
-			$name = $this->a->getLevel(2, $levels);
-			$page = $this->a->getLevel(3, $levels);
-			$widget = $this->a->getLevel(4, $levels);
-
-			$dock = new Dock($name);
-			if (isset($_GET['options'])) {
-				$dock->options = json_decode(stripslashes(urldecode($_GET['options'])));
-			}
-			$dock->page = $page;
-			ob_start();
-			$add = $dock->addWidget($widget);
-
-			if (is_array($add)) {
-				if (isset($add['content'])) {
-					header('content-type: text/plain; charset=utf-8');
-					return json_encode((object) array(
-						'content' => ob_get_clean().$add['content']
-					));
-				} else {
-					$class = new stdClass;
-					$class->status = 'OK';
-					$class->dock = $add['dock'];
-					$class->widget = $add['widget'];
-					$class->page = $dock->page;
-					if (isset($_GET['options'])) {
-						$class->options = stripslashes($_GET['options']);
-					}
-					header('content-type: text/plain; charset=utf-8');
-					return json_encode($class);
-				}
-			} else {
-				return ob_get_clean().$add;
-			}
-		}
-
-		function plxEditWidget($level, $levels, $cache)
-		{
-			ob_start();
-			$this->a->root = '';
-			$id = $this->a->getLevel(2, $levels);
-			$fetch = Core::getOption($id);
-			$widget = json_decode($fetch->value);
-			$dock = new Dock($fetch->association);
-			if (isset($_GET['options'])) {
-				$dock->options = json_decode(stripslashes(urldecode($_GET['options'])));
-			}
-			$dock->page = $this->a->getLevel(3, $levels);
-			$edit = $dock->editWidget($widget, $id);
-			if (is_array($edit)) {
-				$output = ob_get_clean();
-				header('content-type: text/plain; charset=utf-8');
-				if (isset($edit['content'])) {
-					return json_encode((object) array(
-						'content' => $output.$edit['content']
-					));
-				} else {
-					$class = new stdClass;
-					$class->status = 'OK';
-					$class->dock = $edit['dock'];
-					$class->page = $dock->page;
-					$class->widget = $edit['widget'];
-					if (isset($_GET['options'])) {
-						$class->options = stripslashes($_GET['options']);
-					}
-					return json_encode($class);
-				}
-			} else {
-				return $edit;
-			}
-		}
-
-		function plxStandaloneWidget($level, $levels, $cache)
-		{
-			ob_start();
-			$this->a->root = '';
-			$name = $this->a->getLevel(2, $levels);
-			$page = $this->a->getLevel(3, $levels);
-			$fake = new stdClass;
-			$fake->id = $page;
-			Control::$current[] = $fake;
-			$widget = $this->a->getLevel(4, $levels);
-			$fetch = $this->getOption('widget', $name);
-			if (empty($fetch)) {
-				@$data->widget = $widget;
-			} else {
-				$data = json_decode($fetch->value);
-			}
-			$dock = new Dock($name, $page);
-			$options = '';
-			if (isset($_GET['options'])) {
-				$options = (array) json_decode(stripslashes(urldecode($_GET['options'])));
-			}
-			$edit = $dock->editWidget($data, @$fetch->id);
-			if (is_array($edit)) {
-				$output = ob_get_clean();
-				header('content-type: text/plain; charset=utf-8');
-				if (isset($edit['content'])) {
-					return json_encode((object) array(
-						'content' => $output.$edit['content']
-					));
-				} else {
-					$class = new stdClass;
-					$class->status = 'OKS';
-					$class->dock = $name;
-					$class->content = $output.$this->getWidget(get_class($dock->widget), $name, $options);
-					$class->options = stripslashes($_GET['options']);
-					header('content-type: text/plain; charset=utf-8');
-					return json_encode($class);
-				}
-			} else {
-				return $edit;
-			}
 		}
 
 		function load($level, $levels, $cache)

@@ -65,7 +65,7 @@
 
 		function getTitle()
 		{
-			return $this->observer->notify('image.getTitle', $this->title);
+			return $this->o->notify('image.getTitle', $this->title);
 		}
 		
 		function getDescription($words = 37)
@@ -100,11 +100,9 @@
 		{
 			$this->enlargedSrc = $this->imageScaleLink($this->getOriginalLink(), $this->getOption('content.fullsize'));
 			$this->src = $this->imageScaleLink($this->getOriginalLink(), $this->getOption('content.width'));
-			$c = $this->tpl->get('view-image.php', array(
+			return $this->t->get('view-image.php', array(
 				'image' => $this
 			));
-        	$this->tpl->set('view-image.php');
-			return $c;
 		}
 
 		function result($options = '')

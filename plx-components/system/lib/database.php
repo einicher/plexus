@@ -134,8 +134,13 @@
 		 */
 		function preparedStatement()
 		{
+			$class = 'stdClass';
 			$param = array();
 			$args = func_get_args();
+			if (is_array($args[0])) {
+				$class = $args[0][0];
+				$args[0] = $args[0][1];
+			}
 			$sql = array_shift($args);
 			$stmt = $this->prepare($sql) OR exit($this->error.'<br />'.$sql);
 			$param[] = array_shift($args);
@@ -144,7 +149,6 @@
 			}
 			call_user_func_array(array($stmt, 'bind_param'), $param) OR exit($this->error);
 			$stmt->execute() OR exit($this->error);
-			$stmt->store_result();
 
 			$customLimit = 0;
 			if (isset($this->execute_callback)) {
@@ -157,19 +161,22 @@
 				}
 			}
 
-			if ($stmt->num_rows > 0) {
-				if (method_exists($stmt, 'get_result')) { // works only with mysqlnd driver installed
-					$result = $stmt->get_result();
-					$results = array();
+			$results = array();
+			if (method_exists($stmt, 'get_result')) { // works only with mysqlnd driver installed
+				$result = $stmt->get_result();
+				if ($result) {
 					$i = 0;
-					while ($f = $result->fetch_object()) {
+					while ($f = $result->fetch_object($class)) {
 						$i++;
 						$results[] = $f;
 						if ($customLimit && $i == $customLimit) {
 							break;
 						}
 					}
-				} else {
+				}
+			} else {
+				$stmt->store_result();
+				if ($stmt->num_rows > 0) {
 					$result = array();
 					$f = new stdClass;
 
@@ -185,10 +192,13 @@
 						$i++;
 						// php sucks!!
 						// $results[] = $f; is suddenly taking over all references within $f so $results values are all referenced to $f
-						// workaround is to create a new object an reassign $f values
-						$noRefs = new stdClass;
+						// workaround is to create a new object and reassign $f values
+						$noRefs = new $class;
 						foreach ($f as $k => $v) {
 							$noRefs->$k = $v;
+						}
+						if ($class != 'stdClass') {
+							$noRefs->__construct();
 						}
 						$results[] = $noRefs;
 						unset($noRefs);
@@ -197,14 +207,14 @@
 						}
 					}
 				}
+			}
 
-				$stmt->close();
+			$stmt->close();
 
-				if (count($results) == 1) {
-					return array_pop($results);
-				} else {
-					return $results;
-				}
+			if (count($results) == 1) {
+				return array_pop($results);
+			} else {
+				return $results;
 			}
 		}
 

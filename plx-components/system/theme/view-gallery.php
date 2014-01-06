@@ -1,20 +1,17 @@
 <? if (!empty($gallery->description)) :  ?>
 <p class="description"><?=$gallery->description?></p>
 <? endif; ?>
-<div class="thumbs">
-<tpl name="thumbs">
-<tpl name="img">
-	<a href="<?=$img->enlarge?>" class="fancyGallery" rel="fancyGallery" title="<?=$img->title?>"><img src="<?=$this->addr->getRoot($this->imageScaleLink($img->src, $this->getOption('gallery.thumbSize'), $this->getOption('gallery.thumbSize')))?>" alt="<?=$img->title?>" /></a>
-</tpl>
-<div class="clear"></div>
+<div class="thumbs clearfix">
+<? foreach ($thumbs as $img) : ?>
+	<a href="<?=$img->enlarge?>" class="fancyGallery" rel="fancyGallery" title="<?=$img->title?>"><img src="<?=$this->a->getRoot($this->imageScaleLink($img->src, $this->getOption('gallery.thumbSize'), $this->getOption('gallery.thumbSize')))?>" alt="<?=$img->title?>" /></a>
+<? endforeach; ?>
+</div>
 <script type="text/javascript" >
 	jQuery('.fancyGallery').fancybox({
 		overlayColor: '#000',
 		overlayOpacity: 0.75
 	});
 </script>
-</tpl>
-</div>
 <div class="info">
 	<?=§('Published {{'.$this->tools->detectTime($gallery->published).'}}')?>
 	<?=$gallery->tools->detectTags($gallery->tags)?>

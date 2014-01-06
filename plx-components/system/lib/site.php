@@ -58,7 +58,7 @@
 
 		function getGenerator()
 		{
-			return $this->system->name.' '.$this->system->version;
+			return $this->system->name.' '.$this->system->version.' ('.$this->system->home.')';
 		}
 
 		function getGeneratorHomepage()
@@ -99,6 +99,11 @@
 				$dock = $this->o->notify('system.occupySidebar.afterLoad', $dock, $name, $options, $this->content);
 			}
 			return $dock;
+		}
+
+		function getWidget()
+		{
+			return call_user_func_array(array(WidgetControl::instance(), 'getWidget'), func_get_args());
 		}
 
 		function showEditPanel()

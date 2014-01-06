@@ -7,7 +7,7 @@
 		function construct()
 		{
 			$this->add('string', 'link', TRUE, array(
-				'label' => $this->lang->get('Link'),
+				'label' => §('Link'),
 				'transformToAddress' => 1
 			));
 
@@ -17,42 +17,42 @@
 			));
 
 			$this->add('file', 'thumb', FALSE, array(
-				'label' => $this->lang->get('Thumb'),
+				'label' => §('Thumb'),
 				'target' => $this->thumbTarget
 			));
 
 			$this->add('string', 'title', FALSE, array(
-				'label' => $this->lang->get('Title'),
+				'label' => §('Title'),
 				'transformToAddress' => 1
 			));
 
 			$this->add('wysiwyg', 'description', FALSE, array(
-				'label' => $this->lang->get('Description'),
+				'label' => §('Description'),
 				'rows' => 5
 			));
 
 			$this->add('text', 'comment', FALSE, array(
-				'label' => $this->lang->get('Your comment'),
+				'label' => §('Your comment'),
 				'rows' => 5,
 				'counter' => TRUE
 			));
 			$this->add('string', 'tags', FALSE, array(
-				'label' => $this->lang->get('Tags'),
-				'caption' => $this->lang->get('Separate with commas')
+				'label' => §('Tags'),
+				'caption' => §('Separate with commas')
 			));
 			$this->add('datetime', 'published', TRUE, array(
-				'label' => $this->lang->get('Published'),
-				'caption' => $this->lang->get('May be in the future.')
+				'label' => §('Published'),
+				'caption' => §('May be in the future.')
 			));
 			$this->add('status', 'status', TRUE, array(
-				'label' => $this->lang->get('Status')
+				'label' => §('Status')
 			));
 		}
 
 		function init()
 		{
 			if (!empty($this->thumb)) {
-				$this->thumbSrc = $this->addr->getRoot($this->getStorage($this->thumbTarget).'/'.$this->thumb);
+				$this->thumbSrc = $this->a->getRoot($this->getStorage($this->thumbTarget).'/'.$this->thumb);
 				$this->thumbSource = $this->thumbSrc;
 			}		
 		}
@@ -62,7 +62,7 @@
 			return $this->title;
 		}
 
-		function getDescription()
+		function getDescription($words = 37)
 		{
 			if (empty($this->comment)) {
 				return $this->tools->cutByWords($this->description);
@@ -80,7 +80,7 @@
 			if (!empty($this->thumb)) {
 				$this->thumbSrc = $this->imageScaleLink($this->getStorage($this->thumbTarget).'/'.$this->thumb, $width);
 			}
-			return Template::get2('view-link.php', array('link' => $this, 'thumbWidth' => $width));
+			return $this->t->get('view-link.php', array('link' => $this, 'thumbWidth' => $width));
 		}
 
 		function analyseLink($fields)
@@ -91,14 +91,14 @@
 	<button type="button" onclick="analyseLink(this);"><?=§('Analyze Link')?></button>
 
 	<div id="customAnalyseImageContainer" style="display: none; margin: 1em 0 0 0;">
-		<label><?=$this->lang->get('Select Preview Image')?></label><br />
+		<label><?=§('Select Preview Image')?></label><br />
 		<div style="width: 250px; height: 150px; float: left; margin: 0 20px 0 0;"><img id="customAnalyseImage" src="" alt="" style="max-width: 250px; max-height: 150px;" /></div>
-		<?=$this->lang->get('Image {{<span id="customAnalyseImageCurrent"></span>}} of {{<span id="customAnalyseImageCount"></span>}}')?>
+		<?=§('Image {{<span id="customAnalyseImageCurrent"></span>}} of {{<span id="customAnalyseImageCount"></span>}}')?>
 		<br /><br />
-		<span id="customAnalyseImagePrev" class="link"><?=$this->lang->get('Previous')?></span>
-		<span id="customAnalyseImageNext" class="link"><?=$this->lang->get('Next')?></span>
+		<span id="customAnalyseImagePrev" class="link"><?=§('Previous')?></span>
+		<span id="customAnalyseImageNext" class="link"><?=§('Next')?></span>
 		<br /><br />
-		<span id="customAnalyseImageNone" class="link"><?=$this->lang->get('No preview image')?></span>
+		<span id="customAnalyseImageNone" class="link"><?=§('No preview image')?></span>
 		<div class="clear"></div>
 	</div>
 
@@ -111,7 +111,7 @@
 				button.disabled = true;
 				var link = jQuery('#link').val();
 				if (link == '') {
-					alert('<?=$this->lang->get('Please fill in a link first in the field above!')?>');
+					alert('<?=§('Please fill in a link first in the field above!')?>');
 					button.disabled = false;
 					return;
 				}
@@ -185,7 +185,7 @@
 			return ob_get_clean();
 		}
 
-		function analyse($url)
+		static public function analyse($url)
 		{
 			$data = new stdClass;
 
@@ -305,7 +305,7 @@
 				$this->excerpt = $this->tools->cutByWords(strip_tags($this->tools->detectSpecialSyntax($this->description)), $this->excerptLength);
 			}
 			$this->footer = 1;
-			return $this->tpl->get2('result-single.php', array('result' => $this));
+			return $this->t->get('result-single.php', array('result' => $this));
 		}
 	}
 ?>

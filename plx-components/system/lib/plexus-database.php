@@ -144,18 +144,20 @@
 				';
 			}
 
+			$plxDbPrev = '';
+			$plxDbNext = '';
 			$browse->overall = $this->d->query($sql)->num_rows;
 			$browse->pages = ceil($browse->overall/$browse->perPage);
 			if ($browse->overall > $browse->perPage) {
 				if ($page > 1) {
-					$this->t->cut('plexus-database.php', 'plxDbPrev', array('class' => '', 'action' => 'jQuery(\'#plxDbMain\')'.$plxDbLoaderJS.'.load(root + \''.$this->a->assigned('system.database').'/'.$type.'/'.($page-1).'\')'));
+					$plxDbPrev = (object) array('class' => '', 'action' => 'jQuery(\'#plxDbMain\')'.$plxDbLoaderJS.'.load(root + \''.$this->a->assigned('system.database').'/'.$type.'/'.($page-1).'\')');
 				} else {
-					$this->t->cut('plexus-database.php', 'plxDbPrev', array('class' => ' disabled', 'action' => ''));
+					$plxDbPrev = (object) array('class' => ' disabled', 'action' => '');
 				}
 				if ($page < $browse->pages) {
-					$this->t->cut('plexus-database.php', 'plxDbNext', array('class' =>  '', 'action' => 'jQuery(\'#plxDbMain\')'.$plxDbLoaderJS.'.load(root + \''.$this->a->assigned('system.database').'/'.$type.'/'.($page+1).'\')'));
+					$plxDbNext = (object) array('class' =>  '', 'action' => 'jQuery(\'#plxDbMain\')'.$plxDbLoaderJS.'.load(root + \''.$this->a->assigned('system.database').'/'.$type.'/'.($page+1).'\')');
 				} else {
-					$this->t->cut('plexus-database.php', 'plxDbNext', array('class' => ' disabled', 'action' => ''));
+					$plxDbNext = (object) array('class' => ' disabled', 'action' => '');
 				}
 			} else {
 				$browse->perPage = $browse->overall;
@@ -237,9 +239,9 @@
 			}			
 			$browse->sql = $sql;
 
-			$plxDbPage = array();
+			$plxDbPages = array();
 			for ($i=1; $i<=$browse->pages; $i++) {
-				$plxDbPage[] = array(
+				$plxDbPages[] = (object) array(
 					'action' => 'jQuery(\'#plxDbMain\')'.$plxDbLoaderJS.'.load(root + \''.$this->a->assigned('system.database').'/'.$type.'/'.$i.'\')',
 					'page' => $i
 				);
@@ -248,8 +250,10 @@
 			return $this->t->get('plexus-database-browse.php', array(
 				'browse' => $browse,
 				'typeTH' => $typeTH,
-				'plxDbPage' => $plxDbPage,
-				'items' => $items
+				'plxDbPages' => $plxDbPages,
+				'items' => $items,
+				'plxDbPrev' => $plxDbPrev,
+				'plxDbNext' => $plxDbNext
 			));
 		}
 
@@ -284,7 +288,7 @@
 					foreach ($images as $v) {
 						$i++;
 						if ($i<=5) {
-							$img = $this->type($v);
+							$img = $this->getData($v);
 							$value .= '<img class="thumb" src="'.$this->imageScaleLink($this->getStorage('images/'.$img->file), 100, 75).'" alt="" />';
 						}
 					}

@@ -7,23 +7,23 @@
 		function construct()
 		{
 			$this->add('string', 'title', FALSE, array(
-				'label' => $this->lang->get('Title'),
+				'label' => §('Title'),
 				'transformToAddress' => 1
 			));
 			$this->add('text', 'description', FALSE, array(
-				'label' => $this->lang->get('Description')
+				'label' => §('Description')
 			));
 			$this->add('file', 'file', FALSE, array(
-				'label' => $this->lang->get('File'),
+				'label' => §('File'),
 				'target' => $this->target
 			));
 			$this->add('string', 'tags', FALSE, array(
-				'label' => $this->lang->get('Tags'),
-				'caption' => $this->lang->get('Separate with commas')
+				'label' => §('Tags'),
+				'caption' => §('Separate with commas')
 			));
 			$this->add('datetime', 'published', TRUE, array(
-				'label' => $this->lang->get('Published'),
-				'caption' => $this->lang->get('May be in the future.')
+				'label' => §('Published'),
+				'caption' => §('May be in the future.')
 			));
 		}
 
@@ -39,7 +39,7 @@
 
 		function getContent()
 		{
-			return Template::get2('file.php', array('file' => $this));
+			return $this->t->get('view-file.php', array('file' => $this));
 		}
 		
 		function result()

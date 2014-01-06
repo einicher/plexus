@@ -1,16 +1,89 @@
 <?php
 	class WidgetControl extends Core
 	{
-
-		function plxAddWidget($level, $levels, $cache)
+		static $instance;
+		
+		static function instance()
 		{
-			$this->addr->root = '';
-			if (!empty($_GET['ajax'])) {
-				$this->addr->root = $_GET['ajax'];
+			if (empty(self::$instance)) {
+				self::$instance = new self;
 			}
-			$name = $this->addr->level(2, $levels);
-			$page = $this->addr->level(3, $levels);
-			$widget = $this->addr->level(4, $levels);
+			return self::$instance;
+		}
+
+		function getWidget($widget, $name, $options = '')
+		{
+			if (!isset(self::$widgets[$widget])) {
+				return 'WIDGET “'.$widget.'” NOT FOUND.';
+			} else {
+				$class = $widget;
+				$page = @end(Control::$current)->id;
+				$fetch = $this->getOption('widget', $name);
+				if (empty($fetch)) {
+					$data = '';
+				} else {
+					$data = json_decode($fetch->value);
+					$data->id = $fetch->id;
+				}
+				require_once self::$widgets[$widget]['file'];
+				$widget = new $widget($name, $page, $data);
+				$widget->id = $name;
+				if (is_array($options)) {
+					$widget->dock = (object) $options;
+				}
+
+				$container = 'div';
+				if (!empty($widget->dock->container)) {
+					$container = $widget->dock->container;
+				}
+
+				$content = $widget->view('template');
+
+				ob_start();
+?>
+<<?php echo $container; ?> id="<?php echo $name; ?>" class="widget standaloneWidget">
+<?php if ($this->access->granted('system.editWidgets') && !empty($page)) : ?>
+	<span id="<?php echo $name; ?>StandaloneEdit" class="plexusEdit plexusControls"><?php echo §('Edit'); ?></span>
+	<script type="text/javascript">
+		jQuery('#<?php echo $name; ?>StandaloneEdit').fancybox({
+			href: root + 'PlexusStandaloneWidget/<?php echo $name; ?>/<?php echo $page; ?>/<?php echo $class; ?>?options=<?php echo urlencode(json_encode($options)); ?>',
+			autoDimensions: false,
+			centerOnScroll: true,
+			overlayOpacity: 0.5,
+			overlayColor: '#000',
+			transitionIn: 'elastic',
+			transitionOut: 'elastic',
+			onComplete: function() {
+				plxWidgetHtml2AjaxForm(root + 'PlexusStandaloneWidget/<?php echo $name; ?>/<?php echo $page; ?>/<?php echo $class; ?>?options=<?php echo urlencode(json_encode($options)); ?>');
+				jQuery('form.plexusForm button.remove').click(function() {
+					var action = jQuery('form.plexusForm').attr('action') + '&plexusRemove';
+					jQuery('form.plexusForm').attr('action', action);
+				});
+			}
+		});
+	</script>
+<?php endif; ?>
+<?php if ($widget->getTitle()) : ?>
+		<h1><?php echo $widget->getTitle(); ?></h1>
+<?php endif; ?>
+		<div class="wrap">
+<?php echo $content; ?>
+		</div>
+</<?php echo $container; ?>>
+<?php
+				return ob_get_clean();
+			}
+		}
+
+		function addWidget($level, $levels, $cache)
+		{
+			$this->a->root = '';
+			if (!empty($_GET['ajax'])) {
+				$this->a->root = $_GET['ajax'];
+			}
+			$name = $this->a->getLevel(2, $levels);
+			$page = $this->a->getLevel(3, $levels);
+			$widget = $this->a->getLevel(4, $levels);
 
 			$dock = new Dock($name);
 			if (isset($_GET['options'])) {
@@ -43,18 +116,18 @@
 			}
 		}
 
-		function plxEditWidget($level, $levels, $cache)
+		function editWidget($level, $levels, $cache)
 		{
 			ob_start();
-			$this->addr->root = '';
-			$id = $this->addr->level(2, $levels);
+			$this->a->root = '';
+			$id = $this->a->getLevel(2, $levels);
 			$fetch = Core::getOption($id);
 			$widget = json_decode($fetch->value);
 			$dock = new Dock($fetch->association);
 			if (isset($_GET['options'])) {
 				$dock->options = json_decode(stripslashes(urldecode($_GET['options'])));
 			}
-			$dock->page = $this->addr->level(3, $levels);
+			$dock->page = $this->a->getLevel(3, $levels);
 			$edit = $dock->editWidget($widget, $id);
 			if (is_array($edit)) {
 				$output = ob_get_clean();
@@ -79,19 +152,19 @@
 			}
 		}
 
-		function plxStandaloneWidget($level, $levels, $cache)
+		function standaloneWidget($level, $levels, $cache)
 		{
 			ob_start();
-			$this->addr->root = '';
-			$name = $this->addr->level(2, $levels);
-			$page = $this->addr->level(3, $levels);
+			$this->a->root = '';
+			$name = $this->a->getLevel(2, $levels);
+			$page = $this->a->getLevel(3, $levels);
 			$fake = new stdClass;
 			$fake->id = $page;
 			Control::$current[] = $fake;
-			$widget = $this->addr->level(4, $levels);
+			$widget = $this->a->getLevel(4, $levels);
 			$fetch = $this->getOption('widget', $name);
 			if (empty($fetch)) {
-				$data->widget = $widget;
+				@$data->widget = $widget;
 			} else {
 				$data = json_decode($fetch->value);
 			}

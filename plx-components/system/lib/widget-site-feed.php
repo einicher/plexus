@@ -85,10 +85,8 @@
 
 		function init()
 		{
-			if (empty($this->data->except)) {
+			if (empty($this->data->include)) {
 				$this->data->include = array('POST', 'IMAGE', 'LINK', 'GALLERY', 'MICRO', 'VIDEO');
-			} else {
-				$this->data->include = preg_split('=,=', $this->data->except, -1, PREG_SPLIT_NO_EMPTY);
 			}
 			if (empty($this->data->limit)) $this->data->limit = 10;
 			if (empty($this->data->length)) $this->data->length = 28;
@@ -140,7 +138,7 @@
 	<label class="formFieldIncludeLabel"><?=§('Included data types')?></label>
 	<? foreach (Core::$types as $type => $data) : ?>
 		<label style="width: 33%; float: left;">
-			<input type="checkbox"<?= in_array($type, $this->data->include) ? ' checked="checked"' : '' ?> />
+			<input type="checkbox" name="include[]" value="<?=$type?>"<?= in_array($type, $this->data->include) ? ' checked="checked"' : '' ?> />
 			<?=$type?>
 		</label>
 	<? endforeach; ?>

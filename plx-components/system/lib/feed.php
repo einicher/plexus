@@ -100,9 +100,9 @@
 				}
 
 				if ($properties) {
-					$query = 'SELECT i.*'.$select.' FROM `#_index` i, `#_properties` p WHERE i.id=p.parent'.$c;
+					$query = 'SELECT i.*'.$select.' FROM `#_index` i, `#_properties` p WHERE i.id=p.parent && status=1'.$c;
 				} else {
-					$query = 'SELECT i.*'.$select.' FROM `#_index` i WHERE 0=0'.$c;
+					$query = 'SELECT i.*'.$select.' FROM `#_index` i WHERE status=1'.$c;
 				}
 			}
 

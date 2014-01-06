@@ -39,7 +39,7 @@
 		function getContent()
 		{
 			$this->code = self::detectAndFit($this->code);
-			return $this->tpl->get('view-video.php', array('video' => $this));
+			return $this->t->get('view-video.php', array('video' => $this));
 		}
 
 		function result($data = '')
@@ -78,8 +78,17 @@
 		{
 			if (stripos($code, '<iframe') !== FALSE) {
 				$code = preg_replace('/<iframe([^>]*)>/ie', '\'<iframe\'.self::detectAndResizeObject(\'\\1\').\'>\'', preg_replace('/<iframe([^>]*)>/ie', '\'<iframe\'.self::detectAndResizeObject(\'\\1\').\'>\'', $code));
-			} else {
+			} elseif (stripos($code, '<embed') !== FALSE) {
 				$code = preg_replace('/<embed([^>]*)>/ie', '\'<embed\'.self::detectAndResizeObject(\'\\1\').\'>\'', preg_replace('/<object([^>]*)>/ie', '\'<object\'.self::detectAndResizeObject(\'\\1\').\'>\'', $code));
+			} elseif (stripos($code, 'youtube.com/watch?v=') !== FALSE) {
+				$path = parse_url($code);
+				if (!empty($path['query'])) {
+					parse_str($path['query'], $query);
+					if (!empty($query['v'])) {
+						$width = Core::getOption('content.width');
+						$code = '<iframe width="'.$width.'" height="'.round($width/(16/9)).'" src="http://www.youtube.com/embed/'.$query['v'].'" frameborder="0" allowfullscreen="true"></iframe>';
+					}
+				}
 			}
 			return $code;
 		}
@@ -155,7 +164,7 @@
 		{
 			if (stripos($this->code, '<iframe') !== FALSE) {
 				preg_match('/src="([^\"]*)"/i', $this->code, $r);
-				$code = str_replace('http://www.youtube.com/embed/', '', $r[1]);
+				$code = str_replace('//www.youtube.com/embed/', '', $r[1]);
 				$video = 'http://www.youtube.com/v/'.$code;
 				$image = 'http://img.youtube.com/vi/'.$code.'/0.jpg';
 			}

@@ -13,7 +13,7 @@
 					'name' => 'title',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Title')
+						'label' => §('Title')
 					) 
 				),
 				array(
@@ -21,7 +21,7 @@
 					'name' => 'markup',
 					'required' => FALSE,
 					'options' => array(
-						'label' => $this->lang->get('Text'),
+						'label' => §('Text'),
 						'rows' => 12
 					) 
 				)

@@ -23,20 +23,26 @@
 		</div>
 
 		<div id="plxDbMainBottomPanel">
-			<form method="post" onsubmit="jQuery('#plxDbMain').load(root + 'PlexusDatabase/<?=$browse->type?>/<?=$browse->current?>', { search: jQuery('#plxDbSearch').val() }); return false;">
+			<form method="post" onsubmit="jQuery('#plxDbMain').load(plxRoot + 'plx-database/<?=$browse->type?>/<?=$browse->current?>', { search: jQuery('#plxDbSearch').val() }); return false;">
 				<input type="text" id="plxDbSearch" name="plxDbSearch" value="<?=$browse->search?>" />
 				<button type="submit"><?=§('Search')?></button>
 			</form>
 			<div id="plxDbMainBottomPanelPages">
 				<div id="display"><strong><?=$browse->from?></strong> <?=§('to')?> <strong><?=$browse->to?></strong> <?=§('out of')?> <strong><?=$browse->overall?></strong></div>
-				<tpl name="plxDbPrev"><span class="click<?=$class?>" onclick="<?=$action?>">&lt;</span></tpl>
+<? if (!empty($plxDbPrev)) : ?>
+				<span class="click<?=$plxDbPrev->class?>" onclick="<?=$plxDbPrev->action?>">&lt;</span>
+<? endif; ?>
+				<div id="plxDbPages">
+					<div id="plxDbPageChooser">
 <? foreach ($plxDbPages as $page) : ?>
-					<div id="plxDbPages">
-						<div id="plxDbPageChooser"><tpl name="plxDbPage"><span class="click" onclick="<?=$action?>"><?=$page?></span></tpl></div>
-						<div id="plxDbPageCurrent" onclick="jQuery('#plxDbPageChooser').toggle();"><?=$browse->current?></div>
-					</div>
+						<span class="click" onclick="<?=$page->action?>"><?=$page->page?></span>
 <? endforeach; ?>
-				<tpl name="plxDbNext"><span class="click<?=$class?>" onclick="<?=$action?>">&gt;</span></tpl>
+					</div>
+					<div id="plxDbPageCurrent" onclick="jQuery('#plxDbPageChooser').toggle();"><?=$browse->current?></div>
+				</div>
+<? if (!empty($plxDbNext)) : ?>
+				<span class="click<?=$plxDbNext->class?>" onclick="<?=$plxDbNext->action?>">&gt;</span>
+<? endif; ?>
 			</div>
 			<div class="clear"></div>
 		</div>
