@@ -9,7 +9,7 @@
 	</div>
 <? endif; ?>
 
-<article id="article-<?=$content->id?>" class="main <?=strtolower($content->getType())?>" style="position:relative">
+<article id="article-<?=$content->id?>" class="main clearfix <?=strtolower($content->getType())?>" style="position:relative">
 
 <? if ($site->showEditPanel()) : ?>
 	<div class="plxEditPanel plexusControls">
@@ -34,8 +34,4 @@
 
 <?=$main?>
 
-	<script type="text/javascript" >
-		jQuery('a.lightThumb').fancybox();
-	</script>
-	<div class="clear"></div>
 </article>

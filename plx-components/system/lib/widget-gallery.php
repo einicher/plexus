@@ -19,22 +19,25 @@
 		function editWidget()
 		{
 			$options = array();
-			$galleries = $this->pdb->get('GALLERY', NULL, TRUE);
+			$galleries = $this->d->get('SELECT * FROM `#_index` WHERE `type`="GALLERY"', array(
+				'force_array' => true,
+				'class' => 'Gallery'
+			));
 			foreach ($galleries as $gallery) {
 				$options[$gallery->id] = $gallery->title;
 			}
 
 			return new Form(array('type' => 'widget',
 				array('type' => 'string', 'name' => 'title', 'required' => FALSE, 'options' => array(
-					'label' => $this->lang->get('Title')
+					'label' => §('Title')
 				)),
 				array('type' => 'select', 'name' => 'gallery', 'required' => TRUE, 'options' => array(
-					'label' => $this->lang->get('Gallery'),
-					'caption' => $this->lang->get('Select the gallery you want to show.'),
+					'label' => §('Gallery'),
+					'caption' => §('Select the gallery you want to show.'),
 					'values' => $options
 				)),
 				array('type' => 'number', 'name' => 'thumbs', 'required' => FALSE, 'options' => array(
-					'label' => $this->lang->get('Number of Thumbs to show')
+					'label' => §('Number of Thumbs to show')
 				))
 				
 			), $this->data);
@@ -48,7 +51,7 @@
 					'thumbs' => $gallery->listThumbs($this->data->thumbs),
 					'title' => $this->data->title,
 					'gallery' => $gallery,
-					'widget' => $widget
+					'widget' => $this->data
 				));
 			} else {
 				return 'GALLERY_'.$this->data->gallery.'_NOT_FOUND';

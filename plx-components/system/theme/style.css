@@ -112,6 +112,9 @@ article.result.gallery .excerpt { width: 605px; }
 #sidebar aside.widget.MenuWidget ul li {}
 #sidebar aside.widget.MenuWidget ul li a { border-bottom: 1px solid #CCC; display: block; text-decoration: none; padding: 10px 20px; color: #000; }
 #sidebar aside.widget.MenuWidget ul li.active a { background: #FFF; margin-left: -1px; padding-left: 21px; }
+#sidebar aside.widget.GalleryWidget .wrap { padding-right: 10px; }
+#sidebar aside.widget.GalleryWidget img { width: 80px !important; height: 80px !important; float: left; margin: 0 10px 10px 0; }
+#sidebar aside.widget.GalleryWidget .more { float: right; margin-right: 10px; }
 
 footer.main { min-height: 30px; background: #000; position: relative; z-index: 50; }
 footer.main .plxDock { padding: 20px 0 0 0; color: #A88F9F; }
