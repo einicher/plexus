@@ -865,8 +865,19 @@ exit;
 
 		function plxFormDeleteFile($levels)
 		{
-			$file = PlexusDataControl::getProperty($_POST['id'], $_POST['property']);
-			PlexusDataControl::deleteProperty($_POST['id'], $_POST['property']);
+			if (empty($_POST['isWidget'])) {
+				$file = PlexusDataControl::getProperty($_POST['id'], $_POST['property']);
+				PlexusDataControl::deleteProperty($_POST['id'], $_POST['property']);
+			} else {
+				$widget = $this->getOption($_POST['id']);
+				if (!empty($widget)) {
+					$widget = json_decode($widget->value);
+					$file = $widget->$_POST['property'];
+					$widget->$_POST['property'] = '';
+					$widgetData = json_encode($widget);
+					$this->setOption($_POST['id'], $widgetData);
+				}
+			}
 			unlink($this->getStorage($_POST['target'].'/'.$file));
 			return 'OK';
 		}

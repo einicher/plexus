@@ -21,7 +21,8 @@
 					data: {
 						id: '<?=$field->id?>',
 						property: '<?=$field->name?>',
-						target: '<?=$field->options->target?>'
+						target: '<?=$field->options->target?>',
+						isWidget: <?=$field->isWidget?>
 					},
 					success: function(data) {
 						if (data == 'OK') {

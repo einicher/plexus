@@ -129,6 +129,7 @@
 			}
 			unset($this->fields['checksOff']);
 
+			// form tag attributes
 			if (isset($this->attributes)) {
 				$attributes = $this->attributes;
 			}
@@ -169,6 +170,7 @@
 					$field->value = '';
 				}
 				$field->options = (object) @$field->options;
+				$field->isWidget = $this->type == 'widget' ? true : false;
 				switch ($field->type) {
 					case 'string':
 					break;

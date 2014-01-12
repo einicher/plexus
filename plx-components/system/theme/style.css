@@ -89,6 +89,7 @@ article.result .excerpt.hasThumb { margin: 0 0 0 110px; }
 article.result .meta { margin: 0.5em 0 0 0; }
 article.result .meta .type { text-decoration: none; background: #000; color: #FFF; font-weight: bold; padding: 0 5px; }
 article.result .meta .date { text-decoration: none; color: #666; }
+article.result.gallery .excerpt { width: 605px; }
 
 #sidebar { float: right; width: 300px; padding: 0 0 32768px 0; margin: 0 0 -32768px 0; background: #F2F2F2; border-left: 1px solid #DDD; }
 #sidebar aside.widget { margin: 0; border-bottom: 1px solid #DDD; }

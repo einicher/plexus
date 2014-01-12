@@ -524,7 +524,7 @@
 
 		public static function deleteProperty($id, $property)
 		{
-			$db = Database2::instance();
+			$db = Database::instance();
 			return $db->query('DELETE FROM `#_properties` WHERE parent='.$id.' && name="'.$db->escape($property).'"') OR exit($db->error);
 		}
 	}
