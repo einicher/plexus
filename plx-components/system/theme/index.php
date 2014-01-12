@@ -35,7 +35,7 @@
 			</div>
 			<footer class="main">
 				<div class="container clearfix">
-<?=$site->getDock('footer', array('addPositionFirst' => FALSE))?>
+<?=$site->getDock('footer', array('addPositionFirst' => false, 'width' => 225))?>
 				</div>
 			</footer>
 		</div>
