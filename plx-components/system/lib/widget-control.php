@@ -46,7 +46,7 @@
 	<span id="<?php echo $name; ?>StandaloneEdit" class="plexusEdit plexusControls"><?php echo §('Edit'); ?></span>
 	<script type="text/javascript">
 		jQuery('#<?php echo $name; ?>StandaloneEdit').fancybox({
-			href: root + 'PlexusStandaloneWidget/<?php echo $name; ?>/<?php echo $page; ?>/<?php echo $class; ?>?options=<?php echo urlencode(json_encode($options)); ?>',
+			href: plxRoot + 'PlexusStandaloneWidget/<?php echo $name; ?>/<?php echo $page; ?>/<?php echo $class; ?>?options=<?php echo urlencode(json_encode($options)); ?>',
 			autoDimensions: false,
 			centerOnScroll: true,
 			overlayOpacity: 0.5,
@@ -54,7 +54,7 @@
 			transitionIn: 'elastic',
 			transitionOut: 'elastic',
 			onComplete: function() {
-				plxWidgetHtml2AjaxForm(root + 'PlexusStandaloneWidget/<?php echo $name; ?>/<?php echo $page; ?>/<?php echo $class; ?>?options=<?php echo urlencode(json_encode($options)); ?>');
+				plxWidgetHtml2AjaxForm(plxRoot + 'PlexusStandaloneWidget/<?php echo $name; ?>/<?php echo $page; ?>/<?php echo $class; ?>?options=<?php echo urlencode(json_encode($options)); ?>');
 				jQuery('form.plexusForm button.remove').click(function() {
 					var action = jQuery('form.plexusForm').attr('action') + '&plexusRemove';
 					jQuery('form.plexusForm').attr('action', action);

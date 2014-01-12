@@ -238,9 +238,6 @@ article.result.gallery .excerpt { margin: 0.5em 0 0 0; }
 
 a.cloudTag, a.listTag { text-decoration: none; }
 a.cloudTag .count, a.listTag .count { color: #666; }
-.tagList { margin: 0 0 20px 0; }
-.tagList ul { margin: 0; padding: 0; list-style-type: none; }
-.tagList ul li { border-bottom: 1px solid #CCC; width: 30%; float: left; margin: 0 3% 0 0; }
 .standaloneWidget { position: relative; }
 
 #plxAdminContainer, .plxAdminContainer { padding: 20px; }
