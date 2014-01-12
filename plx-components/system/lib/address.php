@@ -199,7 +199,7 @@
 						}
 					}
 					$prev = end(self::$dependencies);
-					if (empty($reserved['dependency']) || $reserved['dependency'] == $prev['name']) {
+					if (empty($reserved['dependency']) || $reserved['dependency'] == $prev['name'] || (is_numeric($reserved['dependency']) && $reserved['dependency'] < 0)) {
 						self::$dependencies[] = $reserved;
 						return $reserved;
 					}
