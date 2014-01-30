@@ -14,7 +14,7 @@
 			</header>
 			<div id="feature">
 				<div class="container clearfix">
-<?=$site->getWidget('SimpleBannerWidget', 'featureImage', array('width' => 960, 'height' => 250))?>
+<?=$site->getWidget('SimpleBannerWidget', 'featureImage', array('width' => 962, 'height' => 250))?>
 				</div>
 			</div>
 			<nav>

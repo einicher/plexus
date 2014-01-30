@@ -14,12 +14,12 @@
 		function index($level, $levels, $cache)
 		{
 			$message = '';
-
 			switch (@$levels[3]) {
 				case 'install':
 					if (empty($levels[4]) || empty($levels[5])) {
-						$this->install();
+						$plxContent = $this->install();
 					} else {
+						exit;
 						$m = $this->processInstall('install', $levels[4], $levels[5], $this->install());
 						if ($m['status'] == 1) {
 							header('Location: '.$this->a->assigned('system.preferences.components'));
@@ -76,7 +76,7 @@
 
 		function overview($message = '', $error = false)
 		{
-			#$this->checkForUpdates();
+			$this->checkForUpdates();
 
 			$versions = array();
 			$upgrades = array();
@@ -132,35 +132,29 @@
 		function install($message = '')
 		{
 			$results = array();
+			$matches = 0;
 
-			if (!empty($_POST)) {
-				$results = json_decode(file_get_contents($this->system->home.'components/JSON/'.urldecode($_POST['searchComponent'])));
-				if (empty($results->matches)) {
-					$this->t->cut('admin-components.php', 'noResults');
-				} else {
-					foreach ($results->results as $key => $result) {
-						$this->t->repeat('admin-components.php', 'result', array(
-							'key' => $key,
-							'result' => $result
-						));
-					}
-					$this->t->cut('admin-components.php', 'results', array(
-						'results' => $results
-					));
-				}
+			if (empty($_POST)) {
+				$results = json_decode(file_get_contents($this->system->home.'components/json/'));
+				$matches = $results->matches;
+				$results = $results->results;
+			} else {
+				$results = json_decode(file_get_contents($this->system->home.'components/json/'.urldecode($_POST['searchComponent'])));
+				$matches = $results->matches;
+				$results = $results->results;
 			}
 
 			$level4 = $this->a->getLevel(4);
 			if (empty($results) && !empty($level4)) {
-				$results = json_decode(file_get_contents($this->system->home.'components/JSON/'.urldecode($level4).'?exactMatch'));
+				$results = json_decode(file_get_contents($this->system->home.'components/json/'.urldecode($level4).'?exactMatch'));
 			}
 
-			$this->t->cut('admin-components.php', 'install', array(
+			return $this->t->get('components-install.php', array(
 				'searchComponent' => @$_POST['searchComponent'],
-				'message' => $message
+				'message' => $message,
+				'results' => $results,
+				'matches' => $matches
 			));
-
-			return $results;
 		}
 
 		function activate($component, $file)
@@ -330,7 +324,7 @@
 			if (!empty($this->conf->preReleases)) {
 				$request .= '&dev=1';
 			}
-			$check = file_get_contents($this->system->home.'components/CheckForUpdates'.$request);
+			$check = file_get_contents($this->system->home.'components/checkForUpdates'.$request);
 			if ($check) {
 				$check = json_decode($check);
 				if ($check->status == 1) {

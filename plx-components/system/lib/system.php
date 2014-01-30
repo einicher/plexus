@@ -20,35 +20,45 @@
 		function search($level, $levels, $cache)
 		{
 			$buttonWidth = round($this->getOption('content.width')*0.2);
-			$inputWidth = $this->getOption('content.width')-$buttonWidth-10;
+			$inputWidth = $this->getOption('content.width')-$buttonWidth-11;
 			
 			if (empty($levels[2])) {
 				$search = (object) array(
+					'classes' => 'search',
 					'pattern' => '',
 					'action' => $this->a->getRoot($this->a->assigned('system.search')),
 					'results' => '',
 					'inputWidth' => $inputWidth,
 					'buttonWidth' => $buttonWidth
 				);
-				$page = new Page(§('Search'), $this->t->get('search.php', array(
-					'search' => $search
-				)));
+				$page = new Page(array(
+					'classes' => 'search',
+					'title' => §('Search'),
+					'content' => $this->t->get('search.php', array(
+						'search' => $search
+					))
+				));
 			} else {
 				$pattern = urldecode(@$levels[2]);
 				$feed = new Feed;
 				$feed->set('search', $pattern);
 
-				$page = new Page(§('Search for “{{'.$pattern.'}}”'), $this->t->get('search.php', array(
-					'pattern' => $pattern,
-					'action' => $this->a->getRoot($this->a->assigned('system.search')),
-					'results' => $feed->view(),
-					'hits' => $feed->getCount(),
-					'feed' => &$feed,
-					'search' => (object) array(
-						'inputWidth' => $inputWidth,
-						'buttonWidth' => $buttonWidth
-					)
-				)));
+				$page = new Page(array(
+					'classes' => 'search',
+					'title' => §('Search for “{{'.$pattern.'}}”'),
+					'content' => $this->t->get('search.php', array(
+						'pattern' => $pattern,
+						'action' => $this->a->getRoot($this->a->assigned('system.search')),
+						'results' => $feed->view(),
+						'hits' => $feed->getCount(),
+						'feed' => &$feed,
+						'search' => (object) array(
+							'inputWidth' => $inputWidth,
+							'buttonWidth' => $buttonWidth,
+							'action' => $this->a->getRoot($this->a->assigned('system.search')),
+						)
+					))
+				));
 			}
 			return $page;
 		}

@@ -166,7 +166,7 @@
 
 			$custom = Template::locateFile('custom-'.$this->content->id.'.php');
 			if (file_exists($custom)) {
-				$content = $this->tools->detectSpecialSyntax($this->t->get($custom));
+				$content = $this->tools->detectSpecialSyntax($this->t->get('custom-'.$this->content->id.'.php'));
 			} else {
 				$content = $this->o->notify('system.content.display', $this->content->view(), $this->content);
 			}

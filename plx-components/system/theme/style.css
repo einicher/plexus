@@ -33,7 +33,7 @@ textarea.wysiwyg { border: 1px solid #CCC; }
 .plxPagination a.active { background: <?=$color1?>; color: #FFF; font-weight: bold; }
 
 #container { margin: 0; background: #E6E6E6; }
-.container { width: 960px; margin: 0 auto; }
+.container { width: 962px; margin: 0 auto; }
 
 header.main { position: relative; z-index: 50; background: #FFF; border-bottom: 1px solid #DDD; }
 header.main h1 { float: left; padding: 0; color: #FFF; font-weight: normal; margin: 0; height: 60px; line-height: 60px; }
@@ -60,8 +60,10 @@ nav ul:hover li a { background: transparent; }
 nav ul li:hover a { background: #444; }
 
 #wrap { background: #FFF; margin: 0 auto 30px auto; border: 1px solid #CCC; border-radius: 0 0 3px 3px; border-top: 0 none; overflow: hidden; }
-#main { padding: 30px; line-height: 150%; width: 599px; float: left; }
+#main { padding: 30px; line-height: 150%; width: 600px; float: left; }
 body.sidebarDisabled #main { width: 860px; }
+body.search #main input,
+body.search #main button { font-size: 20px; }
 
 article.main.image h1.main { margin: 0 0 1em 0; }
 article.main .info { padding: 1em; background: #EEEEEE; border-top: 1px solid #CCC; margin: 1em 0 0 0; }
