@@ -264,16 +264,16 @@
 				if (is_writable(PLX_COMPONENTS)) {
 					$target = PLX_COMPONENTS.$component.'/';
 					if (file_exists($target)) {
-						@chmod($target, 0777);
+						@chmod($target, 0755);
 						$this->deleteRecursive($target);
 					}
-					if (!@mkdir($target, 0777)) {
+					if (!@mkdir($target, 0755)) {
 						return array(
 							'message' => §('Target directory {{'.$target.'}} could not be created. Maybe you need to set write permissions to the plx-components directory?'),
 							'status' => 0
 						);
 					}
-					@chmod($target, 0777);
+					@chmod($target, 0755);
 
 					if (!empty($this->conf->preReleases)) {
 						$source .= '&dev=1';
@@ -425,7 +425,7 @@
 			if (is_dir($current)) {
 				echo 'if (!file_exists($target.\''.$path.'\')) {
 	mkdir($target.\''.$path.'\');
-	chmod($target.\''.str_replace($r, '', $current).'\', 0777);
+	chmod($target.\''.str_replace($r, '', $current).'\', 0755);
 }
 
 ';
@@ -440,14 +440,14 @@
 					echo '$f = fopen($target.\''.$path.'\', \'w\');
 fwrite($f, \''.str_replace("'", "\'", str_replace('\\', '\\\\', file_get_contents($current))).'\');
 fclose($f);
-chmod($target.\''.$path.'\', 0777);
+chmod($target.\''.$path.'\', 0755);
 
 ';
 				} else {
 					echo '$f = fopen($target.\''.$path.'\', \'w\');
 fwrite($f, base64_decode(\''.base64_encode(file_get_contents($current)).'\'));
 fclose($f);
-chmod($target.\''.$path.'\', 0777);
+chmod($target.\''.$path.'\', 0755);
 
 ';
 				}
