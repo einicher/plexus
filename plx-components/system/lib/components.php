@@ -234,7 +234,6 @@
 							'status' => 0
 						);
 					} else {
-						/*
 						$path = opendir('.');
 						$excludes = array('.', '..', 'plx-storage', 'plx-components');
 						while ($c = readdir($path)) {
@@ -250,7 +249,7 @@
 						$target = '';
 						$process = eval($script);
 						$this->system->version = $results->results[0]->version;
-						*/
+
 						return array(
 							'message' => §('Plexus upgrade successfull. You are now on version {{<b>'.$results->results[0]->version.'</b>}}.'),
 							'status' => 1
