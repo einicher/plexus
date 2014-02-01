@@ -19,7 +19,6 @@
 					if (empty($levels[4]) || empty($levels[5])) {
 						$plxContent = $this->install();
 					} else {
-						exit;
 						$m = $this->processInstall('install', $levels[4], $levels[5], $this->install());
 						if ($m['status'] == 1) {
 							header('Location: '.$this->a->assigned('system.preferences.components'));
@@ -32,9 +31,9 @@
 
 				case 'remove':
 					$message = $this->remove($levels[4]);
-					$this->overview($message);
-					echo $this->t->get('admin-components.php', array(
-						'message' => $message
+					echo $this->t->get('components.php', array(
+						'message' => $message,
+						'plxContent' => $this->overview($message)
 					));
 					exit;
 				break;
@@ -42,15 +41,17 @@
 				case 'upgrade':
 					$m = $this->upgrade($levels[4]);
 					if ($m['status'] == 1) {
-						$this->overview($m['message']);
-						echo $this->t->get('admin-components.php', array(
-							'message' => $m['message']
+						echo $this->t->get('components.php', array(
+							'message' => $m['message'],
+							'plxContent' => $this->overview($m['message'])
 						));
 						exit;
 					}
 					if ($m['status'] == 0) {
-						$this->overview($m['message'], true);
-						echo $this->t->get('admin-components.php', array('message' => 1));
+						echo $this->t->get('components.php', array(
+							'message' => 1,
+							'plxContent' => $this->overview($m['message'], true)
+						));
 						exit;
 					}
 				break;
@@ -89,6 +90,7 @@
 			}
 
 			$components = $this->detectComponents();
+			unset($components['system']);
 			asort($components);
 			foreach ($components as $c => $class) {
 				$e = new $class(true);
@@ -201,7 +203,7 @@
 
 		function upgrade($component)
 		{
-			$results = json_decode(file_get_contents($this->system->home.'components/JSON/'.urldecode($component).'?exactMatch'));
+			$results = json_decode(file_get_contents($this->system->home.'components/json/'.urldecode($component).'?exactMatch'));
 			if (!empty($results)) {
 				$source = base64_encode($results->results[0]->source);
 				return $this->processInstall('upgrade', $component, $source, $results);
@@ -220,7 +222,7 @@
 			$status = 1;
 			if (is_writable(PLX_COMPONENTS)) {
 				if ($component == 'plexus') {
-					$source = json_decode(file_get_contents($this->system->home.'Components/JSON/plexus?exactMatch'));
+					$source = json_decode(file_get_contents($this->system->home.'components/json/plexus?exactMatch'));
 					if (empty($source->results[0]->source)) {
 						return array(
 							'message' => §('Failed to get the link to the plexus core source file.'),
@@ -268,6 +270,7 @@
 					@chmod($target, 0777);
 
 					$script = @file_get_contents(@base64_decode($source));
+
 					if (empty($script)) {
 						return array(
 							'message' => §('Download of install script failed.'),
@@ -450,10 +453,11 @@ chmod($target.\''.$path.'\', 0777);
 			$dir = opendir($p);
 			while ($c = readdir($dir)) {
 				if ($c != '.' && $c != '..') {
-					$path = $p.'/'.$c;
+					$path = str_replace('//', '/', $p.'/'.$c);
 					if (is_dir($path)) {
 						$this->deleteRecursive($path);
 					} else {
+						//echo µ($path);
 						unlink($path);
 					}
 				}

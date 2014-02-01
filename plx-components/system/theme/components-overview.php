@@ -14,7 +14,7 @@
 	</div>
 <? endif; ?>
 <? if (!empty($plexusUpgrade)) : ?>
-	<div class="upgrade" style="margin: 20px;"><?=§('Plexus {{<strong>'.$plexusUpgrade.'</strong>}} available. Backup your database, then {{<a href="'.$this->a->getHome('PlexusComponents/PlexusInstall/Upgrade/plexus').'">'.§('click here to start the automatic upgrade process').'</a>}}.')?></div>
+	<div class="upgrade" style="margin: 20px;"><?=§('Plexus {{<strong>'.$plexusUpgrade['newVersion'].'</strong>}} available. Backup your database, then {{<a href="'.$this->a->assigned('system.preferences.components.upgrade').'/plexus">'.§('click here to start the automatic upgrade process').'</a>}}.')?></div>
 <? endif; ?>
 <? if (!empty($overviewUpgrades)) : ?>
 
@@ -31,7 +31,7 @@
 <div class="component">
 	<div class="controls">
 <? if ($component->upgrade) : ?>
-		<a href="<?=$this->a->assigned('system.preferences.components.upgrade').'/'.$component?>" class="upgrade"><?=§('Upgrade')?></a>
+		<a href="<?=$this->a->assigned('system.preferences.components.upgrade').'/'.$component->file?>" class="upgrade"><?=§('Upgrade')?></a>
 <? endif; ?>
 <? if ($component->active) : ?>
 		<a href="<?=$this->a->assigned('system.preferences.components.deactivate').'/'.$component->class?>" class="deactivate"><?=§('Deactivate')?></a>
