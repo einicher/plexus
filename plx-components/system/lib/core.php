@@ -60,7 +60,7 @@
 					if (empty(self::$system)) {
 						$system = new stdClass;
 						$system->name = 'Plexus';
-						$system->version = '0.4.9';
+						$system->version = '0.6';
 						$system->home = 'http://plexus-cms.org/';
 						self::$system = $system;
 					}

@@ -252,7 +252,10 @@
 							$target = '';
 							$process = eval($script);
 							$this->system->version = $results->results[0]->version;
-							return $this->plxComponents(1, array('', 'PlexusComponents'), array(), TRUE);
+							return array(
+								'message' => §('Plexus upgrade successfull. You are now on version {{<b>'.$results->results[0]->version.'</b>}}.'),
+								'status' => 1
+							);
 						}
 					}
 				} else {
@@ -389,7 +392,7 @@
 		function packPlexus()
 		{
 	        $p = opendir('./');
-	        $excluded = array('.', '..', '.bzr', '.bzignore', 'plx-storage', 'plx-components', '.settings', '.buildpath', '.project', '.bzrignore');
+	        $excluded = array('.', '..', '.bzr', '.bzignore', 'plx-storage', 'plx-components', '.settings', '.buildpath', '.project', '.bzrignore', '.git', '.gitignore');
 	        while($c = readdir($p)) {
 				if (!in_array($c, $excluded)) {
 				        $this->packSwitch($c, '');
