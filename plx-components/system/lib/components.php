@@ -223,7 +223,11 @@
 
 			if ($component == 'plexus') {
 				if (is_writable('./')) {
-					$source = json_decode(file_get_contents($this->system->home.'components/json/plexus?exactMatch'));
+					$request = $this->system->home.'components/json/plexus?exactMatch';
+					if (!empty($this->conf->preReleases)) {
+						$request .= '&dev=1';
+					}
+					$source = json_decode(file_get_contents($request));
 					if (empty($source->results[0]->source)) {
 						return array(
 							'message' => §('Failed to get the link to the plexus core source file.'),
@@ -277,6 +281,9 @@
 					}
 					@chmod($target, 0777);
 
+					if (!empty($this->conf->preReleases)) {
+						$source .= '&dev=1';
+					}
 					$script = @file_get_contents(@base64_decode($source));
 
 					if (empty($script)) {
