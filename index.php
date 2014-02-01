@@ -48,8 +48,8 @@
 		if (!isset($overrideCache) && file_exists($storage)) {
 			$pc = $storage.'page-cache/';
 			if (!file_exists($pc)) {
-				mkdir($pc);
-				chmod($pc, 0777);
+				@mkdir($pc);
+				@chmod($pc, 0777);
 			}
 			$pageCache = $pc.sha1($url['path']);
 			if (isset($_SERVER['HTTP_PRAGMA']) && $_SERVER['HTTP_PRAGMA'] == 'no-cache') {

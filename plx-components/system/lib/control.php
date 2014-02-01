@@ -109,10 +109,11 @@
 				$this->a->assign('system.preferences.languages', 'languages', array('Preferences::instance()', 'control'), 'system.preferences');
 
 				$this->a->assign('system.preferences.components', 'components', array('Preferences::instance()', 'control'), 'system.preferences');
-				$this->a->assign('system.preferences.components.install', 'install', array('Preferences::instance()', 'control'), 'system.preferences.components');
+				$this->a->assign('system.preferences.components.install', 'install', array('Preferences::instance()', 'control'), 'system.preferences.components', false, true);
 				$this->a->assign('system.preferences.components.activate', 'activate', array('Components::instance()', 'index'), 'system.preferences.components', true, true);
 				$this->a->assign('system.preferences.components.deactivate', 'deactivate', array('Components::instance()', 'index'), 'system.preferences.components', true, true);
-				$this->a->assign('system.preferences.components.remove', 'remove', array('Components::instance()', 'index'), 'system.preferences.components');
+				$this->a->assign('system.preferences.components.remove', 'remove', array('Components::instance()', 'index'), 'system.preferences.components', false, true);
+				$this->a->assign('system.preferences.components.upgrade', 'upgrade', array('Components::instance()', 'index'), 'system.preferences.components', false, true);
 
 				$this->a->assign('system.preferences.cache', 'cache', array('Preferences::instance()', 'control'), 'system.preferences');
 				$this->a->assign('system.preferences.cache.clear', 'clear', array('Preferences::instance()', 'control'), 'system.preferences.cache');
