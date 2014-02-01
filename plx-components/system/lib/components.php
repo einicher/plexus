@@ -203,9 +203,13 @@
 
 		function upgrade($component)
 		{
-			$results = json_decode(file_get_contents($this->system->home.'components/json/'.urldecode($component).'?exactMatch'));
+			$request = $this->system->home.'components/json/'.urldecode($component).'?exactMatch';
+			if (!empty($this->conf->preReleases)) {
+				$request .= '&dev=1';
+			}
+			$results = json_decode(file_get_contents($request));
 			if (!empty($results)) {
-				$source = base64_encode($results->results[0]->source);
+				$source = $results->results[0]->source;
 				return $this->processInstall('upgrade', $component, $source, $results);
 			}
 		}
@@ -223,41 +227,34 @@
 
 			if ($component == 'plexus') {
 				if (is_writable('./')) {
-					$request = $this->system->home.'components/json/plexus?exactMatch';
-					if (!empty($this->conf->preReleases)) {
-						$request .= '&dev=1';
-					}
-					if (empty($source->results[0]->source)) {
+					$script = @file_get_contents($source);
+					if (empty($script)) {
 						return array(
-							'message' => §('Failed to get the link to the plexus core source file.'),
+							'message' => §('Failed to fetch the plexus core source from „{{'.$source.'}}“.'),
 							'status' => 0
 						);
 					} else {
-						$source = $results->results[0]->source;
-						$script = @file_get_contents($source);
-						if (empty($script)) {
-							return array(
-								'message' => §('Failed to fetch the plexus core source from „{{'.$source.'}}“.'),
-								'status' => 0
-							);
-						} else {
-							$path = opendir('.');
-							$excludes = array('.', '..', 'plx-storage', 'plx-components');
-							while ($c = readdir($path)) {
-								if (!in_array($c, $excludes)) {
-									if (is_dir($c)) {
-										$this->deleteRecursive($c);
-									} else {
-										unlink($c);
-									}
+						/*
+						$path = opendir('.');
+						$excludes = array('.', '..', 'plx-storage', 'plx-components');
+						while ($c = readdir($path)) {
+							if (!in_array($c, $excludes)) {
+								if (is_dir($c)) {
+									$this->deleteRecursive($c);
+								} else {
+									unlink($c);
 								}
 							}
-							$this->deleteRecursive('./plx-components/system');
-							$target = '';
-							$process = eval($script);
-							$this->system->version = $results->results[0]->version;
-							return $this->plxComponents(1, array('', 'PlexusComponents'), array(), TRUE);
 						}
+						$this->deleteRecursive('./plx-components/system');
+						$target = '';
+						$process = eval($script);
+						$this->system->version = $results->results[0]->version;
+						*/
+						return array(
+							'message' => §('Plexus upgrade successfull. You are now on version {{<b>'.$results->results[0]->version.'</b>}}.'),
+							'status' => 1
+						);
 					}
 				} else {
 					return array(
@@ -283,7 +280,7 @@
 					if (!empty($this->conf->preReleases)) {
 						$source .= '&dev=1';
 					}
-					$script = @file_get_contents(@base64_decode($source));
+					$script = @file_get_contents($source);
 
 					if (empty($script)) {
 						return array(
