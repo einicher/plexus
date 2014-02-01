@@ -227,7 +227,6 @@
 					if (!empty($this->conf->preReleases)) {
 						$request .= '&dev=1';
 					}
-					$source = json_decode(file_get_contents($request));
 					if (empty($source->results[0]->source)) {
 						return array(
 							'message' => §('Failed to get the link to the plexus core source file.'),
