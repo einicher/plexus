@@ -1,4 +1,8 @@
-<? if (!empty($message)) : ?>
+<? if (!empty($error)) : ?>
+	<div id="error" style="border-bottom: 1px solid #CCC;">
+		<div class="errors"><?=$message?></div>
+	</div>
+<? elseif (!empty($message)) : ?>
 	<div id="message" style="border-bottom: 1px solid #CCC;">
 		<div class="infos"><?=$message?></div>
 	</div>
@@ -7,11 +11,6 @@
 			jQuery("#message").fadeOut();
 		}, 5000);
 	</script>
-<? endif; ?>
-<? if (!empty($error)) : ?>
-	<div id="error" style="border-bottom: 1px solid #CCC;">
-		<div class="errors"><?=$message?></div>
-	</div>
 <? endif; ?>
 <? if (!empty($plexusUpgrade)) : ?>
 	<div class="upgrade" style="margin: 20px;"><?=§('Plexus {{<strong>'.$plexusUpgrade['newVersion'].'</strong>}} available. Backup your database, then {{<a href="'.$this->a->assigned('system.preferences.components.upgrade').'/plexus">'.§('click here to start the automatic upgrade process').'</a>}}.')?></div>

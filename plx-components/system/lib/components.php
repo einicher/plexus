@@ -220,8 +220,9 @@
 		function processInstall($type, $component, $source, $results)
 		{
 			$status = 1;
-			if (is_writable(PLX_COMPONENTS)) {
-				if ($component == 'plexus') {
+
+			if ($component == 'plexus') {
+				if (is_writable('./')) {
 					$source = json_decode(file_get_contents($this->system->home.'components/json/plexus?exactMatch'));
 					if (empty($source->results[0]->source)) {
 						return array(
@@ -256,6 +257,13 @@
 						}
 					}
 				} else {
+					return array(
+						'message' => §('Your {{<strong>plexus main directory</strong>}} is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.§('the plexus download page').'</a>}} to download the new version on your own and install it by hand.'),
+						'status' => 0
+					);
+				}
+			} else {
+				if (is_writable(PLX_COMPONENTS)) {
 					$target = PLX_COMPONENTS.$component.'/';
 					if (file_exists($target)) {
 						@chmod($target, 0777);
@@ -297,18 +305,18 @@
 							}
 						}
 					}
-				}
-			} else {
-				if ($type == 'upgrade') {
-					return array(
-						'message' => §('Your {{<strong>plx-components</strong>}} directory is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.§('the components page').'</a>}} to download the new version on your own and install it by hand.'),
-						'status' => 0
-					);
 				} else {
-					return array(
-						'message' => §('Your {{<strong>plx-components</strong>}} directory is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.§('the components page').'</a>}} to download the component and install it by hand by extracting amd movin it to the plx-components folder.'),
-						'status' => 0
-					);
+					if ($type == 'upgrade') {
+						return array(
+							'message' => §('Your {{<strong>plx-components</strong>}} directory is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.§('the components page').'</a>}} to download the new version on your own and install it by hand.'),
+							'status' => 0
+						);
+					} else {
+						return array(
+							'message' => §('Your {{<strong>plx-components</strong>}} directory is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.§('the components page').'</a>}} to download the component and install it by hand by extracting and moving it to the plx-components folder.'),
+							'status' => 0
+						);
+					}
 				}
 			}
 		}
