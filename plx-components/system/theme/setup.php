@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<title><?=$setup->title?> • <?=$this->system->name?> <?=$this->system->version?> Setup</title>
-		<link type="text/css" rel="stylesheet" href="<?=PLX_SYSTEM.'theme/system.css'?>" />
+		<link type="text/css" rel="stylesheet" href="<?=$this->a->getRoot('plx-components/system/theme/system.css')?>" />
 		<style type="text/css">
 			body { background: #F2F2F2; font-family: sans-serif; font-size: 14px; }
 			#container { border: 1px solid #DDD; width: 980px; margin: 50px auto; border-radius: 5px; }
