@@ -203,9 +203,13 @@
 
 		function upgrade($component)
 		{
-			$results = json_decode(file_get_contents($this->system->home.'components/json/'.urldecode($component).'?exactMatch'));
+			$request = $this->system->home.'components/json/'.urldecode($component).'?exactMatch';
+			if (!empty($this->conf->preReleases)) {
+				$request .= '&dev=1';
+			}
+			$results = json_decode(file_get_contents($request));
 			if (!empty($results)) {
-				$source = base64_encode($results->results[0]->source);
+				$source = $results->results[0]->source;
 				return $this->processInstall('upgrade', $component, $source, $results);
 			}
 		}
@@ -220,45 +224,44 @@
 		function processInstall($type, $component, $source, $results)
 		{
 			$status = 1;
-			if (is_writable(PLX_COMPONENTS)) {
-				if ($component == 'plexus') {
-					$source = json_decode(file_get_contents($this->system->home.'components/json/plexus?exactMatch'));
-					if (empty($source->results[0]->source)) {
+
+			if ($component == 'plexus') {
+				if (is_writable('./')) {
+					$script = @file_get_contents($source);
+					if (empty($script)) {
 						return array(
-							'message' => §('Failed to get the link to the plexus core source file.'),
+							'message' => §('Failed to fetch the plexus core source from „{{'.$source.'}}“.'),
 							'status' => 0
 						);
 					} else {
-						$source = $results->results[0]->source;
-						$script = @file_get_contents($source);
-						if (empty($script)) {
-							return array(
-								'message' => §('Failed to fetch the plexus core source from „{{'.$source.'}}“.'),
-								'status' => 0
-							);
-						} else {
-							$path = opendir('.');
-							$excludes = array('.', '..', 'plx-storage', 'plx-components');
-							while ($c = readdir($path)) {
-								if (!in_array($c, $excludes)) {
-									if (is_dir($c)) {
-										$this->deleteRecursive($c);
-									} else {
-										unlink($c);
-									}
+						$path = opendir('.');
+						$excludes = array('.', '..', 'plx-storage', 'plx-components');
+						while ($c = readdir($path)) {
+							if (!in_array($c, $excludes)) {
+								if (is_dir($c)) {
+									$this->deleteRecursive($c);
+								} else {
+									unlink($c);
 								}
 							}
-							$this->deleteRecursive('./plx-components/system');
-							$target = '';
-							$process = eval($script);
-							$this->system->version = $results->results[0]->version;
-							return array(
-								'message' => §('Plexus upgrade successfull. You are now on version {{<b>'.$results->results[0]->version.'</b>}}.'),
-								'status' => 1
-							);
 						}
+						$this->deleteRecursive('./plx-components/system');
+						$target = '';
+						$process = eval($script);
+						$this->system->version = $results->results[0]->version;
+						return array(
+							'message' => §('Plexus upgrade successfull. You are now on version {{<b>'.$results->results[0]->version.'</b>}}.'),
+							'status' => 1
+						);
 					}
 				} else {
+					return array(
+						'message' => §('Your {{<strong>plexus main directory</strong>}} is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.§('the plexus download page').'</a>}} to download the new version on your own and install it by hand.'),
+						'status' => 0
+					);
+				}
+			} else {
+				if (is_writable(PLX_COMPONENTS)) {
 					$target = PLX_COMPONENTS.$component.'/';
 					if (file_exists($target)) {
 						@chmod($target, 0777);
@@ -272,7 +275,10 @@
 					}
 					@chmod($target, 0777);
 
-					$script = @file_get_contents(@base64_decode($source));
+					if (!empty($this->conf->preReleases)) {
+						$source .= '&dev=1';
+					}
+					$script = @file_get_contents($source);
 
 					if (empty($script)) {
 						return array(
@@ -300,18 +306,18 @@
 							}
 						}
 					}
-				}
-			} else {
-				if ($type == 'upgrade') {
-					return array(
-						'message' => §('Your {{<strong>plx-components</strong>}} directory is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.§('the components page').'</a>}} to download the new version on your own and install it by hand.'),
-						'status' => 0
-					);
 				} else {
-					return array(
-						'message' => §('Your {{<strong>plx-components</strong>}} directory is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.§('the components page').'</a>}} to download the component and install it by hand by extracting amd movin it to the plx-components folder.'),
-						'status' => 0
-					);
+					if ($type == 'upgrade') {
+						return array(
+							'message' => §('Your {{<strong>plx-components</strong>}} directory is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.§('the components page').'</a>}} to download the new version on your own and install it by hand.'),
+							'status' => 0
+						);
+					} else {
+						return array(
+							'message' => §('Your {{<strong>plx-components</strong>}} directory is not writable. Automatic install will not work. Fix this problem or go to {{<a href="'.$results->results[0]->href.'" class="external" target="_blank">'.§('the components page').'</a>}} to download the component and install it by hand by extracting and moving it to the plx-components folder.'),
+							'status' => 0
+						);
+					}
 				}
 			}
 		}
