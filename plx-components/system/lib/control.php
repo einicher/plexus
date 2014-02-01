@@ -96,6 +96,7 @@
 				$this->a->assign('system.standaloneWidget', 'PlexusStandaloneWidget', array('WidgetControl::instance()', 'standaloneWidget'), '', true);
 
 				$this->a->assign('plexus.pack', 'plx-pack', array('Components::instance()', 'plxPack'));
+				$this->a->assign('plexus.pack.package', '*', array('Components::instance()', 'plxPack'), 'plexus.pack', true);
 
 				$this->a->assign('system.database', 'plx-database', array('PlexusDatabase::instance()', 'control'));
 				$this->a->assign('system.database.edit', 'edit', array('PlexusDatabase::instance()', 'control'), 'system.database');

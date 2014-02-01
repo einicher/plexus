@@ -422,7 +422,8 @@
 				}
 			} else {
 				$extensions = array('php', 'txt', 'htm', 'html', 'css', 'xml', 'xsl', 'js', 'htaccess');
-				$ext = strtolower(end(explode('.', $current)));
+				$ext = explode('.', $current);
+				$ext = strtolower(end($ext));
 				if (in_array($ext, $extensions)) {
 					echo '$f = fopen($target.\''.$path.'\', \'w\');
 fwrite($f, \''.str_replace("'", "\'", str_replace('\\', '\\\\', file_get_contents($current))).'\');
