@@ -99,6 +99,10 @@
 					)';
 				}
 
+				if (!empty($_GET['filter'])) {
+					$c .= ' AND `type`="'.$this->d->escape($_GET['filter']).'"';
+				}
+
 				if ($properties) {
 					$query = 'SELECT i.*'.$select.' FROM `#_index` i, `#_properties` p WHERE i.id=p.parent && status=1'.$c;
 				} else {
@@ -216,21 +220,19 @@
 		function getTypeSelector()
 		{
 			$items = array();
-			$current = $this->lang->get('-- Filter by Type --');
+			$current = §('-- Filter by Type --');
 			foreach (Core::$types as $name => $type) {
-				if (in_array($name, $this->data->except)) {
-					$items[] = array(
-						'item' => (object) array(
+				if (in_array($name, $this->options->include)) {
+					$items[] = (object) array(
 							'label' => $type['label'],
-							'href' => $this->addr->current('', FALSE, array('filter' => $name))
-						)
+							'href' => $this->a->current('', FALSE, array('filter' => $name))
 					);
 				}
 				if (isset($_GET['filter']) && $name == $_GET['filter']) {
-					$current = $this->lang->get('Filtered by type {{<strong>'.$type['label'].'</strong>}}');
+					$current = §('Filtered by type {{<strong>'.$type['label'].'</strong>}}');
 				}
 			}
-			return Template::get2('feed-type-selector.php', array(
+			return $this->t->get('feed-type-selector.php', array(
 				'current' => $current,
 				'items' => $items
 			));
