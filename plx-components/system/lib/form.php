@@ -415,7 +415,7 @@
 			}
 			$showFormAdvancedControls = false;
 			if (!empty($advanced) && !$advancedOff && $this->access->granted('system.edit.advanced')) {
-				$showFormAdvancedControls = false;
+				$showFormAdvancedControls = true;
 			}
 			$showChecks = false;
 			if (!empty($checks) && !$checksOff) {
