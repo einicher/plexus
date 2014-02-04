@@ -18,19 +18,23 @@
 
 		function control($level, $levels, $cache)
 		{
-			Control::$standalone = true;
+			if ($this->access->granted('database')) {
+				Control::$standalone = true;
 
-			if (isset ($_GET['ajax'])) {
-				$this->a->root = $_GET['ajax'];
-			}
+				if (isset ($_GET['ajax'])) {
+					$this->a->root = $_GET['ajax'];
+				}
 
-			if (empty($levels[2])) {
-				$this->main = $this->index();
+				if (empty($levels[2])) {
+					$this->main = $this->index();
+				} else {
+					echo $this->browse($this->a->getLevel(2, $levels));
+					exit;
+				}
+				return $this;
 			} else {
-				echo $this->browse($this->a->getLevel(2, $levels));
-				exit;
+				return new Page(§('Please login'), §('To access the preferences section you need do be logged in.').'<br /><br />'.$this->access->getLoginDialog());
 			}
-			return $this;
 		}
 
 		function view()
