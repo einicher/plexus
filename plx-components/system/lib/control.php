@@ -119,6 +119,7 @@
 				$this->a->assign('system.preferences.cache.clear', 'clear', array('Preferences::instance()', 'control'), 'system.preferences.cache');
 				$this->a->assign('system.preferences.trackbacks', 'trackbacks', array('Preferences::instance()', 'control'), 'system.preferences');
 				$this->a->assign('system.preferences.blockedIps', 'blocked-ips', array('Preferences::instance()', 'control'), 'system.preferences');
+				$this->a->assign('system.preferences.multisite', 'multisite', array('Preferences::instance()', 'control'), 'system.preferences');
 
 				// MAKE SOME DATA TYPES OCCUPY ADDRESSES
 				$this->a->occupy('USER', 'system.users');

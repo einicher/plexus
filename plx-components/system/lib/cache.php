@@ -31,18 +31,23 @@
 			return ob_get_clean();
 		}
 
-		static public function clearPageCache()
+		static public function clearPageCache($site = '')
 		{
 			$success = array();
 			$fail = array();
 			$p = Core::getStorage('page-cache/');
-			$d = opendir($p);
-			while ($c = readdir($d)) {
-				if ($c != '..' && $c != '.') {
-					if (unlink($p.$c)) {
-						$success[] = $p.$c;
-					} else {
-						$fail[] = $p.$c;
+			if (!empty($site)) {
+				$p = PLX_STORAGE.'multi/'.$site.'/page-cache/';
+			}
+			if (file_exists($p)) {
+				$d = opendir($p);
+				while ($c = readdir($d)) {
+					if ($c != '..' && $c != '.') {
+						if (unlink($p.$c)) {
+							$success[] = $p.$c;
+						} else {
+							$fail[] = $p.$c;
+						}
 					}
 				}
 			}
@@ -52,18 +57,23 @@
 			);
 		}
 
-		function clearImageCache()
+		function clearImageCache($site = '')
 		{
 			$success = array();
 			$fail = array();
 			$p = Core::getStorage('cache/');
-			$d = opendir($p);
-			while ($c = readdir($d)) {
-				if ($c != '..' && $c != '.') {
-					if (unlink($p.$c)) {
-						$success[] = $p.$c;
-					} else {
-						$fail[] = $p.$c;
+			if (!empty($site)) {
+				$p = PLX_STORAGE.'multi/'.$site.'/cache/';
+			}
+			if (file_exists($p)) {
+				$d = opendir($p);
+				while ($c = readdir($d)) {
+					if ($c != '..' && $c != '.') {
+						if (unlink($p.$c)) {
+							$success[] = $p.$c;
+						} else {
+							$fail[] = $p.$c;
+						}
 					}
 				}
 			}

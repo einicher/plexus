@@ -25,6 +25,7 @@
 						case 'components': $this->main = Components::instance()->index($level, $levels, $cache); break;
 						case 'trackbacks': $this->main = Trackback::instance()->preferencesPage($level, $levels, $cache); break;
 						case 'blocked-ips': $this->main = $this->blockedIps($level, $levels, $cache); break;
+						case 'multisite': $this->main = $this->multisite($level, $levels, $cache); break;
 					}
 					if (isset(Core::$preferences[$levels[2]])) {
 						$p = Core::$preferences[$levels[2]];
@@ -44,6 +45,30 @@
 				'menu' => $this->getMenu(),
 				'backendID' => 'preferences'
 			));
+		}
+
+		function getMenu()
+		{
+			$menu = array(
+				array('general', §('General Settings'), $this->a->assigned('system.preferences', 2), true),
+				array('cache', §('Cache'), $this->a->assigned('system.preferences.cache', 2)),
+				array('components', §('Components'), $this->a->assigned('system.preferences.components', 2)),
+				array('languages', §('Languages'), $this->a->assigned('system.preferences.languages', 2)),
+				array('trackbacks', §('Trackbacks'), $this->a->assigned('system.preferences.trackbacks', 2), false, Trackback::instance()->getPendingTrackbacks()),
+				array('blocked-ips', §('Blocked IPs'), $this->a->assigned('system.preferences.blockedIps', 2))
+			);
+			if (Access::$user->rights == 'OVERLOARD' && file_exists(PLX_STORAGE.'multi/')) {
+				$menu[] = array('multisite', §('Multi site'), $this->a->assigned('system.preferences.multisite', 2));
+			}
+			foreach (Core::$preferences as $p) {
+				$name = $this->a->transform(strtolower($p->name));
+				$menu[] = array($name, $p->name, $this->a->assigned('system.preferences.'.$name));
+			}
+			foreach (Site::$components as $component) {
+				$name = strtolower($component->address);
+				$menu[] = array($name, $component->label, $this->a->assigned('system.preferences.'.$name, 2));
+			}
+			return $menu;
 		}
 
 		function generalSettings()
@@ -329,25 +354,82 @@
 			}
 		}
 
-		function getMenu()
+		function multisite($level, $levels, $cache)
 		{
-			$menu = array(
-				array('general', §('General Settings'), $this->a->assigned('system.preferences', 2), true),
-				array('cache', §('Cache'), $this->a->assigned('system.preferences.cache', 2)),
-				array('components', §('Components'), $this->a->assigned('system.preferences.components', 2)),
-				array('languages', §('Languages'), $this->a->assigned('system.preferences.languages', 2)),
-				array('trackbacks', §('Trackbacks'), $this->a->assigned('system.preferences.trackbacks', 2), false, Trackback::instance()->getPendingTrackbacks()),
-				array('blocked-ips', §('Blocked IPs'), $this->a->assigned('system.preferences.blockedIps', 2))
+			$clear = (object) array(
+				'fail' => array(),
+				'success' => array()
 			);
-			foreach (Core::$preferences as $p) {
-				$name = $this->a->transform(strtolower($p->name));
-				$menu[] = array($name, $p->name, $this->a->assigned('system.preferences.'.$name));
+
+			$sites = array();
+			$p = PLX_STORAGE.'multi/';
+			$d = opendir($p);
+			while ($c = readdir($d)) {
+				if ($c != '.' && $c != '..') {
+					$sites[] = $c;
+				}
 			}
-			foreach (Site::$components as $component) {
-				$name = strtolower($component->address);
-				$menu[] = array($name, $component->label, $this->a->assigned('system.preferences.'.$name, 2));
+			sort($sites);
+
+			if (!empty($_GET['cpc'])) {
+				if ($_GET['cpc'] == '__all__') {
+					foreach ($sites as $site) {
+						$c = Cache::clearPageCache($site);
+						$clear->fail = array_merge($c->fail, $clear->fail);
+						$clear->success = array_merge($c->success, $clear->success);
+					}
+				} else {
+					$clear = Cache::clearPageCache(urldecode($_GET['cpc']));
+				}
 			}
-			return $menu;
+			if (!empty($_GET['cic'])) {
+				if ($_GET['cic'] == '__all__') {
+					foreach ($sites as $site) {
+						$c = Cache::clearImageCache($site);
+						$clear->fail = array_merge($c->fail, $clear->fail);
+						$clear->success = array_merge($c->success, $clear->success);
+					}
+				} else {
+					$clear = Cache::clearImageCache(urldecode($_GET['cic']));
+				}
+			}
+
+			foreach ($sites as $k => $site) {
+				$pageCache = 0;
+				if (file_exists($p.$site.'/page-cache/')) {
+					$d = opendir($p.$site.'/page-cache/');
+					while ($c = readdir($d)) {
+						if ($c != '.' && $c != '..') {
+							$pageCache++;
+						}
+					}
+				} else {
+					$pageCache = §('No page cache');
+				}
+
+				$imageCache = 0;
+				if (file_exists($p.$site.'/cache/')) {
+					$d = opendir($p.$site.'/cache/');
+					while ($c = readdir($d)) {
+						if ($c != '.' && $c != '..') {
+							$imageCache++;
+						}
+					}
+				} else {
+					$imageCache = §('No image cache');
+				}
+
+				$sites[$k] = (object) array(
+					'name' => $site,
+					'pageCache' => $pageCache,
+					'imageCache' => $imageCache
+				);
+			}
+
+			return $this->t->get('preferences-multisite.php', array(
+				'sites' => $sites,
+				'clear' => $clear
+			));
 		}
 	}
 ?>

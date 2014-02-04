@@ -394,6 +394,11 @@ ul.editorChooseType li a:hover { background: #F2E6EE; }
 .plexusGUI .toggleButtons div:first-child, .plexusGUI .toggleButtons a:first-child { border-radius: 4px 0 0 4px; border-right: 0 none; }
 .plexusGUI .toggleButtons div:last-child, .plexusGUI .toggleButtons a:last-child { border-radius: 0 4px 4px 0; border-left: 0 none; }
 
+.plexusGUI table, .plxGuiTable { width: 100%; border-collapse: collapse; border: 1px solid #CCC; }
+.plexusGUI table th, .plxGuiTable th,
+.plexusGUI table td, .plxGuiTable td { border: 1px solid #CCC; padding: 5px; }
+.plexusGUI table th, .plxGuiTable th { font-weight: bold; border-bottom-width: 2px; text-align: left; }
+
 .plx-button.green {
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
