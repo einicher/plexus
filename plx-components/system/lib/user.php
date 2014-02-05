@@ -105,12 +105,9 @@
 			}
 
 			if (!isset($this->plexusImport)) {
-				$check = $this->pdb->get('USER', array(
-					'email' => $this->email,
-					'id' => '!='.$this->id
-				));
+				$check = $this->d->get('SELECT i.id FROM `#_index` i, `#_properties` p WHERE p.name="email" && p.value="'.$this->d->escape($this->email).'" && i.id=p.parent && i.type="USER" && i.id!='.$this->id);
 				if (!empty($check)) {
-					$this->error(§('A user with the email “{{'.$this->email.'}}” already exists. {{<a href="'.$this->addr->registered('system.users.password').'">'.§('You can request an new password here.').'</a>}}'));
+					$this->error(§('A user with the email “{{'.$this->email.'}}” already exists. {{<a href="'.$this->a->registered('system.users.password').'">'.§('You can request an new password here.').'</a>}}'));
 					return FALSE;
 				}
 			}
@@ -138,8 +135,9 @@
 		function getContent()
 		{
 			require_once PLX_SYSTEM.'lib/widget-site-feed.php';
-			$w = new SiteFeedWidget;
-			$w->sql = 'SELECT * FROM '.$this->db->table('index').' WHERE status=1 AND author='.$this->id.' ORDER BY published DESC';
+			$w = new Feed(array(
+				'author' => $this->id
+			));
 			$this->feed = $w->view();
 			return $this->t->get('user.php', array('user' => $this));
 		}

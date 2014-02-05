@@ -29,6 +29,7 @@
 			//exclude --""--
 			//search
 			//tag
+			//author
 			
 			$this->set('noThumbs', 0);
 			$this->set('paginationPages', 7);
@@ -67,6 +68,10 @@
 				
 				if (isset($this->options->parent)) {
 					$c .= ' && i.parent='.$this->options->parent;
+				}
+				
+				if (isset($this->options->author)) {
+					$c .= ' && i.author='.$this->options->author;
 				}
 				
 				if (isset($this->options->include)) {
