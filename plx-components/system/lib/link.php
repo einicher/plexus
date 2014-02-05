@@ -142,6 +142,8 @@
 						} else {
 							document.plexusForm.tags.value = data.keywords;
 						}
+					} else {
+						document.plexusForm.tags.value = '';
 					}
 
 					if (data.images != undefined) {
@@ -196,7 +198,9 @@
 
 			$page = @file_get_contents(urldecode($url));
 			if (!empty($page)) {
-				$page = mb_convert_encoding($page, 'UTF-8', mb_detect_encoding($page));
+				if (!mb_check_encoding($page, 'UTF-8')) {
+					$page = mb_convert_encoding($page, 'UTF-8');
+				}
 				if (!empty($page)) {
 					$page = preg_replace('/\<script[^\>]*\>.*\<\/script\>/isU', '', $page);
 					$page = preg_replace('/\<noscript[^\>]*\>.*\<\/noscript\>/isU', '', $page);
