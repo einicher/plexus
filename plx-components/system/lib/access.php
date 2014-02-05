@@ -237,8 +237,10 @@
 	<strong><?php echo §('Groups')?></strong> (<?php echo §('Group rights will be inherited to this user')?>)
 	<div class="plxRightsDialogContainer">
 			<input type="checkbox" id="group--1" name="groups[]" value="-1" <?php echo  in_array(-1, $field->value) ? 'checked="checked"' : '' ?>/> <label for="group--1"><?php echo §('Overloards')?> <span class="description">(<?php echo §('All time full access, no matter what')?>)</span></label><br />
-<? while ($fetch = $this->d->get('SELECT * FROM `#_index` WHERE type="GROUP"', true)) :
-		$group = $this->type($fetch); ?>
+<?
+	$q = $this->d->query('SELECT * FROM `#_index` WHERE `type`="GROUP"');
+	while ($group = $q->fetch_object('Group')) :
+?>
 			<input type="checkbox" id="group-<?php echo $group->id?>" name="groups[]" value="<?php echo $group->id?>" <?php echo  in_array($group->id, $field->value) ? 'checked="checked"' : '' ?>/> <label for="group-<?php echo $group->id?>"><?php echo $group->name?><? if (!empty($group->description)) : ?> (<span class="description" title="<?php echo strip_tags($group->description)?>"><?php echo $this->tools->cutByWords(strip_tags($group->description), 7)?></span>)<? endif; ?></label><br />
 <? endwhile; ?>
 			<div class="clear"></div>
@@ -254,14 +256,12 @@
 				return 'OVERLOARD';
 			}
 
-			$sql = 'SELECT * FROM '.$this->db->table('index').' WHERE type="GROUP" AND id IN('.implode(',', $groups).')';
-			while ($fetch = $this->db->fetch($sql, 1)) {
-				$group = $this->type($fetch);
+			$q = $this->d->query('SELECT * FROM `#_index` WHERE `type`="GROUP" AND id IN('.implode(',', $groups).')');
+			while ($group = $q->fetch_object('Group')) {
 				foreach ($group->rights as $right) {
 					$rights[] = $right;
 				}
 			}
-			$this->db->clear($sql);
 
 			return $rights;
 		}

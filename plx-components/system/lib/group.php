@@ -7,14 +7,14 @@
 		function construct()
 		{
 			$this->add('string', 'name', TRUE, array(
-				'label' => $this->lang->get('Name'),
+				'label' => §('Name'),
 				'transformToAddress' => 1
 			));
 			$this->add('wysiwyg', 'description', FALSE, array(
-				'label' => $this->lang->get('Description')
+				'label' => §('Description')
 			));
 			$this->add('custom', 'rights', FALSE, array(
-				'actor' => Access::getInstance(),
+				'actor' => Access::instance(),
 				'call' => 'rightsDialog'
 			));
 		}
@@ -28,7 +28,7 @@
 			}
 		}
 
-		function beforeSave()
+		function beforeSave($data)
 		{
 			if (!empty($this->rights)) {
 				$this->change('rights', 'text');
@@ -54,8 +54,8 @@
 		static function getGroups($completeGroupObject = false)
 		{
 			$groups = array();
-			while ($fetch = Database::fetch('SELECT * FROM '.Database::table('index').' WHERE `type`="GROUP"')) {
-				$group = new Group($fetch);
+			$q = Database::instance()->query('SELECT * FROM `#_index` WHERE `type`="GROUP"');
+			while ($group = $q->fetch_object('Group')) {
 				if ($completeGroupObject) {
 					$groups[$group->id] = $group;
 				} else {
@@ -68,8 +68,8 @@
 		static function getUsers($groupID, $completeUserObject = false)
 		{
 			$users = array();
-			while ($fetch = Database::fetch('SELECT i.* FROM '.Database::table('textual').' t, '.Database::table('index').' i WHERE i.type="USER" AND i.id=t.parent AND t.name="groups" AND FIND_IN_SET('.$groupID.', t.value)')) {
-				$user = new User($fetch);
+			$q = Database::instance()->query('SELECT i.* FROM `#_properties`p, `#_index` i WHERE i.type="USER" AND i.id=p.parent AND p.name="groups" AND FIND_IN_SET('.$groupID.', p.value)');
+			while ($user = $q->fetch_object('User')) {
 				if ($completeUserObject) {
 					$users[$user->id] = $user;
 				} else {
