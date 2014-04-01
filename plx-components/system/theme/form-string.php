@@ -4,6 +4,9 @@
 <? endif; ?>
 		<div class="fieldStringWrap">
 			<input type="<?= isset($field->password) ? 'password' : 'text' ?>" class="fieldString" id="<?=$field->name?>" name="<?=$field->name?>" value="<?=$field->value?>" size="30"/>
+<? if (!empty($field->options->suggestions)) : ?>
+	<?=$field->options->suggestions?>
+<? endif; ?>
 		</div>
 <? if (!empty($caption)) : ?>
 		<p class="caption"><?=$caption?></p>

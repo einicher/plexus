@@ -78,8 +78,10 @@
 
 		function plxTranslate($level, $levels, $cache)
 		{
+			exit;
+			echo µ('hier');
 			if (empty($levels[$level+1])) {
-				$translate = $this->getData(array_pop($cache));
+				$translate = $this->getData($cache[$level-1]);
 				$translations = Language::getTranslations($translate->id);
 				$t = array();
 				foreach ($translations as $translation) {
@@ -89,12 +91,13 @@
 					$fetch = $this->getData($translation);
 					$t[$fetch->language] = $fetch;
 				}
-				return new Page(§('Choose language'), $this->t->get('system', 'translate.php', array(
-					'languages' => self::$languages,
+				return new Page(§('Choose language'), $this->t->get('translate.php', array(
+					'languages' => Control::$languages,
 					'current' => $translate,
 					'translations' => $t
 				)));
 			} else {
+				echo µ('dfasdfsdf');
 				self::$editMode = true;
 				$translate = $this->getData(array_pop($cache));
 				$type = $this->getType($translate->type);

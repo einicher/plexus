@@ -56,7 +56,7 @@
 
 		static public function locateFile($file, $component = '')
 		{
-			if (empty($component)) {
+			if (empty($component) && $component !== false) {
 				$dbg = debug_backtrace();
 				if (isset($dbg[1]['file'])) {
 					preg_match('='.PLX_COMPONENTS.'([^/]*)/=', $dbg[1]['file'], $results);
@@ -67,27 +67,27 @@
 			}
 
 			if (Core::getConf('system', 'theme') != '') {
-	            if (empty($component)) {
-	                $path = Core::getStorage(Core::getConf('system', 'theme').'/system/'.$file);
-	                if (!file_exists($path)) {
-	                	$path = PLX_STORAGE.'themes/'.Core::getConf('system', 'theme').'/system/'.$file;
-	                }
-	            } else {
-	                $path = Core::getStorage(Core::getConf('system', 'theme').'/'.$component.'/'.$file);
-	                if (!file_exists($path)) {
-	                	$path = PLX_STORAGE.'themes/'.Core::getConf('system', 'theme').'/'.$component.'/'.$file;
-	                }
-	            }
+				if (empty($component)) {
+					$path = Core::getStorage(Core::getConf('system', 'theme').'/system/'.$file);
+					if (!file_exists($path)) {
+						$path = PLX_STORAGE.'themes/'.Core::getConf('system', 'theme').'/system/'.$file;
+					}
+				} else {
+					$path = Core::getStorage(Core::getConf('system', 'theme').'/'.$component.'/'.$file);
+					if (!file_exists($path)) {
+						$path = PLX_STORAGE.'themes/'.Core::getConf('system', 'theme').'/'.$component.'/'.$file;
+					}
+				}
 			}
 
-            if (empty($path) || !file_exists($path)) {
-                if (empty($component)) {
-                    $path = PLX_SYSTEM.'theme/'.$file;
-                } else {
-                    $path = PLX_COMPONENTS.$component.'/theme/'.$file;
-                }
-            }
-            return $path;
+			if (empty($path) || !file_exists($path)) {
+				if (empty($component)) {
+					$path = PLX_SYSTEM.'theme/'.$file;
+				} else {
+					$path = PLX_COMPONENTS.$component.'/theme/'.$file;
+				}
+			}
+			return $path;
 		}
 
 		static public function includeFromThemeRoot($file)

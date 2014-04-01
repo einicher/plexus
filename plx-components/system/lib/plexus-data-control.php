@@ -274,7 +274,7 @@
 			$data = self::getDataById($id);
 			foreach (PlexusDataModel::$bluePrints[$data->type] as $field) {
 				if ($field['type'] == 'file') {
-					$src = $this->getStorage($field['options']['target']).'/';
+					$src = Core::getStorage($field['options']['target']).'/';
 					$src .= $data->$field['name'];
 					if (file_exists($src) && is_file($src)) {
 						unlink($src);

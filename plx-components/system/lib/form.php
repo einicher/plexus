@@ -369,6 +369,7 @@
 </div>
 <?php
 					$sug .= ob_get_clean();
+					$field->options->suggestions = $sug;
 				}
 
 				if (isset($field->options->label)) {

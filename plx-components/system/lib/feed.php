@@ -14,6 +14,11 @@
 
 		function &__construct(array $options = array())
 		{
+			$this->page = 1;
+			if (Control::instance()->paginationActive) {
+				$this->page = Control::instance()->paginationPage;
+			}
+			
 			$this->options = new stdClass;
 			
 			$this->set('excerptLength', 64);
@@ -38,7 +43,9 @@
 			$this->set('showPagination', true);
 
 			$this->options = (object) array_merge((array) $this->options, $options);
-			
+
+			$this->option = $this->o->notify('feed.options', $this->options);
+
 			return $this;
 		}
 
@@ -103,6 +110,14 @@
 						OR FIND_IN_SET(" '.$this->options->tag.'", p.value)
 					)';
 				}
+				
+				if (isset($this->options->find_in_set)) {
+					$properties = true;
+					$c .= ' && p.name="'.$this->options->find_in_set['name'].'" && (
+						FIND_IN_SET("'.$this->options->find_in_set['value'].'", p.value)
+						OR FIND_IN_SET(" '.$this->options->find_in_set['value'].'", p.value)
+					)';
+				}
 
 				if (!empty($_GET['filter'])) {
 					$c .= ' AND `type`="'.$this->d->escape($_GET['filter']).'"';
@@ -142,6 +157,7 @@
 
 			if ($results || $results->num_rows) {
 				while ($f = $results->fetch_object()) {
+//echo µ($f);
 					$r[$f->id] = $f;
 					$rid[] = $f->id;
 				}
@@ -163,15 +179,9 @@
 
 		function view()
 		{
-
-			$page = 1;
-			if (Control::instance()->paginationActive) {
-				$page = Control::instance()->paginationPage;
-			}
-
-			$r = $this->getItems($page);
-
-			if ($page > 1 && count($r) > 0 && Control::instance()->paginationActive) {
+			$r = $this->getItems($this->page);
+//echo µ($r);
+			if ($this->page > 1 && count($r) > 0 && Control::instance()->paginationActive) {
 				Control::instance()->paginationUsed = true;
 			}
 
@@ -180,11 +190,13 @@
 			$results = array();
 			foreach ($r as $id => $result) {
 				$i++;
-
+//echo µ($result);
 				$type = $this->getDataType($result->type);
+//echo µ($type);
 				require_once $type->file;
+//echo µ($type->file);
 				$type = new $type->class($result, true);
-
+//echo µ($type);
 				$type->count = $i;
 				$type->titleLength = $this->option('titleLength');
 				$type->excerptLength = $this->option('excerptLength');
@@ -210,7 +222,7 @@
 				$count = $this->getCount();
 				if ($count > $this->option('limit')) {
 					self::$counter++;
-					$results .= Tools::instance()->pagination('feed-'.self::$counter, $count, $page, $this->option('limit'), $this->option('paginationPages')).'<div class="clear"></div>';
+					$results .= Tools::instance()->pagination('feed-'.self::$counter, $count, $this->page, $this->option('limit'), $this->option('paginationPages')).'<div class="clear"></div>';
 				}
 			}
 

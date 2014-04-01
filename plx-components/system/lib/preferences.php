@@ -143,6 +143,7 @@
 
 		function languages()
 		{
+			$success = false;
 			if (!empty($_POST['plexusLanguageSettings'])) {
 				$langs = array();
 				foreach ($_POST['prefix'] as $key => $prefix) {
@@ -156,78 +157,17 @@
 					'prefix' => $_POST['prefix'],
 					'lang' => $_POST['lang']
 				)));
-				$success = 1;
+				$success = true;
+			}
+			if (!empty($_POST['moveToLanguageNonce'])) {
+				$this->d->getPrepared('UPDATE `#_index` SET language=?', 's', $_POST['moveToLanguage']);
 			}
 			$langs = $this->getOption('system.languages');
-			ob_start();
-?>
-	<div class="generalSettings">
-		<h1><?=§('Languages')?></h1>
-<? if (isset($success)) : ?>
-		<div class="infos"><?=§('Data saved successfully.')?></div>
-		<script type="text/javascript" >
-			jQuery('#plxAdminContainer .infos').delay(5000).fadeOut();
-		</script>
-<? endif; ?>
-		<p><?=§('Here you can set custom root paths like {{<strong>'.$this->a->getHome('de').'</strong>}} for your multiple languages.')?></p>
-		<form method="post" class="plexusPreferencesForm plexusForm" action="<?=$this->a->current()?>">
-			<ul id="languageEditorBody" style="list-style-type: none; margin: 0; padding: 0;">
-<?php
-	if (!empty($langs)) {
-		$langs = json_decode($langs);
-		foreach ($langs->prefix as $key => $prefix) {
-?>
-				<li>
-					<span class="handle" style="background: #070; cursor: move;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-					<label for=""><?=§('Language name')?></label>
-					<input type="text" name="lang[]" value="<?=$langs->lang[$key]?>" />
-					&nbsp;&nbsp;&nbsp;&nbsp;
-					<label><?=$this->a->getHome()?></label>
-					<input type="text" name="prefix[]" value="<?=$prefix?>" style="width: 50px;" />
-				</li>
-<?php
-
-		}
-	}
-?>
-				<li>
-					<span class="handle" style="background: #070; cursor: move;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-					<label for=""><?=§('Language name')?></label>
-					<input type="text" name="lang[]" value="" />
-					&nbsp;&nbsp;&nbsp;&nbsp;
-					<label><?=$this->a->getHome()?></label>
-					<input type="text" name="prefix[]" value="" style="width: 50px;" />
-				</li>
-			</ul>
-			<div id="languageEditorDefault" style="display: none;">
-				<li>
-					<span class="handle" style="background: #070; cursor: move;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-					<label for=""><?=§('Language name')?></label>
-					<input type="text" name="lang[]" value="" />
-					&nbsp;&nbsp;&nbsp;&nbsp;
-					<label><?=$this->a->getHome()?></label>
-					<input type="text" name="prefix[]" value="" style="width: 50px;" />
-				</li>
-			</div>
-			<br />
-			<button type="submit" style="float: right;"><?=§('Save')?></button>
-			<button id="languageEditorButton" type="button"><?=§('+ Add Language')?></button>
-			<input type="hidden" name="plexusLanguageSettings" value="1" />
-		</form>
-		<script type="text/javascript">
-			jQuery('#languageEditorButton').click(function(e) {
-				jQuery('#languageEditorBody').append(
-					jQuery('#languageEditorDefault').html()
-				);
-			});
-			jQuery('ul#languageEditorBody').sortable({
-				handle: 'span.handle',
-				cursor: 'crosshair'
-			});
-		</script>
-	</div>
-<?php
-			return ob_get_clean();
+			$langs = json_decode($langs);
+			return $this->t->get('preferences-language.php', array(
+				'langs' => $langs,
+				'success' => $success
+			));
 		}
 
 		function getTitle()

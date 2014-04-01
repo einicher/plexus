@@ -18,7 +18,7 @@
 
 		function __construct()
 		{
-			$this->t->locateFile('lang.php');
+			on_exist_require(Core::getStorage(Core::getConf('system', 'theme').'/lang.php'));
 		}
 
 		function get($text)
@@ -127,19 +127,14 @@
 			self::$custom[$lang][$orig] = $trans;
 		}
 
-		static function getTranslations($id, $translations = array(), $taken = array(0))
+		static function getTranslations($id)
 		{
-			$r = Database2::instance()->query('SELECT * FROM `#_options` WHERE name="translation" && (association='.$id.' || value='.$id.') && id NOT IN('.implode(',', $taken).')', array('force_array' => true));
-			if ($r && $r->num_rows) {
-				while ($f = $r->fetch_object()) {
-					$taken[] = $f->id;
-					$translations[$f->value] = $f->value;
-					$translations[$f->association] = $f->association;
-					if ($id == $f->association) {
-						$translations = self::getTranslations($f->value, $translations, $taken);
-					} else {
-						$translations = self::getTranslations($f->association, $translations, $taken);
-					}
+			$translations = array();
+			$root = Database::instance()->prepared('SELECT translation FROM `#_index` WHERE id=?', 'i', $id);
+			if (!empty($root->translation)) {
+				$q = Database::instance()->query('SELECT * FROM `#_index` WHERE translation='.$root->translation);
+				while ($f = $q->fetch_object()) {
+					$translations[] = $f;
 				}
 			}
 			return $translations;

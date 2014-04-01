@@ -23,7 +23,7 @@ span.link { cursor: pointer; text-decoration: underline; color: #369; }
 .clear { clear: both; } /* old style */
 
 /* new style */
-.clearfix:after { content: " "; display: block; clear: both; visibility: hidden; line-height: 0; height: 0; }
+.clearfix:after { content: "."; display: block; clear: both; visibility: hidden; line-height: 0; height: 0; }
 .clearfix { display: inline-block; }
 html[xmlns] .clearfix { display: block; }
 * html .clearfix { height: 1%; }

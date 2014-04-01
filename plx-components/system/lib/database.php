@@ -24,6 +24,7 @@
 						  `author` int(11) NOT NULL,
 						  `published` int(11) NOT NULL,
 						  `language` varchar(255) NOT NULL,
+						  `translation` varchar(255) NOT NULL,
 						  PRIMARY KEY (`id`),
 						  INDEX (`parent`,`address`,`status`,`published`)
 						) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -126,13 +127,19 @@
 		function getPrepared()
 		{
 			$args = func_get_args();
-			return call_user_func_array(array(&$this, 'preparedStatement'), $args);
+			return call_user_func_array(array(&$this, 'prepared'), $args);
+		}
+
+		function preparedStatement()
+		{
+			$args = func_get_args();
+			return call_user_func_array(array(&$this, 'prepared'), $args);
 		}
 
 		/**
 		 * $sql, $types, [$args ..]
 		 */
-		function preparedStatement()
+		function prepared()
 		{
 			$class = 'stdClass';
 			$param = array();

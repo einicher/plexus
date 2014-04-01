@@ -63,8 +63,8 @@
 				$this->a->assign('system.create', §('create'), array('ContentControls::instance()', 'plxCreate'), array(-1, 'preceded_empty'));
 				$this->a->assign('system.create.type', §('create'), array('ContentControls::instance()', 'plxCreate'), array(-2, 'preceded_empty'));
 				$this->a->assign('system.edit', §('edit'), array('ContentControls::instance()', 'plxEdit'), -1);
-				$this->a->assign('system.translate', §('translate'), array('ContentControls::instance()', 'plxTranslate'), -1);
-				$this->a->assign('system.translate.language', '*', array('ContentControls::instance()', 'plxTranslate'), -2);
+				$this->a->assign('system.translate', §('translate'), array('ContentControls::instance()', 'plxTranslate'), array(-1, 'preceded_empty'));
+				$this->a->assign('system.translate.type', §('translate'), array('ContentControls::instance()', 'plxTranslate'), array(-2, 'preceded_empty'));
 				$this->a->assign('system.copy', §('copy'), array('ContentControls::instance()', 'plxCopy'), -1);
 
 				// SYSTEM CONTROL
@@ -305,7 +305,7 @@
 					} else {
 						$current = $this->a->isAssigned($level, $lvs, $cache);
 if (isset($_GET['debug'])) {
-	echo µ($current);
+	echo 'ia'.µ($current);
 }
 					}
 
@@ -379,6 +379,9 @@ if (isset($_GET['debug'])) {
 					$additional = ' OR parent=0';
 				}
 			}
+if (isset($_GET['debug'])) {
+	echo 'cc'.µ($current);
+}
 
 			$this->debug('Control::run loop READY');
 
@@ -439,7 +442,7 @@ if (isset($_GET['debug'])) {
 			} else {
 				$customView = $this->t->getThemeRoot('system', 'view-'.self::$content->id.'.php');
 				if (file_exists($customView)) {
-					$return  = $this->t->get('system', 'view-'.self::$content->id.'.php');
+					$return  = $this->t->get('view-'.self::$content->id.'.php');
 				} else {
 					$return  = $this->t->get('index.php');
 				}

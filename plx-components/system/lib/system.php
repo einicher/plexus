@@ -69,7 +69,9 @@
 				require_once PLX_SYSTEM.'lib/widget-tag-cloud.php';
 				$tags = new TagCloudWidget;
 				$tags = $this->o->notify('system.tags', $tags);
-				return new Page(§('Tags'), $tags->view(1));
+				$p = new Page(§('Tags'), $tags->view(1));
+				$p->classes = 'tags';
+				return $p;
 			} else {
 				$tag = urldecode(@$levels[2]);
 				$feed = new Feed;

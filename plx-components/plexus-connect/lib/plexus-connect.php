@@ -71,16 +71,16 @@
 			return $indicator;
 		}
 
-		function getUnreadCount()
+		static public function getUnreadCount()
 		{
-			$r = Database2::instance()->query('SELECT * FROM '.Database2::instance()->table('pushes').' WHERE status=0');
+			$r = Database::instance()->query('SELECT * FROM '.Database::instance()->table('pushes').' WHERE status=0');
 			if (isset($r->num_rows)) {
 				return $r->num_rows;
 			}
 			return 0;
 		}
 
-		function getOpenRequests()
+		static public function getOpenRequests()
 		{
 			$connections = Core::getOption('plexus.connect.connection');
 			if (empty($connections)) {

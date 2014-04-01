@@ -10,7 +10,7 @@
 			<h1><?= htmlspecialchars(empty($result->titleLength) || $result->titleLength == -1  ? $result->title : $this->tools->cutByChars($result->title, $result->titleLength)) ?></h1>
 		<? endif; ?>
 		<? if (!empty($result->hasThumb)) : ?>
-			<img class="thumb" src="<?=htmlspecialchars($this->imageScaleLink($result->thumbSrc, $result->thumbWidth, $result->thumbHeight))?>" width="<?=$result->thumbWidth?>" alt="" />
+			<img class="thumb" src="<?=htmlspecialchars($this->imageScaleLink($result->thumbSrc, isset($result->thumbWidth) ? $result->thumbWidth : 100, isset($result->thumbHeight) ? $result->thumbHeight : ''))?>" width="<?=$result->thumbWidth?>" alt="" />
 		<? endif; ?>
 		<? if (!empty($result->headingBelowThumb)) : ?>
 			<h1><?= htmlspecialchars(empty($result->titleLength) || $result->titleLength == -1 ? $result->title : $this->tools->cutByChars($result->title, $result->titleLength)) ?></h1>

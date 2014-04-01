@@ -64,6 +64,7 @@
 			if (!empty($i)) {
 				$this->hasThumb = TRUE;
 				$this->thumbSrc = str_replace('../', '', $i);
+				$this->thumbWidth = 100;
 			}
 			$this->excerpt = $this->tools->cutByWords(strip_tags($c), $this->excerptLength);
 			$this->footer = 1;

@@ -178,6 +178,14 @@
 					}
 //echo µ($name.'('.count($levels).'+'.$reserved['dependency'].')'.$check);
 				}
+/*if ($reserved['address'] == 'translate') {
+	if ($level == $check) {
+		echo µ(self::$dependencies);
+		echo µ(count($levels));
+		echo µ($check.'->'.$level);
+		echo µ($reserved);
+	}
+}*/
 				if (
 					isset($levels[$level])
 					&& $levels[$level] == urlencode($reserved['address'])
