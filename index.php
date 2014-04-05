@@ -110,6 +110,9 @@
 			}
 		}
 		$file = $control->getStorage(str_replace('plx-file/', '', PLX_ADDR_PATH));
+		if (substr($file, -4, 4) == '.php') {
+			return;
+		}
 		if (substr(PLX_ADDR_PATH, -4, 4) == '.pdf') {
 			header('Content-Type: application/pdf');
 		} else {

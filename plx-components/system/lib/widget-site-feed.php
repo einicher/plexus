@@ -119,6 +119,8 @@
 			}
 			if (empty($this->data->pagination)) {
 				$f->set('showPagination', true);
+			} else {
+				$f->set('showPagination', false);
 			}
 			if (!empty($this->data->typeSelector)) {
 				$f->set('showTypeSelector', true);

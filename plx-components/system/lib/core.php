@@ -415,5 +415,10 @@
 				'callback' => $callback
 			);
 		}
+
+		static public function loadClass($component, $class)
+		{
+			require_once PLX_COMPONENTS.$component.'/lib/'.strtolower($class).'.php';
+		}
 	}
 ?>
