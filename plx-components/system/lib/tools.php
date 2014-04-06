@@ -528,7 +528,10 @@
 			}
 			$headers  = 'MIME-Version: 1.0'."\r\n";
 			$headers .= 'Content-type: text/plain; charset=utf-8'."\r\n";
-			$headers .= 'From: '.$from."\r\n";
+			if (!empty($from)) {
+				$headers .= 'From: '.$from."\r\n";
+			}
+			$headers .= 'X-Mailer: PHP/'.phpversion();
 			return mail($mail, $subject, $message, $headers);
 		}
 	}

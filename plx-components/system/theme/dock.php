@@ -23,10 +23,10 @@
 			transitionIn: 'elastic',
 			transitionOut: 'elastic',
 			onComplete: function() {
-				/*plxWidgetHtml2AjaxForm('<?=$widget->href?>');
+				plxWidgetHtml2AjaxForm('<?=$widget->href?>');
 				jQuery('form.plexusForm button.remove').click(function() {
 					jQuery('form.plexusForm').attr('action', '<?=$widget->href?><?= strpos($widget->href, '?') == FALSE ? '?' : '&' ?>plexusRemove');
-				});*/
+				});
 			}
 		});
 	</script>

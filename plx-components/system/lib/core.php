@@ -268,13 +268,14 @@
 			}
 			
 			if (is_numeric($name)) {
-				return Database::instance()->get('SELECT * FROM `#_options` WHERE id="'.Database::instance()->escape($name).'"');
+				return Database::instance()->get('SELECT * FROM `#_options` WHERE id="'.Database::instance()->escape($name).'" ORDER BY id ASC');
 			}
 
 			$sql = 'SELECT * FROM '.Database::table('options').' WHERE name="'.Database::escape($name).'"';
 			if (!empty($association)) {
 				$sql .= ' && association="'.Database::escape($association).'"';
 			}
+			$sql .= ' ORDER BY id ASC';
 
 			$get = Database::instance()->get($sql);
 
@@ -363,7 +364,7 @@
 				'call' => $call,
 				'actor' => &$actor
 			);
-			$this->a->assign('system.preferences.'.$n, $n, array(&$actor, $call), 'system.preferences');
+			$this->a->assign('system.preferences.'.$n, $n, array('Preferences::instance()', 'control'), 'system.preferences');
 		}
 
 		function registerAjaxCall($call, &$actor = '')

@@ -1,5 +1,4 @@
 <?php
-
 	define('PLX_START', microtime(TRUE));
 
 	error_reporting(E_ALL);
