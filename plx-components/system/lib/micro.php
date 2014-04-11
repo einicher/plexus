@@ -20,6 +20,13 @@
 			$this->status = 1;
 		}
 
+		function beforeSave($data)
+		{
+			preg_match_all('/#(\w+)/', $this->post, $results);
+			$this->add('string', 'tags');
+			$this->tags = implode(',', $results[1]);			
+		}
+
         function onSaveReady($data)
         {
             $this->d->query('UPDATE `#_index` SET address="'.base_convert($this->id+3600, 10, 36).'" WHERE id='.$this->id);
@@ -37,6 +44,9 @@
 
         function getContent()
         {
+            if (!ContentControls::$editMode) {
+            	$this->post = preg_replace('/#(\w+)/', '<a href="'.$this->a->assigned('system.tags').'/\\1">#\\1</a>', $this->post);
+            }
         	return $this->t->get('view-micro.php', array('micro' => $this));
         }
 

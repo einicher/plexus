@@ -41,7 +41,10 @@
 			$checks = '<p>'.§('Please correct all problems (the red ones are problems) and {{<a href="javascript:location.reload()">refresh</a>}}.').'</p><ul>';
 			$checks .= version_compare(PHP_VERSION, '5.0.0', '>=') ? '<li class="green">'.§('Your PHP version is '.PHP_VERSION.'.').'</li>' : '<li class="red">'.§('At least PHP version 5 needed, version '.PHP_VERSION.' found.').'</li>';
 			@chmod(PLX_STORAGE, 0777);
-			$checks .= is_writable(PLX_STORAGE) ? '<li class="green">'.§('Storage directory is writable.').'</li>' : '<li class="red">'.§('Storage directory '.PLX_STORAGE.' ist not writable').'</li>';
+			$checks .= is_writable(PLX_STORAGE) ? '<li class="green">'.§('Storage directory is writable.').'</li>' : '<li class="red">'.§('Storage directory '.PLX_STORAGE.' is not writable').'</li>';
+			if (file_exists(Core::getStorage())) {
+				$checks .= is_writable(Core::getStorage('')) ? '<li class="green">'.§('Host directory is writable.').'</li>' : '<li class="red">'.§('Host directory '.Core::getStorage().' is not writable').'</li>';
+			}
 			if (file_exists(Core::getStorage('config.php'))) {
 				$checks .= is_writable(Core::getStorage('config.php')) ? '<li class="green">'.§('Configuration file is writable.').'</li>' : '<li class="red">'.§('Configuration file '.PLX_STORAGE.'config.php ist not writable').'</li>';
 			}
